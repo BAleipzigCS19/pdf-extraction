@@ -31,4 +31,9 @@ dependencies {
 tasks.compileJava {
     sourceCompatibility = "17"
     targetCompatibility = "17"
+    options.encoding = "UTF-8"
+}
+
+application{
+    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
