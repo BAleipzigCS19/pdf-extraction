@@ -1,8 +1,6 @@
 package de.baleipzig.pdfextraction.controller;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import de.baleipzig.pdfextraction.base.TestBaseUtils;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,25 +11,13 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import java.io.IOException;
-
 @ExtendWith(ApplicationExtension.class)
 public class ActionControllerTest {
 
     @Start
     private void start(Stage stage) {
 
-        Parent root = new Parent() {
-        };
-        try {
-            root = FXMLLoader.load(getClass().getResource("/view/ActionView.fxml"));
-        } catch (IOException e) {
-            System.out.println("Fehler beim Laden der Scene. Fehlermeldung: " + e.getMessage());
-        }
-
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        TestBaseUtils.start(stage, getClass().getResource("/view/ActionView.fxml"));
     }
 
     @Test
@@ -54,5 +40,6 @@ public class ActionControllerTest {
 
         robot.clickOn("#runActionButton");
         FxAssert.verifyThat("OK", NodeMatchers.isVisible());
+        robot.clickOn("OK");
     }
 }
