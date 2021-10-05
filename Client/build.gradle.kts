@@ -23,9 +23,7 @@ dependencies {
     implementation(project(":Backend"))
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation("org.testfx:testfx-core:4.0.16-alpha")
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
-    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
 tasks.compileJava {
