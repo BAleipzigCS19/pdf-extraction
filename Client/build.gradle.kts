@@ -26,7 +26,7 @@ dependencies {
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
 }
 
-tasks.compileJava {
+tasks.withType<JavaCompile>(){
     sourceCompatibility = "17"
     targetCompatibility = "17"
     options.encoding = "UTF-8"
