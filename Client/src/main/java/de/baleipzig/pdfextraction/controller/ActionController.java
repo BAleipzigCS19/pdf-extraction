@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.controller;
 
-import de.baleipzig.pdfextraction.common.alert.AlertCommon;
-import de.baleipzig.pdfextraction.common.controller.ControllerCommon;
+import de.baleipzig.pdfextraction.common.alert.AlertUtils;
+import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,12 +26,12 @@ public class ActionController implements Initializable {
     @FXML
     public void runActionButtonOnAction(ActionEvent actionEvent) {
 
-        AlertCommon.ShowAlert(Alert.AlertType.INFORMATION, "Erfolgreich", "Aktion ausgeführt", "Die Aktion wurde erfolgreich ausgeführt");
+        AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Erfolgreich", "Aktion ausgeführt", "Die Aktion wurde erfolgreich ausgeführt");
     }
 
     @FXML
     public void backToImportButtonOnAction(ActionEvent actionEvent) {
 
-        ControllerCommon.switchScene(actionEvent, this, "/view/ImportView.fxml");
+        ControllerUtils.switchScene(actionEvent, this, "/view/ImportView.fxml");
     }
 }

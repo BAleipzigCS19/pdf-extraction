@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ControllerCommon {
+public class ControllerUtils {
 
     public static void switchScene(ActionEvent actionEvent, Object context, String pathToSwitch) {
 

@@ -35,7 +35,7 @@ public class ActionControllerTest {
     }
 
     @Test
-    public void VerifyViewComponents() {
+    public void verifyViewComponents() {
 
         FxAssert.verifyThat("#runActionButton", LabeledMatchers.hasText("Aktion durchführen"));
         FxAssert.verifyThat("#backToImportButton", LabeledMatchers.hasText("Zurück"));
@@ -43,14 +43,14 @@ public class ActionControllerTest {
     }
 
     @Test
-    public void NavigateBack(FxRobot robot) {
+    public void navigateBack(FxRobot robot) {
 
         robot.clickOn("#backToImportButton");
         FxAssert.verifyThat("#continueButton", NodeMatchers.isVisible());
     }
 
     @Test
-    public void RunAction(FxRobot robot) {
+    public void RrnAction(FxRobot robot) {
 
         robot.clickOn("#runActionButton");
         FxAssert.verifyThat("OK", NodeMatchers.isVisible());

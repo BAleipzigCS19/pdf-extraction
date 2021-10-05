@@ -1,6 +1,6 @@
 package de.baleipzig.pdfextraction.controller;
 
-import de.baleipzig.pdfextraction.common.controller.ControllerCommon;
+import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,6 +24,6 @@ public class ImportController implements Initializable {
     @FXML
     private void continueButtonOnAction(ActionEvent actionEvent) {
 
-        ControllerCommon.switchScene(actionEvent, this, "/view/ActionView.fxml");
+        ControllerUtils.switchScene(actionEvent, this, "/view/ActionView.fxml");
     }
 }

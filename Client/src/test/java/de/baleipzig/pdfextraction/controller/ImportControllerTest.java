@@ -35,14 +35,14 @@ public class ImportControllerTest {
     }
 
     @Test
-    public void VerifyViewComponents() {
+    public void verifyViewComponents() {
 
         FxAssert.verifyThat("#templateComboBox", NodeMatchers.isVisible());
         FxAssert.verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
     }
 
     @Test
-    public void NavigateContinue(FxRobot robot) {
+    public void navigateContinue(FxRobot robot) {
 
         robot.clickOn("#continueButton");
         FxAssert.verifyThat("#backToImportButton", NodeMatchers.isVisible());
