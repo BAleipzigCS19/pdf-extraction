@@ -50,7 +50,7 @@ public class ActionControllerTest {
     }
 
     @Test
-    public void RrnAction(FxRobot robot) {
+    public void runAction(FxRobot robot) {
 
         robot.clickOn("#runActionButton");
         FxAssert.verifyThat("OK", NodeMatchers.isVisible());
