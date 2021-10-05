@@ -34,6 +34,10 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 
+tasks.test{
+    useJUnitPlatform()
+}
+
 application{
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
