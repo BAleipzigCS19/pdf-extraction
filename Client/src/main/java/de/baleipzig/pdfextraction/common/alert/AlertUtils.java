@@ -6,12 +6,22 @@ public class AlertUtils {
 
     private AlertUtils() {}
 
-    public static void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+    public static void showAlert(final Alert.AlertType alertType,
+                                 final String title,
+                                 final String header,
+                                 final String content) {
 
-        Alert alert = new Alert(alertType);
+        getAlert(alertType, title, header, content).show();
+    }
+
+    public static Alert getAlert(final Alert.AlertType alertType,
+                                 final String title,
+                                 final String header,
+                                 final String content) {
+        final Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.show();
+        return alert;
     }
 }

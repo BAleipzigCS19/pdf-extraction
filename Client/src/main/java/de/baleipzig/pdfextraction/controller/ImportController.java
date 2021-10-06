@@ -1,33 +1,24 @@
 package de.baleipzig.pdfextraction.controller;
 
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class ImportController implements Initializable {
-
-    public Button continueButton;
-    public ComboBox templateComboBox;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        //empty Method
-    }
+public class ImportController {
 
     @FXML
-    private void continueButtonOnAction(ActionEvent actionEvent) {
+    public Button continueButton;
+
+    @FXML
+    public ComboBox<String> templateComboBox;
+
+    @FXML
+    private void continueButtonOnAction() {
 
         ControllerUtils.switchScene(
-                (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(),
+                (Stage) this.continueButton.getScene().getWindow(),
                 getClass().getResource("/view/ActionView.fxml")
         );
     }

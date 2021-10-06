@@ -12,13 +12,13 @@ public class ControllerUtils {
 
     private ControllerUtils() {}
 
-    public static void switchScene(Stage stage, URL url) {
+    public static void switchScene(final Stage current, final URL linkToNewScene) {
 
         try {
-            Parent root = FXMLLoader.load(url);
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            final Parent root = FXMLLoader.load(linkToNewScene);
+            final Scene scene = new Scene(root);
+            current.setScene(scene);
+            current.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
