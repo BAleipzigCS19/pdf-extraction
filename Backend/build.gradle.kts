@@ -12,9 +12,3 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-
-
-tasks.compileJava {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
-}

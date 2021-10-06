@@ -15,5 +15,9 @@ var qube = sonarqube
 subprojects{
      apply plugin: 'java'
 
-    task qube dependsOn(it.tasks.build)
+    tasks.withType(JavaCompile){
+        sourceCompatibility("17")
+        targetCompatibility("17")
+        options.encoding("utf-8")
+    }
 }
