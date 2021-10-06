@@ -12,50 +12,47 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane hgap="10.0" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/17"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.controller.ImportController">
+<GridPane hgap="10.0" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.controller.ImportController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES"/>
-        <ColumnConstraints hgrow="SOMETIMES"/>
+        <ColumnConstraints hgrow="SOMETIMES" />
+        <ColumnConstraints hgrow="SOMETIMES" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints maxHeight="50.0" minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <Pane prefWidth="400.0"/>
+        <Pane prefWidth="400.0" />
         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
             <children>
                 <VBox>
                     <children>
-                        <Label text="Templates"/>
+                        <Label text="Templates" />
                         <ComboBox fx:id="templateComboBox" prefWidth="200.0" promptText="Template auswählen">
                             <VBox.margin>
-                                <Insets top="10.0"/>
+                                <Insets top="10.0" />
                             </VBox.margin>
                         </ComboBox>
                     </children>
                 </VBox>
             </children>
             <GridPane.margin>
-                <Insets/>
+                <Insets />
             </GridPane.margin>
         </AnchorPane>
         <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
             <content>
                 <Label text="Ermittelte Daten">
                     <padding>
-                        <Insets bottom="10.0"/>
+                        <Insets bottom="10.0" />
                     </padding>
                 </Label>
             </content>
         </ScrollPane>
-        <Button fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" text="Weiter"
-                GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2"
-                GridPane.valignment="BOTTOM"/>
+        <Button fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" text="Weiter" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
     </children>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </GridPane>

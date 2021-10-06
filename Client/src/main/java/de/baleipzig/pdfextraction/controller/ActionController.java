@@ -5,9 +5,11 @@ import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,6 +18,7 @@ public class ActionController implements Initializable {
 
     public CheckBox createTerminationCheckBox;
     public Button runActionButton;
+    public Button backToImportButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -32,6 +35,9 @@ public class ActionController implements Initializable {
     @FXML
     public void backToImportButtonOnAction(ActionEvent actionEvent) {
 
-        ControllerUtils.switchScene(actionEvent, this, "/view/ImportView.fxml");
+        ControllerUtils.switchScene(
+                (Stage) ((Node) actionEvent.getSource()).getScene().getWindow(),
+                getClass().getResource("/view/ImportView.fxml")
+        );
     }
 }
