@@ -1,0 +1,19 @@
+plugins {
+    id "org.sonarqube" version "3.3"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "BAleipzigCS19_pdf-extraction"
+        property "sonar.organization", "pdfextraction"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+var qube = sonarqube
+
+subprojects{
+     apply plugin: 'java'
+
+    task qube dependsOn(it.tasks.build)
+}
