@@ -26,11 +26,11 @@ dependencies {
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
 }
 
-tasks.test{
+tasks.test {
     useJUnitPlatform()
 }
 
-application{
+application {
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
 
