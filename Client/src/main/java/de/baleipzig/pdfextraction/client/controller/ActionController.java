@@ -1,7 +1,8 @@
-package de.baleipzig.pdfextraction.controller;
+package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.common.alert.AlertUtils;
-import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.view.ImportView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,10 +31,6 @@ public class ActionController {
 
     @FXML
     public void backToImportButtonOnAction() {
-
-        ControllerUtils.switchScene(
-                (Stage) this.backToImportButton.getScene().getWindow(),
-                getClass().getResource("/view/ImportView.fxml")
-        );
+        ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(),new ImportView());
     }
 }

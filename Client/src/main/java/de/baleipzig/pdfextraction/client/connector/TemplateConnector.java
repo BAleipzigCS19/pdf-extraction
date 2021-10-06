@@ -1,6 +1,7 @@
 package de.baleipzig.pdfextraction.client.connector;
 
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import jakarta.inject.Singleton;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,11 +14,16 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
+@Singleton
 public class TemplateConnector {
 
     private final WebClient webClient;
 
-    public TemplateConnector(final String baseURl) {
+    public TemplateConnector() {
+        this("http://localhost:5050/rest");
+    }
+
+    protected TemplateConnector(final String baseURl) {
         this.webClient = WebClient.builder()
                 .baseUrl(baseURl)
                 .defaultHeaders(header -> {
@@ -32,9 +38,10 @@ public class TemplateConnector {
                 .uri("/template/names")
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToMono(new ParameterizedTypeReference<>(){});
+                        return response.bodyToMono(new ParameterizedTypeReference<>() {
+                        });
                     } else {
-                        return Mono.error(() -> response.createException().block());
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
     }
@@ -52,7 +59,7 @@ public class TemplateConnector {
                 });
     }
 
-    public Mono<Void> save(final TemplateDTO dto){
+    public Mono<Void> save(final TemplateDTO dto) {
         return this.webClient
                 .method(HttpMethod.PUT)
                 .uri("/template")

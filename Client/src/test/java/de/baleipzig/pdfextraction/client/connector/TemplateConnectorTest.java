@@ -1,8 +1,8 @@
+package de.baleipzig.pdfextraction.client.connector;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
-import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
-import io.netty.handler.codec.http.HttpHeaderValues;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import reactor.test.StepVerifier;
 import java.io.IOException;
 import java.util.List;
 
-class ConnectorTest {
+class TemplateConnectorTest {
 
     private MockWebServer mock;
     private TemplateConnector connector;
@@ -30,7 +30,7 @@ class ConnectorTest {
     void HasName() {
         this.mock.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
-                .setHeader(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+                .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .setBody("[{\"name\":\"test\",\"content\":\"\"}]")
         );
 
@@ -55,7 +55,7 @@ class ConnectorTest {
 
         this.mock.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
-                .setHeader(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+                .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .setBody(new ObjectMapper().writeValueAsString(toSave))
         );
 

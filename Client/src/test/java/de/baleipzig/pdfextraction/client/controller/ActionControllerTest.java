@@ -1,6 +1,7 @@
-package de.baleipzig.pdfextraction.controller;
+package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.view.ActionView;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -17,7 +18,7 @@ class ActionControllerTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
 
-        ControllerUtils.switchScene(stage, getClass().getResource("/view/ActionView.fxml"));
+        ControllerUtils.switchScene(stage, new ActionView());
     }
 
     @Test

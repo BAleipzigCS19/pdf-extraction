@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.common.alert;
+package de.baleipzig.pdfextraction.client.utils;
 
 import javafx.scene.control.Alert;
 
