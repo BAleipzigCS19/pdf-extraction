@@ -1,5 +1,4 @@
 plugins {
-    java
     application
     id("org.openjfx.javafxplugin") version "0.0.10"
 }
@@ -22,14 +21,9 @@ javafx {
 dependencies {
     implementation(project(":Backend"))
 
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
-}
-
-tasks.withType<JavaCompile>(){
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
-    options.encoding = "UTF-8"
 }
 
 tasks.test{
@@ -39,3 +33,4 @@ tasks.test{
 application{
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
+
