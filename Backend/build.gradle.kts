@@ -1,7 +1,3 @@
-plugins {
-    java
-}
-
 version = "0.0.1-SNAPSHOT"
 
 repositories {
@@ -30,11 +26,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-
-tasks.withType<JavaCompile>() {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
-    options.encoding = "UTF-8"
 }
