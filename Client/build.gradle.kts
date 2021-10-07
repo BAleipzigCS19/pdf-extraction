@@ -29,6 +29,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
     implementation("org.apache.pdfbox:pdfbox:2.0.24")
+
 }
 
 tasks.test {
