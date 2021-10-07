@@ -15,5 +15,7 @@ public class Launcher extends Application {
         Scene scene = new Scene(new StackPane(l), 640, 480);
         stage.setScene(scene);
         stage.show();
+
+        Pdf_previewer.preview(stage,"D:\\UNI\\Semester4\\Projektarbeit_Wilhelm_Kuhring");
     }
 }
