@@ -13,6 +13,8 @@ public class ImportController {
 
     @FXML
     public ComboBox<String> templateComboBox;
+    @FXML
+    public Button createTemplateButton;
 
     @FXML
     private void continueButtonOnAction() {
@@ -20,6 +22,15 @@ public class ImportController {
         ControllerUtils.switchScene(
                 (Stage) this.continueButton.getScene().getWindow(),
                 getClass().getResource("/view/ActionView.fxml")
+        );
+    }
+
+    @FXML
+    public void createTemplateButtonOnAction() {
+
+        ControllerUtils.switchScene(
+                (Stage) this.continueButton.getScene().getWindow(),
+                getClass().getResource("/view/CreateTemplateView.fxml")
         );
     }
 }
