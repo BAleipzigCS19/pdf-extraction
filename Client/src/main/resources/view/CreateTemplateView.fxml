@@ -54,7 +54,7 @@
                     </children>
                 </GridPane>
                 <Label text="zu ermittelnde Daten" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                <Button fx:id="addFieldButton" mnemonicParsing="false" onAction="#AddFieldButtonOnClick" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                <Button fx:id="addFieldButton" mnemonicParsing="false" onAction="#addFieldButtonOnClick" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
                 <Button fx:id="createTemplateButton" mnemonicParsing="false" onAction="#createTemplateButtonOnAction" text="Template erstellen" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                 <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                     <content>

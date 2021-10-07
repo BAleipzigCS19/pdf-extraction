@@ -34,9 +34,8 @@ public class CreateTemplateController implements Initializable {
     }
 
     @FXML
-    public void AddFieldButtonOnClick() {
+    public void addFieldButtonOnClick() {
 
-        //TODO Liste aller unterstützten FieldTypes noch hinzufügen
         List<String> fieldTypes = FieldTypes.getAllFieldTypes().stream().map(FieldTypes::getName).toList();
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(fieldTypes.get(0), fieldTypes);
