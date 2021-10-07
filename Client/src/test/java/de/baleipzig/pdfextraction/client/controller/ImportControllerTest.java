@@ -32,4 +32,11 @@ class ImportControllerTest extends ApplicationTest {
         clickOn("#continueButton");
         FxAssert.verifyThat("#backToImportButton", NodeMatchers.isVisible());
     }
+
+    @Test
+    void navigateCreateTemplate() {
+
+        clickOn("#createTemplateButton");
+        FxAssert.verifyThat("#addFieldButton", NodeMatchers.isVisible());
+    }
 }
