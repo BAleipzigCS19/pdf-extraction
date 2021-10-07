@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -33,17 +34,18 @@ public class TemplateConnector {
                 }).build();
     }
 
-    public Mono<List<TemplateDTO>> getAllNames() {
+    public Flux<String> getAllNames() {
         return this.webClient.method(HttpMethod.GET)
                 .uri("/template/names")
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToMono(new ParameterizedTypeReference<>() {
+                        return response.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                         });
                     } else {
                         return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
-                });
+                })
+                .flatMapMany(Flux::fromIterable);
     }
 
     public Mono<TemplateDTO> getForName(final String name) {
@@ -54,7 +56,7 @@ public class TemplateConnector {
                         return response.bodyToMono(new ParameterizedTypeReference<>() {
                         });
                     } else {
-                        return Mono.error(() -> response.createException().block());
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
     }
@@ -68,7 +70,7 @@ public class TemplateConnector {
                     if (response.statusCode().equals(HttpStatus.CREATED)) {
                         return Mono.empty();
                     } else {
-                        return Mono.error(() -> response.createException().block());
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
     }

@@ -20,22 +20,24 @@ class TemplateConnectorTest {
     private TemplateConnector connector;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp()
+            throws IOException {
         this.mock = new MockWebServer();
         this.mock.start();
         this.connector = new TemplateConnector("http://%s:%s".formatted(this.mock.getHostName(), this.mock.getPort()));
     }
 
     @Test
-    void HasName() {
+    void HasName()
+            throws JsonProcessingException {
         this.mock.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                .setBody("[{\"name\":\"test\",\"content\":\"\"}]")
+                .setBody(new ObjectMapper().writeValueAsString(List.of("test", "test2", "test3")))
         );
 
         StepVerifier.create(this.connector.getAllNames())
-                .expectNext(List.of(new TemplateDTO("test", "")))
+                .expectNext("test", "test2", "test3")
                 .verifyComplete();
     }
 

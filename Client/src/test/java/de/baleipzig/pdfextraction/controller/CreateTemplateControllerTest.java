@@ -1,6 +1,7 @@
 package de.baleipzig.pdfextraction.controller;
 
-import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -16,7 +17,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
 
-        ControllerUtils.switchScene(stage, getClass().getResource("/view/CreateTemplateView.fxml"));
+        ControllerUtils.switchScene(stage, new CreateTemplate());
     }
 
     @Test

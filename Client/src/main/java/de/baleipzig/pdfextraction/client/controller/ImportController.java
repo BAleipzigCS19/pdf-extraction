@@ -1,20 +1,21 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
+import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.ActionView;
+import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ImportController implements Initializable {
@@ -38,15 +39,20 @@ public class ImportController implements Initializable {
         this.connector
                 .getAllNames()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class).error("Exception while listening for response.", err))
-                .onErrorReturn(Collections.emptyList())
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", "", "Es ist ein Fehler bei dem kommunizieren mit dem Server aufgetreten.")))
                 .subscribe(this::onRequestCompleted);
     }
 
-    private void onRequestCompleted(final List<TemplateDTO> response) {
-        final List<String> names = response.stream()
-                .map(TemplateDTO::getName)
-                .toList();
+    private void onRequestCompleted(final String name) {
+        this.templateComboBox.getItems().add(name);
+    }
 
-        this.templateComboBox.getItems().setAll(names);
+    @FXML
+    public void createTemplateButtonOnAction() {
+
+        ControllerUtils.switchScene(
+                (Stage) this.continueButton.getScene().getWindow(),
+                new CreateTemplate()
+        );
     }
 }

@@ -1,7 +1,8 @@
-package de.baleipzig.pdfextraction.controller;
+package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.common.alert.AlertUtils;
-import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.view.ImportView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -21,10 +22,17 @@ public class CreateTemplateController implements Initializable {
 
     @FXML
     public GridPane dataGridPane;
-    private final VBox vBox = new VBox(10);
+
+    @FXML
     public AnchorPane fieldAnchorPane;
+
+    @FXML
     public TextField insuranceTextField;
+
+    @FXML
     public TextField templateNameTextField;
+
+    private final VBox vBox = new VBox(10);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -33,7 +41,7 @@ public class CreateTemplateController implements Initializable {
     }
 
     @FXML
-    public void AddFieldButtonOnClick() {
+    public void addFieldButtonOnClick() {
 
         //TODO Liste aller unterstützten FieldTypes noch hinzufügen
         List<String> choices = new ArrayList<>();
@@ -73,14 +81,14 @@ public class CreateTemplateController implements Initializable {
 
             ControllerUtils.switchScene(
                     (Stage) this.dataGridPane.getScene().getWindow(),
-                    getClass().getResource("/view/ImportView.fxml")
+                    new ImportView()
             );
         }
     }
 
     private boolean isDataIncomplete() {
 
-        return insuranceTextField.getText().trim().isEmpty() || templateNameTextField.getText().trim().isEmpty()
-                || fieldAnchorPane.getChildren().size() == 0;
+        return insuranceTextField.getText().isBlank() || templateNameTextField.getText().isBlank()
+                || fieldAnchorPane.getChildren().isEmpty();
     }
 }

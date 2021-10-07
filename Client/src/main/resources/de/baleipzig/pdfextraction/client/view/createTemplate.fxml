@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.controller.CreateTemplateController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -54,7 +54,7 @@
                     </children>
                 </GridPane>
                 <Label text="zu ermittelnde Daten" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                <Button fx:id="addFieldButton" mnemonicParsing="false" onAction="#AddFieldButtonOnClick" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                <Button fx:id="addFieldButton" mnemonicParsing="false" onAction="#addFieldButtonOnClick" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
                 <Button fx:id="createTemplateButton" mnemonicParsing="false" onAction="#createTemplateButtonOnAction" text="Template erstellen" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                 <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                     <content>

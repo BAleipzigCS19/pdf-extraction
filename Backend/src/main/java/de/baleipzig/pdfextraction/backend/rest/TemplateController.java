@@ -28,10 +28,10 @@ public class TemplateController {
     }
 
     @GetMapping(path = "template/names")
-    public ResponseEntity<List<TemplateDTO>> getAllNames() {
-        final List<TemplateDTO> body = this.repo.findAll()
+    public ResponseEntity<List<String>> getAllNames() {
+        final List<String> body = this.repo.findAll()
                 .stream()
-                .map(t -> new TemplateDTO(t.getName(), ""))
+                .map(Template::getName)
                 .toList();
 
         return ResponseEntity.ok(body);
