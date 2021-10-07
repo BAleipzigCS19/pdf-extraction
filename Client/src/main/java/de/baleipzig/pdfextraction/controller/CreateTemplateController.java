@@ -2,6 +2,7 @@ package de.baleipzig.pdfextraction.controller;
 
 import de.baleipzig.pdfextraction.common.alert.AlertUtils;
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
+import de.baleipzig.pdfextraction.fieldtype.FieldTypes;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -36,12 +37,9 @@ public class CreateTemplateController implements Initializable {
     public void AddFieldButtonOnClick() {
 
         //TODO Liste aller unterstützten FieldTypes noch hinzufügen
-        List<String> choices = new ArrayList<>();
-        choices.add("Field-Typ 1");
-        choices.add("Field-Typ 2");
-        choices.add("Field-Typ 3");
+        List<String> fieldTypes = FieldTypes.getAllFieldTypes().stream().map(FieldTypes::getName).toList();
 
-        ChoiceDialog<String> dialog = new ChoiceDialog<>("Field-Typ 1", choices);
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(fieldTypes.get(0), fieldTypes);
         dialog.setTitle("Feld-Typ");
         dialog.setHeaderText("Wähle einen Feld-Typ");
 
@@ -80,7 +78,7 @@ public class CreateTemplateController implements Initializable {
 
     private boolean isDataIncomplete() {
 
-        return insuranceTextField.getText().trim().isEmpty() || templateNameTextField.getText().trim().isEmpty()
-                || fieldAnchorPane.getChildren().size() == 0;
+        return insuranceTextField.getText().isBlank() || templateNameTextField.getText().isBlank()
+                || fieldAnchorPane.getChildren().isEmpty();
     }
 }
