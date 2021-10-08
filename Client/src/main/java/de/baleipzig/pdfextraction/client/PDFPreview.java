@@ -20,6 +20,8 @@ import java.util.Arrays;
 public class PDFPreview {
 
     public static int numberOfPages = 0;
+    // current page zählt von 1 aus, startet also nicht bei 0
+    private static int currentPage = 1;
 
     public static int getCurrentPage() {
         return currentPage;
@@ -29,8 +31,6 @@ public class PDFPreview {
         PDFPreview.currentPage = currentPage;
     }
 
-    // current page zählt von 1 aus, startet also nicht bei 0
-    public static int currentPage = 1;
 
     public static Image createPreviewImage(final int pageIndex, final Path pdfPath) {
 

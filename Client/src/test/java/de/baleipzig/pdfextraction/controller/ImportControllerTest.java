@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.controller;
 
+import de.baleipzig.pdfextraction.client.PDFPreview;
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,9 @@ import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
+
+import java.io.File;
+import java.nio.file.Paths;
 
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class ImportControllerTest extends ApplicationTest {
@@ -24,7 +28,12 @@ class ImportControllerTest extends ApplicationTest {
 
         FxAssert.verifyThat("#templateComboBox", NodeMatchers.isVisible());
         FxAssert.verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
+        FxAssert.verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
+        FxAssert.verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
+        FxAssert.verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
+        FxAssert.verifyThat("#pageIndex", NodeMatchers.isVisible());
     }
+
 
     @Test
     void navigateContinue() {
@@ -32,4 +41,6 @@ class ImportControllerTest extends ApplicationTest {
         clickOn("#continueButton");
         FxAssert.verifyThat("#backToImportButton", NodeMatchers.isVisible());
     }
+
+
 }

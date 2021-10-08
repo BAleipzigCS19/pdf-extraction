@@ -70,14 +70,14 @@ public class ImportController {
 
         if (PDFPreview.getCurrentPage() > 1 && pdfPath != null){
 
-            int pageNumber = PDFPreview.getCurrentPage() + -1;
+            int pageNumber = PDFPreview.getCurrentPage() - 1;
             updatePdfPreview(pageNumber);
         }
     }
 
     public void onClickPageForward(ActionEvent actionEvent) {
 
-        if (PDFPreview.getCurrentPage() < PDFPreview.numberOfPages + 1 && pdfPath != null){
+        if (PDFPreview.getCurrentPage() < PDFPreview.numberOfPages && pdfPath != null){
 
             int pageNumber = PDFPreview.getCurrentPage() + 1;
             updatePdfPreview(pageNumber);
