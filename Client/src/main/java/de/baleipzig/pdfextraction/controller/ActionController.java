@@ -35,5 +35,6 @@ public class ActionController {
                 (Stage) this.backToImportButton.getScene().getWindow(),
                 getClass().getResource("/view/ImportView.fxml")
         );
+
     }
 }

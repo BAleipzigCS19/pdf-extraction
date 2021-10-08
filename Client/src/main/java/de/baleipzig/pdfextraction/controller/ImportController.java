@@ -40,7 +40,7 @@ public class ImportController {
     @FXML
     public Button buttonChooseFile;
 
-    private Path pdfPath = null;
+    private static Path pdfPath = null;
 
     @FXML
     private void continueButtonOnAction() {
@@ -59,32 +59,28 @@ public class ImportController {
         imageView.fitWidthProperty().bind(parent.widthProperty());
         imageView.fitHeightProperty().bind(parent.heightProperty());
 
-        // es gibt noch den bug das der pdf path nicht gespeichert wird
         if (pdfPath == null){
-            pageIndex.setText("Seite: 0");
+            pageIndex.setText("Seitenanzahl");
         } else {
-            loadImage();
-            pageIndex.setText("Seite: " + PDFPreview.getCurrentPage());
+            updatePdfPreview(PDFPreview.getCurrentPage());
         }
     }
 
     public void onClickPageBack(ActionEvent actionEvent) {
 
-        if (PDFPreview.getCurrentPage() > 0 && pdfPath != null){
+        if (PDFPreview.getCurrentPage() > 1 && pdfPath != null){
 
-            PDFPreview.setCurrentPage(PDFPreview.getCurrentPage() - 1);
-            pageIndex.setText("Seite: " + PDFPreview.getCurrentPage());
-            loadImage();
+            int pageNumber = PDFPreview.getCurrentPage() + -1;
+            updatePdfPreview(pageNumber);
         }
     }
 
     public void onClickPageForward(ActionEvent actionEvent) {
 
-        if (PDFPreview.getCurrentPage() < PDFPreview.numberOfPages && pdfPath != null){
+        if (PDFPreview.getCurrentPage() < PDFPreview.numberOfPages + 1 && pdfPath != null){
 
-            PDFPreview.setCurrentPage(PDFPreview.getCurrentPage() + 1);
-            pageIndex.setText("Seite: " + PDFPreview.getCurrentPage());
-            loadImage();
+            int pageNumber = PDFPreview.getCurrentPage() + 1;
+            updatePdfPreview(pageNumber);
         }
     }
 
@@ -97,11 +93,21 @@ public class ImportController {
         File selectedFile = fileChooser.showOpenDialog(currentStage);
         pdfPath = Paths.get(selectedFile.toURI());
 
-        loadImage();
+        // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
+        PDFPreview.setCurrentPage(1);
+        updatePdfPreview(PDFPreview.getCurrentPage());
     }
 
     private void loadImage(){
-        Image previewImage = PDFPreview.createPreviewImage(PDFPreview.getCurrentPage(), pdfPath);
+        Image previewImage = PDFPreview.createPreviewImage(PDFPreview.getCurrentPage() - 1, pdfPath);
         imageView.setImage(previewImage);
     }
+
+    private void updatePdfPreview(int pageNumber){
+
+        PDFPreview.setCurrentPage(pageNumber);
+        pageIndex.setText("Seite: " + PDFPreview.getCurrentPage());
+        loadImage();
+    }
+
 }
