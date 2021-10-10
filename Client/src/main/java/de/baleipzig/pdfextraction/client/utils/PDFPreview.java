@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.client;
+package de.baleipzig.pdfextraction.client.utils;
 
 import javafx.scene.image.Image;
 import org.apache.pdfbox.pdmodel.PDDocument;
