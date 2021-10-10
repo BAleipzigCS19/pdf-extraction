@@ -29,6 +29,7 @@ public class ImportController {
 
     @FXML
     public ComboBox<String> templateComboBox;
+
     @FXML
     public Button createTemplateButton;
 
