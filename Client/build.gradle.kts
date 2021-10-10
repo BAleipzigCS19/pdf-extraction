@@ -7,6 +7,7 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 application {
@@ -25,6 +26,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
+
+    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
+
 }
 
 tasks.test {
