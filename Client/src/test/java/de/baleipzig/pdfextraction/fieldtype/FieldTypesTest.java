@@ -15,9 +15,9 @@ class FieldTypesTest {
 
         assertNotNull(fieldTypes);
         assertEquals(4, fieldTypes.size());
-        assertEquals("Empfänger-Adresse", fieldTypes.get(0).getName());
-        assertEquals("Sender-Adresse", fieldTypes.get(1).getName());
-        assertEquals("Ablaufdatum", fieldTypes.get(2).getName());
-        assertEquals("Versicherungsnummer", fieldTypes.get(3).getName());
+        assertTrue(fieldTypes.contains(FieldTypes.ADDRESS_SENDER));
+        assertTrue(fieldTypes.contains(FieldTypes.ADDRESS_RECEIVER));
+        assertTrue(fieldTypes.contains(FieldTypes.EXPIRATION));
+        assertTrue(fieldTypes.contains(FieldTypes.INSURANCE_NUMBER));
     }
 }

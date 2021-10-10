@@ -1,11 +1,11 @@
 package de.baleipzig.pdfextraction.fieldtype;
 
-import de.baleipzig.pdfextraction.api.ApiBase;
+import de.baleipzig.pdfextraction.api.AddressSender;
 
 public class AddressSenderFieldType implements FieldTypeBase{
 
     @Override
-    public ApiBase analyze(String text) {
+    public AddressSender analyze(String text) {
         return null;
     }
 }

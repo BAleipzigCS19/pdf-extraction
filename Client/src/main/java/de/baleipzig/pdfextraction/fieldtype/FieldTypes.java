@@ -10,7 +10,7 @@ public enum FieldTypes {
     EXPIRATION("Ablaufdatum"),
     INSURANCE_NUMBER("Versicherungsnummer");
 
-    private String name;
+    private final String name;
 
     FieldTypes(String name) {
         this.name = name;
@@ -18,10 +18,6 @@ public enum FieldTypes {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public static List<FieldTypes> getAllFieldTypes(){
