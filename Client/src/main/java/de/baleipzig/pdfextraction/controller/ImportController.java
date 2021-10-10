@@ -29,6 +29,8 @@ public class ImportController {
 
     @FXML
     public ComboBox<String> templateComboBox;
+    @FXML
+    public Button createTemplateButton;
 
     @FXML
     public Label pageIndex;
@@ -51,6 +53,15 @@ public class ImportController {
         ControllerUtils.switchScene(
                 (Stage) this.continueButton.getScene().getWindow(),
                 getClass().getResource("/view/ActionView.fxml")
+        );
+    }
+
+    @FXML
+    public void createTemplateButtonOnAction() {
+
+        ControllerUtils.switchScene(
+                (Stage) this.continueButton.getScene().getWindow(),
+                getClass().getResource("/view/CreateTemplateView.fxml")
         );
     }
 
@@ -85,6 +96,7 @@ public class ImportController {
         }
     }
 
+    @FXML
     public void onClickChooseFile() {
         // Filechooser
         final Stage current = (Stage) this.buttonChooseFile.getScene().getWindow();

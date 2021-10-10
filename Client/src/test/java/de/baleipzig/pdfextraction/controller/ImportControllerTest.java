@@ -34,7 +34,6 @@ class ImportControllerTest extends ApplicationTest {
         FxAssert.verifyThat("#pageIndex", NodeMatchers.isVisible());
     }
 
-
     @Test
     void navigateContinue() {
 
@@ -42,5 +41,10 @@ class ImportControllerTest extends ApplicationTest {
         FxAssert.verifyThat("#backToImportButton", NodeMatchers.isVisible());
     }
 
+    @Test
+    void navigateCreateTemplate() {
 
+        clickOn("#createTemplateButton");
+        FxAssert.verifyThat("#addFieldButton", NodeMatchers.isVisible());
+    }
 }
