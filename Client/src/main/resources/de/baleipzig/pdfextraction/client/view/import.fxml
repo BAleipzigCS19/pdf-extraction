@@ -5,13 +5,13 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.5" prefHeight="454.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.controller.ImportController">
+<SplitPane dividerPositions="0.5" prefHeight="454.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
    <items>
       <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="452.0" prefWidth="304.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="432.0" prefWidth="411.0">
                <children>
-                  <ImageView fx:id="imageView" layoutX="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <ImageView fx:id="imageView" layoutX="9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
           <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="0.0" prefHeight="50.0" prefWidth="298.0">
