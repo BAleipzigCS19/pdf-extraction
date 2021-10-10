@@ -37,7 +37,6 @@ dependencies {
     compileOnly("org.slf4j:slf4j-api:2.0.0-alpha5")
     runtimeOnly("ch.qos.logback:logback-classic:1.3.0-alpha10")
 
-
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
@@ -47,6 +46,9 @@ dependencies {
     testImplementation("com.squareup.okhttp3:okhttp:4.9.2")
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.2")
+
+    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
 }
 
 tasks.test {

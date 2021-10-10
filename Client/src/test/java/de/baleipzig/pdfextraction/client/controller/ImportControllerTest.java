@@ -24,6 +24,10 @@ class ImportControllerTest extends ApplicationTest {
 
         FxAssert.verifyThat("#templateComboBox", NodeMatchers.isVisible());
         FxAssert.verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
+        FxAssert.verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
+        FxAssert.verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
+        FxAssert.verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
+        FxAssert.verifyThat("#pageIndex", NodeMatchers.isVisible());
     }
 
     @Test
