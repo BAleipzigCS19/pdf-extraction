@@ -3,7 +3,6 @@ package de.baleipzig.pdfextraction.controller;
 import de.baleipzig.pdfextraction.client.PDFPreview;
 import de.baleipzig.pdfextraction.common.alert.AlertUtils;
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
-import de.baleipzig.pdfextraction.utils.CheckedSupplier;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -17,12 +16,14 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ImportController {
 
-    private static final PDFPreview renderer = new PDFPreview();
+    protected static final PDFPreview renderer = new PDFPreview();
 
     @FXML
     public Button continueButton;
@@ -116,12 +117,13 @@ public class ImportController {
         updatePdfPreview(renderer::getCurrentPreview);
     }
 
-    private void updatePdfPreview(final CheckedSupplier<Image> image) {
+    private void updatePdfPreview(final Supplier<Image> image) {
         try {
             final Image toSet = image.get();
+
             imageView.setImage(toSet);
             pageIndex.setText("Seite: %d/%d".formatted(renderer.getCurrentPage() + 1, renderer.getNumberOfPages() + 1));
-        } catch (final Throwable e) {
+        } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()
                     .setCause(e)

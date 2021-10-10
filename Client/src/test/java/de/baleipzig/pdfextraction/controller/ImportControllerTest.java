@@ -1,6 +1,5 @@
 package de.baleipzig.pdfextraction.controller;
 
-import de.baleipzig.pdfextraction.client.PDFPreview;
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
@@ -10,9 +9,6 @@ import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class ImportControllerTest extends ApplicationTest {
