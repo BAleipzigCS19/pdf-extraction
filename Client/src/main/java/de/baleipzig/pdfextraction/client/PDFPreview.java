@@ -1,68 +1,108 @@
 package de.baleipzig.pdfextraction.client;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.VBox;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 
 public class PDFPreview {
 
-    public static int numberOfPages = 0;
+    private Path pdfPath;
+    private int numberOfPages = 0;
     // current page zählt von 1 aus, startet also nicht bei 0
-    private static int currentPage = 1;
+    private int currentPage = 1;
 
-    public static int getCurrentPage() {
-        return currentPage;
+    public boolean hasNextPage() {
+        return hasPreview() && this.currentPage < this.numberOfPages;
     }
 
-    public static void setCurrentPage(int currentPage) {
-        PDFPreview.currentPage = currentPage;
+    public boolean hasPreviousPage() {
+        return hasPreview() && this.currentPage > 0;
     }
 
+    public boolean hasPreview() {
+        return this.pdfPath != null;
+    }
 
-    public static Image createPreviewImage(final int pageIndex, final Path pdfPath) {
+    public Image getCurrentPreview() {
+        if (!hasPreview()) {
+            throw new IllegalStateException("No current Page available.");
+        }
 
+        return createPreviewImage();
+    }
+
+    public Image getNextPreview() {
+        if (!hasNextPage()) {
+            throw new IllegalStateException("No next page available.");
+        }
+
+        this.currentPage++;
+        return createPreviewImage();
+    }
+
+    public Image getPreviousPreview() {
+        if (!hasPreviousPage()) {
+            throw new IllegalStateException("No previous page available");
+        }
+
+        this.currentPage--;
+        return createPreviewImage();
+    }
+
+    public int getCurrentPage() {
+        return this.currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public void setPdfPath(Path pdfPath) {
+        this.pdfPath = pdfPath;
+        this.currentPage = 0;
+
+        refreshPageNumber();
+    }
+
+    public int getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    private void refreshPageNumber() {
+        try (final InputStream input = Files.newInputStream(this.pdfPath);
+             final PDDocument document = PDDocument.load(input)) {
+            this.numberOfPages = document.getNumberOfPages();
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private Image createPreviewImage() {
         try {
-
-            BufferedImage bufferedPDFImage = PDFPreview.convertPDFtoImage(pdfPath, pageIndex);
+            BufferedImage bufferedPDFImage = convertPDFtoImage();
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(bufferedPDFImage, "PNG", outputStream);
 
             return new Image(new ByteArrayInputStream(outputStream.toByteArray()));
         } catch (IOException e) {
-            LoggerFactory.getLogger(PDFPreview.class)
-                    .atError()
-                    .addArgument(pdfPath)
-                    .setCause(e)
-                    .log("Exception occurred while converting the pdf {} into an image");
+            throw new UncheckedIOException(e);
         }
-
-        return null;
     }
 
-    private static BufferedImage convertPDFtoImage(final Path pdfPath, final int pageIndex) throws IOException {
-
-        try (InputStream input = Files.newInputStream(pdfPath);
+    private BufferedImage convertPDFtoImage()
+            throws IOException {
+        try (InputStream input = Files.newInputStream(this.pdfPath);
              PDDocument document = PDDocument.load(input)) {
-
-            numberOfPages = document.getNumberOfPages();
             PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-            return pdfRenderer.renderImage(pageIndex);
+            return pdfRenderer.renderImage(this.currentPage);
         }
-
     }
-
 }

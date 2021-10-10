@@ -1,9 +1,11 @@
 package de.baleipzig.pdfextraction.controller;
 
 import de.baleipzig.pdfextraction.client.PDFPreview;
+import de.baleipzig.pdfextraction.common.alert.AlertUtils;
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
-import javafx.event.ActionEvent;
+import de.baleipzig.pdfextraction.utils.CheckedSupplier;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -12,12 +14,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 public class ImportController {
+
+    private static final PDFPreview renderer = new PDFPreview();
 
     @FXML
     public Button continueButton;
@@ -40,8 +45,6 @@ public class ImportController {
     @FXML
     public Button buttonChooseFile;
 
-    private static Path pdfPath = null;
-
     @FXML
     private void continueButtonOnAction() {
 
@@ -59,55 +62,60 @@ public class ImportController {
         imageView.fitWidthProperty().bind(parent.widthProperty());
         imageView.fitHeightProperty().bind(parent.heightProperty());
 
-        if (pdfPath == null){
-            pageIndex.setText("Seitenanzahl");
+        if (renderer.hasPreview()) {
+            updatePdfPreview(renderer::getCurrentPreview);
         } else {
-            updatePdfPreview(PDFPreview.getCurrentPage());
+            pageIndex.setText("Seitenanzahl");
         }
     }
 
-    public void onClickPageBack(ActionEvent actionEvent) {
+    @FXML
+    public void onClickPageBack() {
 
-        if (PDFPreview.getCurrentPage() > 1 && pdfPath != null){
-
-            int pageNumber = PDFPreview.getCurrentPage() - 1;
-            updatePdfPreview(pageNumber);
+        if (renderer.hasPreviousPage()) {
+            updatePdfPreview(renderer::getPreviousPreview);
         }
     }
 
-    public void onClickPageForward(ActionEvent actionEvent) {
+    @FXML
+    public void onClickPageForward() {
 
-        if (PDFPreview.getCurrentPage() < PDFPreview.numberOfPages && pdfPath != null){
-
-            int pageNumber = PDFPreview.getCurrentPage() + 1;
-            updatePdfPreview(pageNumber);
+        if (renderer.hasNextPage()) {
+            updatePdfPreview(renderer::getNextPreview);
         }
     }
 
-    public void onClickChooseFile(ActionEvent actionEvent) {
-
+    public void onClickChooseFile() {
         // Filechooser
-        Stage currentStage = (Stage) this.continueButton.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
+        final Stage current = (Stage) this.buttonChooseFile.getScene().getWindow();
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().setAll(List.of(new FileChooser.ExtensionFilter("PDF's", "*.pdf")));
+        final File selectedFile = fileChooser.showOpenDialog(current);
+        if (selectedFile == null) {
+            //User canceled the dialog
+            return;
+        }
 
-        File selectedFile = fileChooser.showOpenDialog(currentStage);
-        pdfPath = Paths.get(selectedFile.toURI());
+        final Path pdfPath = selectedFile.toPath();
 
+        renderer.setPdfPath(pdfPath);
         // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
-        PDFPreview.setCurrentPage(1);
-        updatePdfPreview(PDFPreview.getCurrentPage());
+        updatePdfPreview(renderer::getCurrentPreview);
     }
 
-    private void loadImage(){
-        Image previewImage = PDFPreview.createPreviewImage(PDFPreview.getCurrentPage() - 1, pdfPath);
-        imageView.setImage(previewImage);
-    }
+    private void updatePdfPreview(final CheckedSupplier<Image> image) {
+        try {
+            final Image toSet = image.get();
+            imageView.setImage(toSet);
+            pageIndex.setText("Seite: %d/%d".formatted(renderer.getCurrentPage() + 1, renderer.getNumberOfPages() + 1));
+        } catch (final Throwable e) {
+            LoggerFactory.getLogger(ImportController.class)
+                    .atError()
+                    .setCause(e)
+                    .log("Exception occurred while setting new Image.");
 
-    private void updatePdfPreview(int pageNumber){
-
-        PDFPreview.setCurrentPage(pageNumber);
-        pageIndex.setText("Seite: " + PDFPreview.getCurrentPage());
-        loadImage();
+            AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", "Ein Fehler ist aufgetreten.", e.getLocalizedMessage());
+        }
     }
 
 }
