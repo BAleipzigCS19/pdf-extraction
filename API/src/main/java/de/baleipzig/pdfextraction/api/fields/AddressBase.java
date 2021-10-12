@@ -1,8 +1,8 @@
-package de.baleipzig.pdfextraction.api;
+package de.baleipzig.pdfextraction.api.fields;
 
 import java.util.Objects;
 
-public class AddressBase extends ApiBase{
+public class AddressBase implements ApiBase{
 
     private String title;
     private String name;

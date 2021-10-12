@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.fieldtype;
+package de.baleipzig.pdfextraction.client.fieldtype;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,8 +1,11 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
+import de.baleipzig.pdfextraction.client.fieldtype.FieldTypes;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.ImportView;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -34,6 +37,9 @@ public class CreateTemplateController implements Initializable {
 
     @FXML
     public TextField templateNameTextField;
+
+    @Inject
+    private TemplateConnector connector;
 
     private final VBox vBox = new VBox(10);
 

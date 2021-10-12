@@ -1,6 +1,6 @@
-package de.baleipzig.pdfextraction.fieldtype;
+package de.baleipzig.pdfextraction.client.fieldtype;
 
-import de.baleipzig.pdfextraction.api.AddressSender;
+import de.baleipzig.pdfextraction.api.fields.AddressSender;
 
 public class AddressSenderFieldType implements FieldTypeBase{
 

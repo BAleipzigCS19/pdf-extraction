@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.api;
+package de.baleipzig.pdfextraction.api.fields;
 
 public class AddressReceiver extends AddressBase {
 

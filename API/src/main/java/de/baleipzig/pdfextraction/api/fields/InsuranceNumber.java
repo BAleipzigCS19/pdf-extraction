@@ -1,8 +1,8 @@
-package de.baleipzig.pdfextraction.api;
+package de.baleipzig.pdfextraction.api.fields;
 
 import java.util.Objects;
 
-public class InsuranceNumber extends ApiBase{
+public class InsuranceNumber implements ApiBase{
 
     private String number;
 

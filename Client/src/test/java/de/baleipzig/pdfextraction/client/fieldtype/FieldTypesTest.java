@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.fieldtype;
+package de.baleipzig.pdfextraction.client.fieldtype;
 
 import org.junit.jupiter.api.Test;
 
