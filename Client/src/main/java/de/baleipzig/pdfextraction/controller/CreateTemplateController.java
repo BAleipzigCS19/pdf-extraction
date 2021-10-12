@@ -26,6 +26,8 @@ public class CreateTemplateController implements Initializable {
     public TextField insuranceTextField;
     public TextField templateNameTextField;
 
+    private List<String> fieldTypes = new ArrayList<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -46,6 +48,8 @@ public class CreateTemplateController implements Initializable {
         dialog.setHeaderText("Wähle einen Feld-Typ");
 
         dialog.showAndWait().ifPresent(fieldType -> {
+            fieldTypes.add(fieldType);
+
             vBox.getChildren().add(new Label(fieldType));
             Pane pane = new Pane();
             pane.setPrefWidth(200);
@@ -81,6 +85,6 @@ public class CreateTemplateController implements Initializable {
     private boolean isDataIncomplete() {
 
         return insuranceTextField.getText().trim().isEmpty() || templateNameTextField.getText().trim().isEmpty()
-                || fieldAnchorPane.getChildren().size() == 0;
+                || fieldTypes.isEmpty();
     }
 }
