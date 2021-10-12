@@ -18,43 +18,43 @@ public class AddressBase extends ApiBase{
         this.town = town;
     }
 
-    protected String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    protected void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    protected String getStreet() {
+    public String getStreet() {
         return street;
     }
 
-    protected void setStreet(String street) {
+    public void setStreet(String street) {
         this.street = street;
     }
 
-    protected String getPostcode() {
+    public String getPostcode() {
         return postcode;
     }
 
-    protected void setPostcode(String postcode) {
+    public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
 
-    protected String getTown() {
+    public String getTown() {
         return town;
     }
 
-    protected void setTown(String town) {
+    public void setTown(String town) {
         this.town = town;
     }
 
