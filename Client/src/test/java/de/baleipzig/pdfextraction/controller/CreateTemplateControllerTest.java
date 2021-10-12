@@ -11,6 +11,8 @@ import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
+import static org.testfx.api.FxAssert.verifyThat;
+
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class CreateTemplateControllerTest extends ApplicationTest {
 
@@ -27,6 +29,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
         FxAssert.verifyThat("#templateNameTextField", NodeMatchers.isVisible());
         FxAssert.verifyThat("#addFieldButton", LabeledMatchers.hasText("+"));
         FxAssert.verifyThat("#createTemplateButton", LabeledMatchers.hasText("Template erstellen"));
+        FxAssert.verifyThat("#cancelButton", LabeledMatchers.hasText("Abbrechen"));
     }
 
     @Test
@@ -50,5 +53,12 @@ class CreateTemplateControllerTest extends ApplicationTest {
         clickOn("#createTemplateButton").clickOn("OK");
 
         FxAssert.verifyThat("#createTemplateButton", NodeMatchers.isVisible());
+    }
+
+    @Test
+    void cancelCreateTemplate() {
+
+        clickOn("#cancelButton");
+        verifyThat("#continueButton", NodeMatchers.isVisible());
     }
 }
