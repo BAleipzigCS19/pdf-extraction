@@ -19,6 +19,8 @@ class FieldTypesTest {
                 FieldTypes.INSURANCE_NUMBER
         );
 
-        assertTrue(FieldTypes.getAllFieldTypes().containsAll(expectedFieldTypes));
+        final List<FieldTypes> actual = FieldTypes.getAllFieldTypes();
+        assertTrue(actual.containsAll(expectedFieldTypes));
+        assertTrue(expectedFieldTypes.containsAll(actual));
     }
 }
