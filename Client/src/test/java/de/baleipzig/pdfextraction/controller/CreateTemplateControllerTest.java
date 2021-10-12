@@ -2,6 +2,7 @@ package de.baleipzig.pdfextraction.controller;
 
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
+import de.baleipzig.pdfextraction.fieldtype.FieldTypes;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -34,8 +35,10 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
         clickOn("#insuranceTextField").write("HUK");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
-        clickOn("#addFieldButton");
-        clickOn("OK");
+        for (int i = 0; i < FieldTypes.values().length; i++) {
+            clickOn("#addFieldButton").clickOn("OK");
+        }
+
         clickOn("#createTemplateButton");
         clickOn("OK");
         FxAssert.verifyThat("#continueButton", NodeMatchers.isVisible());
@@ -43,11 +46,10 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
     @Test
     void dataIsIncomplete() {
-
-        clickOn("#insuranceTextField").write("   ");
+        clickOn("#insuranceTextField").write("");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
-        clickOn("#createTemplateButton");
-        clickOn("OK");
+        clickOn("#createTemplateButton").clickOn("OK");
+
         FxAssert.verifyThat("#createTemplateButton", NodeMatchers.isVisible());
     }
 }
