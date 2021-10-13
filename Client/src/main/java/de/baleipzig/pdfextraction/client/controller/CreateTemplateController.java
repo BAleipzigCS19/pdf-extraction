@@ -60,7 +60,7 @@ public class CreateTemplateController implements Initializable {
                 .filter(Predicate.not(this.chosenFieldtypes::contains))
                 .collect(Collectors.toSet());
 
-        if (fieldTypes.isEmpty()){
+        if (fieldTypes.isEmpty()) {
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", "", "Es sind bereits alle verfügbaren Typen hinzugefügt worden.");
             return;
         }
@@ -101,6 +101,14 @@ public class CreateTemplateController implements Initializable {
                     new ImportView()
             );
         }
+    }
+
+    public void cancelButtonOnAction() {
+
+        ControllerUtils.switchScene(
+                (Stage) this.dataGridPane.getScene().getWindow(),
+                getClass().getResource("/view/ImportView.fxml")
+        );
     }
 
     private boolean isDataIncomplete() {

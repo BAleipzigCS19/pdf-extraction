@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFPreview;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
@@ -13,11 +14,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +27,6 @@ import java.util.function.Supplier;
 
 public class ImportController implements Initializable {
 
-    protected static final PDFPreview renderer = new PDFPreview();
 
     @Inject
     private TemplateConnector connector;
@@ -46,23 +41,19 @@ public class ImportController implements Initializable {
     public Button createTemplateButton;
 
     @FXML
-    public Label pageIndex;
-
-    @FXML
-    public Button buttonPageBack;
-
-    @FXML
-    public Button buttonPageForward;
-
-    @FXML
-    public ImageView imageView;
-
-    @FXML
-    public Button buttonChooseFile;
-
-    @FXML
     private void continueButtonOnAction() {
-        ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(), new ActionView());
+
+        ControllerUtils.switchScene(
+                (Stage) this.continueButton.getScene().getWindow(), new ActionView()););
+    }
+
+    @FXML
+    public void createTemplateButtonOnAction() {
+
+        ControllerUtils.switchScene(
+                (Stage) this.continueButton.getScene().getWindow(),
+                getClass().getResource("/view/CreateTemplateView.fxml")
+        );
     }
 
     @Override
