@@ -2,7 +2,7 @@ package de.baleipzig.pdfextraction.api;
 
 import java.util.Objects;
 
-public class AddressBase extends ApiBase{
+public class AddressBase extends ApiBase {
 
     private String title;
     private String name;

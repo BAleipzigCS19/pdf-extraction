@@ -13,10 +13,17 @@ import java.nio.file.Path;
 
 public class PDFPreview {
 
+    private static final PDFPreview instance = new PDFPreview();
     private Path pdfPath;
     private int numberOfPages = 0;
     // current page zählt von 1 aus, startet also nicht bei 0
     private int currentPage = 1;
+    private PDFPreview() {
+    }
+
+    public static PDFPreview getInstance() {
+        return instance;
+    }
 
     public boolean hasNextPage() {
         return hasPreview() && this.currentPage < this.numberOfPages;
