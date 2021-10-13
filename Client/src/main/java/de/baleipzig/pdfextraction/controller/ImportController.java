@@ -19,11 +19,6 @@ public class ImportController {
     public Button createTemplateButton;
 
     @FXML
-    private void initialize() {
-        //noch leer
-    }
-
-    @FXML
     private void continueButtonOnAction() {
 
         ControllerUtils.switchScene(
