@@ -1,7 +1,7 @@
-package de.baleipzig.pdfextraction.controller;
+package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.client.PDFPreview;
-import de.baleipzig.pdfextraction.common.alert.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.PDFPreview;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;

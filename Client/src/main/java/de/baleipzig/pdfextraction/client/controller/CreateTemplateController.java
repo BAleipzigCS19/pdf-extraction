@@ -8,10 +8,7 @@ import de.baleipzig.pdfextraction.client.view.ImportView;
 import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -37,6 +34,15 @@ public class CreateTemplateController implements Initializable {
 
     @FXML
     public TextField templateNameTextField;
+
+    @FXML
+    public Button cancelButton;
+
+    @FXML
+    public Button createTemplateButton;
+
+    @FXML
+    public Button addFieldButton;
 
     @Inject
     private TemplateConnector connector;
@@ -107,7 +113,7 @@ public class CreateTemplateController implements Initializable {
 
         ControllerUtils.switchScene(
                 (Stage) this.dataGridPane.getScene().getWindow(),
-                getClass().getResource("/view/ImportView.fxml")
+                new ImportView()
         );
     }
 

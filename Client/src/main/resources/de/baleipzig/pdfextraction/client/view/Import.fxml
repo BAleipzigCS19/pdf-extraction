@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <GridPane prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.controller.ImportController">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -21,7 +21,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <fx:include source="include/PdfPreviewInclude.fxml" />
+      <fx:include source="PdfPreview.fxml" />
       <GridPane prefHeight="481.0" prefWidth="363.0" GridPane.columnIndex="1">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" />
