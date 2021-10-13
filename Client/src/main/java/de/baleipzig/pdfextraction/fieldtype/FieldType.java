@@ -1,9 +1,9 @@
 package de.baleipzig.pdfextraction.fieldtype;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.Set;
 
-public enum FieldTypes {
+public enum FieldType {
 
     ADDRESS_RECEIVER("Empfänger-Adresse"),
     ADDRESS_SENDER("Sender-Adresse"),
@@ -12,16 +12,21 @@ public enum FieldTypes {
 
     private final String name;
 
-    FieldTypes(String name) {
+    FieldType(String name) {
         this.name = name;
+    }
+
+    public static Set<FieldType> getAllFieldTypes() {
+
+        return EnumSet.allOf(FieldType.class);
     }
 
     public String getName() {
         return name;
     }
 
-    public static List<FieldTypes> getAllFieldTypes(){
-
-        return Arrays.asList(FieldTypes.values());
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

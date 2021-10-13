@@ -3,7 +3,7 @@ package de.baleipzig.pdfextraction.api;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class ExpirationDate extends ApiBase{
+public class ExpirationDate extends ApiBase {
 
     private LocalDate date;
 
