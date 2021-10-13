@@ -61,6 +61,7 @@
                         <AnchorPane fx:id="fieldAnchorPane" prefHeight="200.0" prefWidth="200.0" />
                     </content>
                 </ScrollPane>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonOnAction" text="Abbrechen" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
             </children>
         </GridPane>
     </children>
