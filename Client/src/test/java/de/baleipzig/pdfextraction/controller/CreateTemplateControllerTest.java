@@ -25,11 +25,11 @@ class CreateTemplateControllerTest extends ApplicationTest {
     @Test
     void verifyViewComponents() {
 
-        FxAssert.verifyThat("#insuranceTextField", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#templateNameTextField", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#addFieldButton", LabeledMatchers.hasText("+"));
-        FxAssert.verifyThat("#createTemplateButton", LabeledMatchers.hasText("Template erstellen"));
-        FxAssert.verifyThat("#cancelButton", LabeledMatchers.hasText("Abbrechen"));
+        verifyThat("#insuranceTextField", NodeMatchers.isVisible());
+        verifyThat("#templateNameTextField", NodeMatchers.isVisible());
+        verifyThat("#addFieldButton", LabeledMatchers.hasText("+"));
+        verifyThat("#createTemplateButton", LabeledMatchers.hasText("Template erstellen"));
+        verifyThat("#cancelButton", LabeledMatchers.hasText("Abbrechen"));
     }
 
     @Test
@@ -43,7 +43,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
         clickOn("#createTemplateButton");
         clickOn("OK");
-        FxAssert.verifyThat("#continueButton", NodeMatchers.isVisible());
+        verifyThat("#continueButton", NodeMatchers.isVisible());
     }
 
     @Test
@@ -52,7 +52,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
         clickOn("#createTemplateButton").clickOn("OK");
 
-        FxAssert.verifyThat("#createTemplateButton", NodeMatchers.isVisible());
+        verifyThat("#createTemplateButton", NodeMatchers.isVisible());
     }
 
     @Test

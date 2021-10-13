@@ -10,6 +10,8 @@ import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
+import static org.testfx.api.FxAssert.verifyThat;
+
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class ImportControllerTest extends ApplicationTest {
 
@@ -22,25 +24,25 @@ class ImportControllerTest extends ApplicationTest {
     @Test
     void verifyViewComponents() {
 
-        FxAssert.verifyThat("#templateComboBox", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
-        FxAssert.verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
-        FxAssert.verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
-        FxAssert.verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
-        FxAssert.verifyThat("#pageIndex", NodeMatchers.isVisible());
+        verifyThat("#templateComboBox", NodeMatchers.isVisible());
+        verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
+        verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
+        verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
+        verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
+        verifyThat("#pageIndex", NodeMatchers.isVisible());
     }
 
     @Test
     void navigateContinue() {
 
         clickOn("#continueButton");
-        FxAssert.verifyThat("#backToImportButton", NodeMatchers.isVisible());
+        verifyThat("#backToImportButton", NodeMatchers.isVisible());
     }
 
     @Test
     void navigateCreateTemplate() {
 
         clickOn("#createTemplateButton");
-        FxAssert.verifyThat("#addFieldButton", NodeMatchers.isVisible());
+        verifyThat("#addFieldButton", NodeMatchers.isVisible());
     }
 }
