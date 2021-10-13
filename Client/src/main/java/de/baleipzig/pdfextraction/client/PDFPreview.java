@@ -16,8 +16,8 @@ public class PDFPreview {
     private static final PDFPreview instance = new PDFPreview();
     private Path pdfPath;
     private int numberOfPages = 0;
-    // current page zählt von 1 aus, startet also nicht bei 0
-    private int currentPage = 1;
+    private int currentPage = 0;
+
     private PDFPreview() {
     }
 
@@ -26,7 +26,7 @@ public class PDFPreview {
     }
 
     public boolean hasNextPage() {
-        return hasPreview() && this.currentPage < this.numberOfPages;
+        return hasPreview() && this.currentPage + 1 < this.numberOfPages;
     }
 
     public boolean hasPreviousPage() {
