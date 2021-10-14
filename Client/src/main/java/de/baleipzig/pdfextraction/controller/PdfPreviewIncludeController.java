@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -41,6 +43,9 @@ public class PdfPreviewIncludeController implements Initializable {
     @FXML
     public Button chooseFileButton;
 
+    @FXML
+    public Label addFileLabel;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -54,6 +59,39 @@ public class PdfPreviewIncludeController implements Initializable {
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
+
+        addFileLabel.setVisible(!PDF_PREVIEW_RENDERER.hasPreview());
+
+        parentAnchorPane.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        parentAnchorPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            boolean success = false;
+            final boolean isCorrectFormat = dragboard.getFiles().get(0).getName().toLowerCase().endsWith(".pdf");
+
+            if (!isCorrectFormat) {
+                AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es werden nur PDF-Dateien unterstützt.");
+                return;
+            }
+
+            if (dragboard.hasFiles()) {
+                if (dragboard.getFiles().size() > 1) {
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es kann nur eine PDF-Datei analysiert werden.");
+                    return;
+                }
+                PDF_PREVIEW_RENDERER.setPdfPath(dragboard.getFiles().get(0).toPath());
+                updatePdfPreview(PDF_PREVIEW_RENDERER::getCurrentPreview);
+                addFileLabel.setVisible(false);
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
     }
 
     @FXML
