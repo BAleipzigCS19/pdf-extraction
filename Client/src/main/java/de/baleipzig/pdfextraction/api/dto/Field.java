@@ -7,21 +7,21 @@ import java.util.Objects;
 public class Field {
     private FieldType type;
     private int page;
-    private double xPos;
-    private double yPos;
-    private double percWidth;
-    private double percHeight;
+    private double xPosPercentage;
+    private double yPosPercentage;
+    private double widthPercentage;
+    private double heightPercentage;
 
     public Field() {
     }
 
-    public Field(FieldType type, int page, double xPos, double yPos, double percWidth, double percHeight) {
+    public Field(FieldType type, int page, double percXPos, double yPos, double percWidth, double percHeight) {
         this.type = type;
         this.page = page;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.percWidth = percWidth;
-        this.percHeight = percHeight;
+        this.xPosPercentage = percXPos;
+        this.yPosPercentage = yPos;
+        this.widthPercentage = percWidth;
+        this.heightPercentage = percHeight;
     }
 
     public int getPage() {
@@ -40,36 +40,36 @@ public class Field {
         this.type = type;
     }
 
-    public double getxPos() {
-        return xPos;
+    public double getxPosPercentage() {
+        return xPosPercentage;
     }
 
-    public void setxPos(double xPos) {
-        this.xPos = xPos;
+    public void setxPosPercentage(double xPosPercentage) {
+        this.xPosPercentage = xPosPercentage;
     }
 
-    public double getyPos() {
-        return yPos;
+    public double getyPosPercentage() {
+        return yPosPercentage;
     }
 
-    public void setyPos(double yPos) {
-        this.yPos = yPos;
+    public void setyPosPercentage(double yPosPercentage) {
+        this.yPosPercentage = yPosPercentage;
     }
 
-    public double getPercWidth() {
-        return percWidth;
+    public double getWidthPercentage() {
+        return widthPercentage;
     }
 
-    public void setPercWidth(double percWidth) {
-        this.percWidth = percWidth;
+    public void setWidthPercentage(double widthPercentage) {
+        this.widthPercentage = widthPercentage;
     }
 
-    public double getPercHeight() {
-        return percHeight;
+    public double getHeightPercentage() {
+        return heightPercentage;
     }
 
-    public void setPercHeight(double percHeight) {
-        this.percHeight = percHeight;
+    public void setHeightPercentage(double heightPercentage) {
+        this.heightPercentage = heightPercentage;
     }
 
     @Override
@@ -78,16 +78,16 @@ public class Field {
             return false;
         }
         return page == other.page
-                && Double.compare(other.xPos, xPos) == 0
-                && Double.compare(other.yPos, yPos) == 0
-                && Double.compare(other.percWidth, percWidth) == 0
-                && Double.compare(other.percHeight, percHeight) == 0
+                && Double.compare(other.xPosPercentage, xPosPercentage) == 0
+                && Double.compare(other.yPosPercentage, yPosPercentage) == 0
+                && Double.compare(other.widthPercentage, widthPercentage) == 0
+                && Double.compare(other.heightPercentage, heightPercentage) == 0
                 && type == other.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, page, xPos, yPos, percWidth, percHeight);
+        return Objects.hash(type, page, xPosPercentage, yPosPercentage, widthPercentage, heightPercentage);
     }
 
     @Override
@@ -95,10 +95,10 @@ public class Field {
         return "Field{" +
                 "type=" + type +
                 ", page=" + page +
-                ", xPos=" + xPos +
-                ", yPos=" + yPos +
-                ", percWidth=" + percWidth +
-                ", percHeight=" + percHeight +
+                ", xPosPercentage=" + xPosPercentage +
+                ", yPosPercentage=" + yPosPercentage +
+                ", widthPercentage=" + widthPercentage +
+                ", heightPercentage=" + heightPercentage +
                 '}';
     }
 }

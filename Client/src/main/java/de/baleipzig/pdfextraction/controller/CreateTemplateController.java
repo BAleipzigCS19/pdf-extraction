@@ -11,7 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -88,9 +90,10 @@ public class CreateTemplateController implements Initializable {
 
         final Set<FieldType> fieldNames = getCurrentFieldNames();
 
-        Set<FieldType> fieldTypes = FieldType.getAllFieldTypes()
+        Set<FieldTypeWrapper> fieldTypes = FieldType.getAllFieldTypes()
                 .stream()
                 .filter(Predicate.not(fieldNames::contains))
+                .map(FieldTypeWrapper::new)
                 .collect(Collectors.toSet());
 
         if (fieldTypes.isEmpty()) {
@@ -99,7 +102,7 @@ public class CreateTemplateController implements Initializable {
         }
 
 
-        ChoiceDialog<FieldType> dialog = new ChoiceDialog<>(fieldTypes.iterator().next(), fieldTypes);
+        ChoiceDialog<FieldTypeWrapper> dialog = new ChoiceDialog<>(fieldTypes.iterator().next(), fieldTypes);
         dialog.setTitle("Feld-Typ");
         dialog.setHeaderText("Wähle einen Feld-Typ");
 
@@ -108,12 +111,20 @@ public class CreateTemplateController implements Initializable {
             AtomicReference<Rectangle> start = new AtomicReference<>(null);
             final Paint color = getColor();
 
+            final Scene scene = this.pdfPreview.getScene();
+            final Stage stage = (Stage) scene.getWindow();
+            final String oldTitle = stage.getTitle();
+
+            stage.setTitle("%s| Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
+
+            pdfPreview.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
+            pdfPreview.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
+
             pdfPreview.setOnMousePressed(event -> {
                 //Press == Start-Pos
-                final double x = event.getSceneX();
-                final double y = event.getSceneY();
-
-                final Rectangle rec = new Rectangle(x, y, 0, 0);
+                final double startX = event.getSceneX();
+                final double startY = event.getSceneY();
+                final Rectangle rec = new Rectangle(startX, startY, 0, 0);
                 rec.setStroke(color);
                 rec.setFill(Color.TRANSPARENT);
                 pdfPreview.getChildren().add(rec);
@@ -125,12 +136,22 @@ public class CreateTemplateController implements Initializable {
                     final ImageView imageView = pdfGridController.pdfPreviewImageView;
 
                     //Prüft das nicht über den Rand des Bildes gegangen wird.
-                    if (ev.getX() < imageView.getX() + imageView.getFitWidth()) {
-                        rec.setWidth(ev.getX() - x);
+                    if (ev.getX() > imageView.getX() && ev.getX() < imageView.getX() + imageView.getFitWidth()) {
+                        final boolean isBackwardsDragged = startX > ev.getX();
+                        if (isBackwardsDragged) {
+                            rec.setX(ev.getX());
+                        }
+
+                        rec.setWidth(Math.abs(ev.getX() - startX));
                     }
 
-                    if (ev.getY() < imageView.getY() + imageView.getFitHeight()) {
-                        rec.setHeight(ev.getY() - y);
+                    if (ev.getY() > imageView.getY() && ev.getY() < imageView.getY() + imageView.getFitHeight()) {
+                        final boolean isBackwardsDragged = startY > ev.getY();
+                        if (isBackwardsDragged) {
+                            rec.setY(ev.getY());
+                        }
+
+                        rec.setHeight(Math.abs(ev.getY() - startY));
                     }
 
                     ev.consume();
@@ -146,14 +167,13 @@ public class CreateTemplateController implements Initializable {
                 //Released == End-Pos
                 final Rectangle rec = start.get();
 
-
                 //Box im Preview
-                final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType, rec);
+                final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec);
 
                 //Panel in der Box rechts
                 final int count = datagrid.getRowCount();
                 final Rectangle dot = new Rectangle(10, 10, color);
-                final Label label = new Label(fieldType.getName());
+                final Label label = new Label(fieldType.toString());
                 final Button remove = new Button("Remove");
                 datagrid.addRow(count, dot, label, remove);
                 remove.setOnAction(e -> {
@@ -170,6 +190,9 @@ public class CreateTemplateController implements Initializable {
                 });
                 pdfPreview.setOnMouseDragged(ev -> {
                 });
+                scene.setCursor(Cursor.DEFAULT);
+                pdfPreview.setOnMouseEntered(ev -> scene.setCursor(Cursor.DEFAULT));
+                stage.setTitle(oldTitle);
             });
         });
     }
@@ -246,5 +269,12 @@ public class CreateTemplateController implements Initializable {
     }
 
     private record Box(int page, FieldType type, Rectangle place) {
+    }
+
+    private record FieldTypeWrapper(FieldType type) {
+        @Override
+        public String toString() {
+            return this.type.getName();
+        }
     }
 }

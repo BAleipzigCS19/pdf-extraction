@@ -27,6 +27,8 @@ public enum FieldType {
 
     @Override
     public String toString() {
-        return this.name;
+        return "FieldType{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }
