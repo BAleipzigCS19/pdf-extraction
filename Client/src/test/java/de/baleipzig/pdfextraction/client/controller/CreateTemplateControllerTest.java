@@ -1,8 +1,10 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.PDFPreview;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
-import de.baleipzig.pdfextraction.client.fieldtype.FieldTypes;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;

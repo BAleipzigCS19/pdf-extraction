@@ -20,10 +20,6 @@ import java.util.ResourceBundle;
 
 public class ImportController implements Initializable {
 
-
-    @Inject
-    private TemplateConnector connector;
-
     @FXML
     public Button continueButton;
 
@@ -32,6 +28,9 @@ public class ImportController implements Initializable {
 
     @FXML
     public Button createTemplateButton;
+
+    @Inject
+    private TemplateConnector connector;
 
     @FXML
     private void continueButtonOnAction() {

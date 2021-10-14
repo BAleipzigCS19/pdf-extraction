@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.fieldtype;
+package de.baleipzig.pdfextraction.api.fields;
 
 import java.util.EnumSet;
 import java.util.Set;

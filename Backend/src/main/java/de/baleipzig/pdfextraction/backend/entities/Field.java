@@ -1,16 +1,20 @@
-package de.baleipzig.pdfextraction.api.dto;
+package de.baleipzig.pdfextraction.backend.entities;
 
-import de.baleipzig.pdfextraction.fieldtype.FieldType;
+import de.baleipzig.pdfextraction.api.fields.FieldType;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Entity;
 import java.util.Objects;
 
-public class Field {
+@Entity
+public class Field extends AbstractPersistable<Long> {
     private FieldType type;
     private int page;
     private double xPosPercentage;
     private double yPosPercentage;
     private double widthPercentage;
     private double heightPercentage;
+
 
     public Field() {
     }

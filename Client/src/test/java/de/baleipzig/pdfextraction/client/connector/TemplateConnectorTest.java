@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 class TemplateConnectorTest {
@@ -46,14 +47,14 @@ class TemplateConnectorTest {
         this.mock.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.CREATED.value()));
 
-        StepVerifier.create(this.connector.save(new TemplateDTO("test", "Hello World.")))
+        StepVerifier.create(this.connector.save(new TemplateDTO("test", "Hello World.", Collections.emptyList())))
                 .verifyComplete();
     }
 
     @Test
     void CanRetrieve()
             throws JsonProcessingException {
-        final TemplateDTO toSave = new TemplateDTO("test", "Hello World.");
+        final TemplateDTO toSave = new TemplateDTO("test", "Hello World.", List.of());
 
         this.mock.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())

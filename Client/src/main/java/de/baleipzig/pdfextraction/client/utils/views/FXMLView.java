@@ -52,14 +52,13 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public abstract class FXMLView extends StackPane {
 
     public static final String DEFAULT_ENDING = "View";
+    protected static final ExecutorService PARENT_CREATION_POOL = getExecutorService();
+    protected final Function<String, Object> injectionContext;
     protected ObjectProperty<Object> presenterProperty;
     protected FXMLLoader fxmlLoader;
     protected String bundleName;
     protected ResourceBundle bundle;
-    protected final Function<String, Object> injectionContext;
     protected URL resource;
-
-    protected static final ExecutorService PARENT_CREATION_POOL = getExecutorService();
 
     /**
      * Constructs the view lazily (fxml is not loaded) with empty injection
@@ -77,6 +76,32 @@ public abstract class FXMLView extends StackPane {
     protected FXMLView(Function<String, Object> injectionContext) {
         this.injectionContext = injectionContext;
         this.init(getFXMLName());
+    }
+
+    static String stripEnding(String clazz) {
+        if (!clazz.endsWith(DEFAULT_ENDING)) {
+            return clazz;
+        }
+        int viewIndex = clazz.lastIndexOf(DEFAULT_ENDING);
+        return clazz.substring(0, viewIndex);
+    }
+
+    public static ResourceBundle getResourceBundle(String name) {
+        try {
+            return getBundle(name);
+        } catch (MissingResourceException ex) {
+            return null;
+        }
+    }
+
+    static ExecutorService getExecutorService() {
+        return Executors.newCachedThreadPool(r -> {
+            Thread thread = Executors.defaultThreadFactory().newThread(r);
+            String name = thread.getName();
+            thread.setName("afterburner.fx-" + name);
+            thread.setDaemon(true);
+            return thread;
+        });
     }
 
     private void init(final String conventionalName) {
@@ -274,37 +299,11 @@ public abstract class FXMLView extends StackPane {
         return this.getClass().getPackage().getName() + "." + conventionalName;
     }
 
-    static String stripEnding(String clazz) {
-        if (!clazz.endsWith(DEFAULT_ENDING)) {
-            return clazz;
-        }
-        int viewIndex = clazz.lastIndexOf(DEFAULT_ENDING);
-        return clazz.substring(0, viewIndex);
-    }
-
-    public static ResourceBundle getResourceBundle(String name) {
-        try {
-            return getBundle(name);
-        } catch (MissingResourceException ex) {
-            return null;
-        }
-    }
-
     /**
      * @return an existing resource bundle, or null
      */
     public ResourceBundle getResourceBundle() {
         return this.bundle;
-    }
-
-    static ExecutorService getExecutorService() {
-        return Executors.newCachedThreadPool(r -> {
-            Thread thread = Executors.defaultThreadFactory().newThread(r);
-            String name = thread.getName();
-            thread.setName("afterburner.fx-" + name);
-            thread.setDaemon(true);
-            return thread;
-        });
     }
 
     /**

@@ -12,7 +12,7 @@ public class Launcher extends Application {
         ControllerUtils.switchScene(stage, new ImportView());
     }
 
-        ControllerUtils.switchScene(stage, getClass().getResource("/view/ImportView.fxml"));
-
+    public static void main(String[] args) {
+        launch(args);
     }
 }

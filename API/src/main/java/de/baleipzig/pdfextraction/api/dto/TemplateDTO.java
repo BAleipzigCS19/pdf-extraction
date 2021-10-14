@@ -1,17 +1,21 @@
 package de.baleipzig.pdfextraction.api.dto;
 
+import java.util.List;
 import java.util.Objects;
 
 public class TemplateDTO {
+
     private String name;
-    private String content;
+    private String consumer;
+    private List<FieldDTO> fields;
 
     public TemplateDTO() {
     }
 
-    public TemplateDTO(String name, String content) {
+    public TemplateDTO(String name, String consumer, List<FieldDTO> fields) {
         this.name = name;
-        this.content = content;
+        this.consumer = consumer;
+        this.fields = fields;
     }
 
     public String getName() {
@@ -22,25 +26,41 @@ public class TemplateDTO {
         this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public String getConsumer() {
+        return consumer;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
+    }
+
+    public List<FieldDTO> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<FieldDTO> fields) {
+        this.fields = fields;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof TemplateDTO other)) {
-            return true;
+            return false;
         }
-
-        return Objects.equals(name, other.name) && Objects.equals(content, other.content);
+        return Objects.equals(name, other.name) && Objects.equals(consumer, other.consumer) && Objects.equals(fields, other.fields);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, content);
+        return Objects.hash(name, consumer, fields);
+    }
+
+    @Override
+    public String toString() {
+        return "Template{" +
+                "name='" + name + '\'' +
+                ", consumer='" + consumer + '\'' +
+                ", fields=" + fields +
+                '}';
     }
 }

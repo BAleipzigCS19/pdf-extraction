@@ -2,9 +2,8 @@ package de.baleipzig.pdfextraction.backend.entities;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,15 +17,19 @@ public class Template extends AbstractPersistable<Integer> {
 
     private String name;
 
-    private String content;
+    private String consumer;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Field> fields;
 
     public Template() {
         //Empty Constructor for Serialization
     }
 
-    public Template(String name, String content) {
+    public Template(String name, String content, List<Field> fields) {
         this.name = name;
-        this.content = content;
+        this.consumer = content;
+        this.fields = fields;
     }
 
     public String getName() {
@@ -37,12 +40,20 @@ public class Template extends AbstractPersistable<Integer> {
         this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public String getConsumer() {
+        return consumer;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setConsumer(String content) {
+        this.consumer = content;
+    }
+
+    public List<Field> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
     }
 
     @Override
@@ -50,11 +61,20 @@ public class Template extends AbstractPersistable<Integer> {
         if (!(o instanceof Template other)) {
             return true;
         }
-        return Objects.equals(name, other.name) && Objects.equals(content, other.content);
+        return Objects.equals(name, other.name) && Objects.equals(consumer, other.consumer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, content);
+        return Objects.hash(super.hashCode(), name, consumer);
+    }
+
+    @Override
+    public String toString() {
+        return "Template{" +
+                "name='" + name + '\'' +
+                ", consumer='" + consumer + '\'' +
+                ", fields=" + fields +
+                '}';
     }
 }

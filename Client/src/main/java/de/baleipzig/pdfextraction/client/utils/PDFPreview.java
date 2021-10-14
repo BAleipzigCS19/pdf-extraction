@@ -9,12 +9,14 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 
 public class PDFPreview {
 
     private static final PDFPreview instance = new PDFPreview();
-    private Path pdfPath;
+
+    private RendererWrapper wrapper;
     private int numberOfPages = 0;
     private int currentPage = 0;
 
@@ -34,7 +36,7 @@ public class PDFPreview {
     }
 
     public boolean hasPreview() {
-        return this.pdfPath != null;
+        return this.wrapper != null;
     }
 
     public Image getCurrentPreview() {
@@ -72,18 +74,20 @@ public class PDFPreview {
     }
 
     public void setPdfPath(Path pdfPath) {
-        this.pdfPath = pdfPath;
         this.currentPage = 0;
 
-        refreshPageNumber();
+        Optional.ofNullable(this.wrapper)
+                .ifPresent(RendererWrapper::close);
+        this.wrapper = newRenderer(pdfPath);
+        refreshPageNumber(pdfPath);
     }
 
     public int getNumberOfPages() {
         return numberOfPages;
     }
 
-    private void refreshPageNumber() {
-        try (final InputStream input = Files.newInputStream(this.pdfPath);
+    private void refreshPageNumber(final Path path) {
+        try (final InputStream input = Files.newInputStream(path);
              final PDDocument document = PDDocument.load(input)) {
             this.numberOfPages = document.getNumberOfPages();
         } catch (final IOException e) {
@@ -93,7 +97,7 @@ public class PDFPreview {
 
     private Image createPreviewImage() {
         try {
-            BufferedImage bufferedPDFImage = convertPDFtoImage();
+            BufferedImage bufferedPDFImage = this.wrapper.renderer.renderImage(this.currentPage);
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(bufferedPDFImage, "PNG", outputStream);
 
@@ -103,13 +107,23 @@ public class PDFPreview {
         }
     }
 
-    private BufferedImage convertPDFtoImage()
-            throws IOException {
-        try (InputStream input = Files.newInputStream(this.pdfPath);
-             PDDocument document = PDDocument.load(input)) {
-            PDFRenderer pdfRenderer = new PDFRenderer(document);
+    private RendererWrapper newRenderer(final Path path) {
+        try (InputStream input = Files.newInputStream(path)) {
+            final PDDocument document = PDDocument.load(input);
+            return new RendererWrapper(new PDFRenderer(document), document);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
-            return pdfRenderer.renderImage(this.currentPage);
+    private record RendererWrapper(PDFRenderer renderer, PDDocument document) implements Closeable {
+        @Override
+        public void close() {
+            try {
+                this.document.close();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 }

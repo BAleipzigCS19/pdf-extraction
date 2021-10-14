@@ -1,24 +1,19 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import de.baleipzig.pdfextraction.api.dto.FieldDTO;
+import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
-import de.baleipzig.pdfextraction.client.fieldtype.FieldTypes;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.PDFPreview;
 import de.baleipzig.pdfextraction.client.view.ImportView;
 import jakarta.inject.Inject;
-import de.baleipzig.pdfextraction.api.dto.Field;
-import de.baleipzig.pdfextraction.api.dto.Template;
-import de.baleipzig.pdfextraction.client.PDFPreview;
-import de.baleipzig.pdfextraction.common.alert.AlertUtils;
-import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
-import de.baleipzig.pdfextraction.fieldtype.FieldType;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -244,7 +239,7 @@ public class CreateTemplateController implements Initializable {
             return;
         }
 
-        final List<Field> fields = new ArrayList<>(this.chosenFieldtypes.size());
+        final List<FieldDTO> fields = new ArrayList<>(this.chosenFieldtypes.size());
 
         final ImageView image = this.pdfGridController.pdfPreviewImageView;
         for (final Box box : this.chosenFieldtypes) {
@@ -256,23 +251,29 @@ public class CreateTemplateController implements Initializable {
             final double percWidth = rec.getWidth() / image.getFitWidth();
             final double percHeight = rec.getHeight() / image.getFitHeight();
 
-            fields.add(new Field(box.type, box.page, percX, percY, percWidth, percHeight));
+            fields.add(new FieldDTO(box.type, box.page, percX, percY, percWidth, percHeight));
         }
 
-        final Template toSave = new Template(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);//unused
+        final TemplateDTO toSave = new TemplateDTO(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);//unused
 
-        //TODO hier müssen die Daten in der DB gespeichert werden
-        AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                "Erfolgreich",
-                "Template wurde erstellt",
-                ""
+        this.connector.save(toSave)
+                .doOnSuccess(v -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.INFORMATION,
+                        "Erfolgreich",
+                        null,
+                        "Template wurde erstellt"
+                )))
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.ERROR,
+                        "Fehler",
+                        "Ein Fehler ist aufgetreten.",
+                        err.getLocalizedMessage()
+                )))
+                .subscribe();
+
+
+        ControllerUtils.switchScene(
+                (Stage) this.dataGridPane.getScene().getWindow(),
+                new ImportView()
         );
-
-            ControllerUtils.switchScene(
-                    (Stage) this.dataGridPane.getScene().getWindow(),
-                    new ImportView()
-            );
-        }
     }
 
     public void cancelButtonOnAction() {
@@ -284,12 +285,7 @@ public class CreateTemplateController implements Initializable {
     }
 
     private boolean isDataIncomplete() {
-        final List<FieldType> allTypes = FieldType.getAllFieldTypes()
-                .stream()
-                .map(FieldTypes::getName)
-                .toList();
-
-        return !getCurrentFieldNames().containsAll(allTypes)
+        return !getCurrentFieldNames().containsAll(FieldType.getAllFieldTypes())
                 || insuranceTextField.getText().isBlank()
                 || templateNameTextField.getText().isBlank();
     }
