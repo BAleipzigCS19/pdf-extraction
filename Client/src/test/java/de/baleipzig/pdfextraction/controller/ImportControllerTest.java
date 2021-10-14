@@ -25,10 +25,6 @@ class ImportControllerTest extends ApplicationTest {
 
         verifyThat("#templateComboBox", NodeMatchers.isVisible());
         verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
-        verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
-        verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
-        verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
-        verifyThat("#pageIndex", NodeMatchers.isVisible());
     }
 
     @Test

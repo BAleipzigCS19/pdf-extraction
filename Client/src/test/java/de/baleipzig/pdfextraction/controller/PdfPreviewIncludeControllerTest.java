@@ -25,5 +25,6 @@ class PdfPreviewIncludeControllerTest extends ApplicationTest {
         FxAssert.verifyThat("#pageBackButton", LabeledMatchers.hasText("<-"));
         FxAssert.verifyThat("#chooseFileButton", LabeledMatchers.hasText("Datei Auswählen"));
         FxAssert.verifyThat("#pageIndexLabel", LabeledMatchers.hasText("Seitenanzahl"));
+        FxAssert.verifyThat("#addFileLabel", LabeledMatchers.hasText("PDF-Datei hinzufügen"));
     }
 }

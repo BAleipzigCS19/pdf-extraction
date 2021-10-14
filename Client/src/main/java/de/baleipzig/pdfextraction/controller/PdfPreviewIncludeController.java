@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -54,6 +56,41 @@ public class PdfPreviewIncludeController implements Initializable {
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
+
+        parentAnchorPane.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        parentAnchorPane.setOnDragDropped(event -> {
+            try {
+                Dragboard dragboard = event.getDragboard();
+                if (!dragboard.hasFiles()) {
+                    return;
+                }
+
+                final List<File> files = dragboard.getFiles();
+                if (files.size() > 1) {
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es kann nur eine PDF-Datei analysiert werden.");
+                    return;
+                }
+
+                final File first = files.get(0);
+                final boolean isCorrectFormat = first.getName().toLowerCase().endsWith(".pdf");
+                if (!isCorrectFormat) {
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es werden nur PDF-Dateien unterstützt.");
+                    return;
+                }
+
+                PDF_PREVIEW_RENDERER.setPdfPath(first.toPath());
+                updatePdfPreview(PDF_PREVIEW_RENDERER::getCurrentPreview);
+            } finally {
+                event.setDropCompleted(true);
+                event.consume();
+            }
+        });
     }
 
     @FXML
