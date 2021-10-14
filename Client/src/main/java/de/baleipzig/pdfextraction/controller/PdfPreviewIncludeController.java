@@ -82,8 +82,8 @@ public class PdfPreviewIncludeController implements Initializable {
                     return;
                 }
 
-                PDF_PREVIEW_RENDERER.setPdfPath(first.toPath());
-                updatePdfPreview(PDF_PREVIEW_RENDERER::getCurrentPreview);
+                PDFPreview.getInstance().setPdfPath(first.toPath());
+                updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
                 event.consume();
