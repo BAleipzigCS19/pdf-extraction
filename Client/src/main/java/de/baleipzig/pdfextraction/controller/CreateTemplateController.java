@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CreateTemplateController implements Initializable {
 
@@ -168,7 +169,7 @@ public class CreateTemplateController implements Initializable {
                 final Rectangle rec = start.get();
 
                 //Box im Preview
-                final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec);
+                final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec, color);
 
                 //Panel in der Box rechts
                 final int count = datagrid.getRowCount();
@@ -204,8 +205,20 @@ public class CreateTemplateController implements Initializable {
     }
 
     private Paint getColor() {
+        final Set<Paint> usedColors = this.chosenFieldtypes.stream()
+                .map(Box::color)
+                .collect(Collectors.toSet());
+
+        final List<Color> freeToUse = Stream.of(Color.CRIMSON, Color.DARKGREEN, Color.MEDIUMBLUE, Color.DEEPPINK, Color.GREEN, Color.INDIGO, Color.RED)
+                .filter(Predicate.not(usedColors::contains))
+                .toList();
+
+        if (freeToUse.isEmpty()) {
+            return Color.BLACK;//Default
+        }
+
         final ThreadLocalRandom random = ThreadLocalRandom.current();
-        return Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+        return freeToUse.get(random.nextInt(0, freeToUse.size() - 1));
     }
 
     @SuppressWarnings({"java:S1854", "java:S1481", "java:S1135"}) //Remove when DB is merged (PAN-19)
@@ -235,7 +248,7 @@ public class CreateTemplateController implements Initializable {
             fields.add(new Field(box.type, box.page, percX, percY, percWidth, percHeight));
         }
 
-        final Template toSave = new Template(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);
+        final Template toSave = new Template(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);//unused
 
         //TODO hier müssen die Daten in der DB gespeichert werden
         AlertUtils.showAlert(Alert.AlertType.INFORMATION,
@@ -268,7 +281,7 @@ public class CreateTemplateController implements Initializable {
                 || templateNameTextField.getText().isBlank();
     }
 
-    private record Box(int page, FieldType type, Rectangle place) {
+    private record Box(int page, FieldType type, Rectangle place, Paint color) {
     }
 
     private record FieldTypeWrapper(FieldType type) {
