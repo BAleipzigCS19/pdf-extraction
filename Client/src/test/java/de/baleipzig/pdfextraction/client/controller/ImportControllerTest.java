@@ -24,11 +24,13 @@ class ImportControllerTest extends ApplicationTest {
     void verifyViewComponents() {
 
         verifyThat("#templateComboBox", NodeMatchers.isVisible());
-        verifyThat("#continueButton", LabeledMatchers.hasText("Weiter"));
-        verifyThat("#buttonPageForward", LabeledMatchers.hasText("->"));
-        verifyThat("#buttonPageBack", LabeledMatchers.hasText("<-"));
-        verifyThat("#buttonChooseFile", LabeledMatchers.hasText("Datei Auswählen"));
-        verifyThat("#pageIndex", NodeMatchers.isVisible());
+        verifyThat("#continueButton", NodeMatchers.isVisible());
+        verifyThat("#pageForwardButton", LabeledMatchers.hasText("->"));
+        verifyThat("#pageForwardButton", NodeMatchers.isVisible());
+        verifyThat("#pageBackButton", LabeledMatchers.hasText("<-"));
+        verifyThat("#pageBackButton", NodeMatchers.isVisible());
+        verifyThat("#chooseFileButton", NodeMatchers.isVisible());
+        verifyThat("#pageIndexLabel", NodeMatchers.isVisible());
     }
 
     @Test

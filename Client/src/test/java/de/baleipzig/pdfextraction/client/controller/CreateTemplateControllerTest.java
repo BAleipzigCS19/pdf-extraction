@@ -7,10 +7,11 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
-import org.testfx.matcher.control.LabeledMatchers;
+
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -28,19 +29,33 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
         verifyThat("#insuranceTextField", NodeMatchers.isVisible());
         verifyThat("#templateNameTextField", NodeMatchers.isVisible());
-        verifyThat("#addFieldButton", LabeledMatchers.hasText("+"));
-        verifyThat("#createTemplateButton", LabeledMatchers.hasText("Template erstellen"));
-        verifyThat("#cancelButton", LabeledMatchers.hasText("Abbrechen"));
+        verifyThat("#addFieldButton", NodeMatchers.isVisible());
+        verifyThat("#createTemplateButton", NodeMatchers.isVisible());
+        verifyThat("#cancelButton", NodeMatchers.isVisible());
     }
 
     @Test
-    void createTemplate() {
+    void createTemplate() throws URISyntaxException {
+        PDFPreview.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Fahrzeugschein.pdf").toURI()));
 
         clickOn("#insuranceTextField").write("HUK");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
-        for (int i = 0; i < FieldTypes.values().length; i++) {
+        for (int i = 0; i < FieldType.values().length; i++) {
             clickOn("#addFieldButton").clickOn("OK");
+            moveTo("#pdfPreview")
+                    .press(MouseButton.PRIMARY)
+                    .moveBy(10.0, 10.0)
+                    .release(MouseButton.PRIMARY);
         }
+
+        clickOn("Remove");
+
+        clickOn("#addFieldButton")
+                .clickOn("OK")
+                .moveTo("#pdfPreview")
+                .press(MouseButton.PRIMARY)
+                .moveBy(-10, -10)
+                .release(MouseButton.PRIMARY);
 
         clickOn("#createTemplateButton");
         clickOn("OK");

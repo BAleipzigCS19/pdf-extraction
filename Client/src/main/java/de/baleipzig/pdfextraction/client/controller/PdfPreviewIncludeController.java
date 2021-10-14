@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -23,8 +25,6 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 public class PdfPreviewIncludeController implements Initializable {
-
-    protected static final PDFPreview PDF_PREVIEW_RENDERER = new PDFPreview();
 
     @FXML
     public Button pageBackButton;
@@ -49,26 +49,61 @@ public class PdfPreviewIncludeController implements Initializable {
         pdfPreviewImageView.fitWidthProperty().bind(parentAnchorPane.widthProperty());
         pdfPreviewImageView.fitHeightProperty().bind(parentAnchorPane.heightProperty());
 
-        if (PDF_PREVIEW_RENDERER.hasPreview()) {
-            updatePdfPreview(PDF_PREVIEW_RENDERER::getCurrentPreview);
+        if (PDFPreview.getInstance().hasPreview()) {
+            updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
+
+        parentAnchorPane.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        parentAnchorPane.setOnDragDropped(event -> {
+            try {
+                Dragboard dragboard = event.getDragboard();
+                if (!dragboard.hasFiles()) {
+                    return;
+                }
+
+                final List<File> files = dragboard.getFiles();
+                if (files.size() > 1) {
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es kann nur eine PDF-Datei analysiert werden.");
+                    return;
+                }
+
+                final File first = files.get(0);
+                final boolean isCorrectFormat = first.getName().toLowerCase().endsWith(".pdf");
+                if (!isCorrectFormat) {
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es werden nur PDF-Dateien unterstützt.");
+                    return;
+                }
+
+                PDFPreview.getInstance().setPdfPath(first.toPath());
+                updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
+            } finally {
+                event.setDropCompleted(true);
+                event.consume();
+            }
+        });
     }
 
     @FXML
     public void onClickPageBack() {
 
-        if (PDF_PREVIEW_RENDERER.hasPreviousPage()) {
-            updatePdfPreview(PDF_PREVIEW_RENDERER::getPreviousPreview);
+        if (PDFPreview.getInstance().hasPreviousPage()) {
+            updatePdfPreview(PDFPreview.getInstance()::getPreviousPreview);
         }
     }
 
     @FXML
     public void onClickPageForward() {
 
-        if (PDF_PREVIEW_RENDERER.hasNextPage()) {
-            updatePdfPreview(PDF_PREVIEW_RENDERER::getNextPreview);
+        if (PDFPreview.getInstance().hasNextPage()) {
+            updatePdfPreview(PDFPreview.getInstance()::getNextPreview);
         }
     }
 
@@ -86,15 +121,15 @@ public class PdfPreviewIncludeController implements Initializable {
 
         final Path pdfPath = selectedFile.toPath();
 
-        PDF_PREVIEW_RENDERER.setPdfPath(pdfPath);
+        PDFPreview.getInstance().setPdfPath(pdfPath);
         // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
-        updatePdfPreview(PDF_PREVIEW_RENDERER::getCurrentPreview);
+        updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
     }
 
     private void updatePdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("Seite: %d/%d".formatted(PDF_PREVIEW_RENDERER.getCurrentPage() + 1, PDF_PREVIEW_RENDERER.getNumberOfPages()));
+            pageIndexLabel.setText("Seite: %d/%d".formatted(PDFPreview.getInstance().getCurrentPage() + 1, PDFPreview.getInstance().getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()
