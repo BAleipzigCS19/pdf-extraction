@@ -230,7 +230,7 @@ public abstract class FXMLView extends StackPane {
             return name;
         }
         LoggerFactory.getLogger(FXMLView.class)
-                .atDebug()
+                .atTrace()
                 .addArgument(name)
                 .log("File {} not found, attempting with camel case");
         name = getConventionalName(false, ending);

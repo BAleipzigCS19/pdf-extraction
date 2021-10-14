@@ -122,11 +122,11 @@ public final class Injector {
     }
 
     static void injectMembers(final Object instance) {
-        Class<? extends Object> clazz = instance.getClass();
+        Class<?> clazz = instance.getClass();
         injectMembers(clazz, instance);
     }
 
-    public static void injectMembers(Class<? extends Object> clazz, final Object instance) throws SecurityException {
+    public static void injectMembers(Class<?> clazz, final Object instance) throws SecurityException {
         LOG_CONSUMER.accept("Injecting members for class " + clazz + " and instance " + instance);
         Field[] fields = clazz.getDeclaredFields();
         for (final Field field : fields) {
@@ -146,7 +146,7 @@ public final class Injector {
                 }
             }
         }
-        Class<? extends Object> superclass = clazz.getSuperclass();
+        Class<?> superclass = clazz.getSuperclass();
         if (superclass != null) {
             LOG_CONSUMER.accept("Injecting members of: " + superclass);
             injectMembers(superclass, instance);
@@ -220,7 +220,7 @@ public final class Injector {
     }
 
     public static Consumer<String> getDefaultLogger() {
-        return l -> LoggerFactory.getLogger(Injector.class).atDebug().log(l);
+        return l -> LoggerFactory.getLogger(Injector.class).atTrace().log(l);
     }
 
     private static boolean isNotPrimitiveOrString(Class<?> type) {
