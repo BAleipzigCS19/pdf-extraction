@@ -11,7 +11,8 @@ import java.net.URL;
 
 public class ControllerUtils {
 
-    private ControllerUtils() {}
+    private ControllerUtils() {
+    }
 
     public static void switchScene(final Stage current, final URL linkToNewScene) {
 

@@ -1,7 +1,6 @@
 package de.baleipzig.pdfextraction.client;
 
 import de.baleipzig.pdfextraction.common.controller.ControllerUtils;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 

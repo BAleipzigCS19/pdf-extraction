@@ -2,7 +2,7 @@ package de.baleipzig.pdfextraction.api;
 
 import java.util.Objects;
 
-public class InsuranceNumber extends ApiBase{
+public class InsuranceNumber extends ApiBase {
 
     private String number;
 
