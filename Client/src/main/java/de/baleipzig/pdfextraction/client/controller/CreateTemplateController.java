@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -29,7 +30,6 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,16 +37,22 @@ import java.util.stream.Stream;
 public class CreateTemplateController implements Initializable {
 
     private final Set<Box> chosenFieldtypes = new HashSet<>();
+
     @FXML
     public GridPane dataGridPane;
+
     @FXML
     public TextField insuranceTextField;
+
     @FXML
     public TextField templateNameTextField;
+
     @FXML
     public AnchorPane pdfPreview;
+
     @FXML
     public PdfPreviewIncludeController pdfGridController;
+
     @FXML
     public GridPane datagrid;
 
@@ -58,13 +64,13 @@ public class CreateTemplateController implements Initializable {
         Platform.runLater(() -> ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(false));
 
         final EventHandler<ActionEvent> superForward = pdfGridController.pageForwardButton.getOnAction();
-        pdfGridController.pageForwardButton.setOnAction(ev -> {
+        this.pdfGridController.pageForwardButton.setOnAction(ev -> {
             superForward.handle(ev);
             this.onPageTurn();
         });
 
         final EventHandler<ActionEvent> superBackward = pdfGridController.pageBackButton.getOnAction();
-        pdfGridController.pageBackButton.setOnAction(ev -> {
+        this.pdfGridController.pageBackButton.setOnAction(ev -> {
             superBackward.handle(ev);
             this.onPageTurn();
         });
@@ -95,13 +101,7 @@ public class CreateTemplateController implements Initializable {
             return;
         }
 
-        final Set<FieldType> fieldNames = getCurrentFieldNames();
-
-        Set<FieldTypeWrapper> fieldTypes = FieldType.getAllFieldTypes()
-                .stream()
-                .filter(Predicate.not(fieldNames::contains))
-                .map(FieldTypeWrapper::new)
-                .collect(Collectors.toSet());
+        final List<FieldTypeWrapper> fieldTypes = getAvailableFieldTypes();
 
         if (fieldTypes.isEmpty()) {
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", "", "Es sind bereits alle verfügbaren Typen hinzugefügt worden.");
@@ -109,99 +109,110 @@ public class CreateTemplateController implements Initializable {
         }
 
 
-        ChoiceDialog<FieldTypeWrapper> dialog = new ChoiceDialog<>(fieldTypes.iterator().next(), fieldTypes);
+        final ChoiceDialog<FieldTypeWrapper> dialog = new ChoiceDialog<>(fieldTypes.iterator().next(), fieldTypes);
         dialog.setTitle("Feld-Typ");
         dialog.setHeaderText("Wähle einen Feld-Typ");
 
 
         dialog.showAndWait().ifPresent(fieldType -> {
-            AtomicReference<Rectangle> start = new AtomicReference<>(null);
+            final Rectangle rec = new Rectangle(0, 0, 0, 0);
             final Paint color = getColor();
-
+            rec.setStroke(color);
+            rec.setFill(Color.TRANSPARENT);
             final Scene scene = this.pdfPreview.getScene();
             final Stage stage = (Stage) scene.getWindow();
             final String oldTitle = stage.getTitle();
 
             stage.setTitle("%s| Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
 
-            pdfPreview.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
-            pdfPreview.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
+            this.pdfPreview.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
+            this.pdfPreview.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
 
-            pdfPreview.setOnMousePressed(event -> {
-                //Press == Start-Pos
-                final double startX = event.getSceneX();
-                final double startY = event.getSceneY();
-                final Rectangle rec = new Rectangle(startX, startY, 0, 0);
-                rec.setStroke(color);
-                rec.setFill(Color.TRANSPARENT);
-                pdfPreview.getChildren().add(rec);
-                start.set(rec);
-                event.consume();
+            this.pdfPreview.setOnMousePressed(event -> startDrawingRectangle(rec, event));
 
-                //Ermöglich das Zeichnen während des Ziehens
-                pdfPreview.setOnMouseDragged(ev -> {
-                    final ImageView imageView = pdfGridController.pdfPreviewImageView;
-
-                    //Prüft das nicht über den Rand des Bildes gegangen wird.
-                    if (ev.getX() > imageView.getX() && ev.getX() < imageView.getX() + imageView.getFitWidth()) {
-                        final boolean isBackwardsDragged = startX > ev.getX();
-                        if (isBackwardsDragged) {
-                            rec.setX(ev.getX());
-                        }
-
-                        rec.setWidth(Math.abs(ev.getX() - startX));
-                    }
-
-                    if (ev.getY() > imageView.getY() && ev.getY() < imageView.getY() + imageView.getFitHeight()) {
-                        final boolean isBackwardsDragged = startY > ev.getY();
-                        if (isBackwardsDragged) {
-                            rec.setY(ev.getY());
-                        }
-
-                        rec.setHeight(Math.abs(ev.getY() - startY));
-                    }
-
-                    ev.consume();
-                });
-
-                //Der Handler hier soll nicht nochmal aufgerufen werden
-                pdfPreview.setOnMousePressed(ev -> {
-                });
-            });
-
-
-            pdfPreview.setOnMouseReleased(event -> {
-                //Released == End-Pos
-                final Rectangle rec = start.get();
-
-                //Box im Preview
-                final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec, color);
-
-                //Panel in der Box rechts
-                final int count = datagrid.getRowCount();
-                final Rectangle dot = new Rectangle(10, 10, color);
-                final Label label = new Label(fieldType.toString());
-                final Button remove = new Button("Remove");
-                datagrid.addRow(count, dot, label, remove);
-                remove.setOnAction(e -> {
-                    datagrid.getChildren().removeAll(dot, label, remove);
-                    chosenFieldtypes.remove(box);
-                    pdfPreview.getChildren().remove(rec);
-                });
-
-                chosenFieldtypes.add(box);
-                event.consume();
-
-                //Die Handler sind fertig, also ersetzen mit welchen, die nichts tun
-                pdfPreview.setOnMouseReleased(ev -> {
-                });
-                pdfPreview.setOnMouseDragged(ev -> {
-                });
-                scene.setCursor(Cursor.DEFAULT);
-                pdfPreview.setOnMouseEntered(ev -> scene.setCursor(Cursor.DEFAULT));
-                stage.setTitle(oldTitle);
-            });
+            this.pdfPreview.setOnMouseReleased(ev -> finishDrawingRectangle(fieldType, rec, color, scene, stage, oldTitle, ev));
         });
+    }
+
+    private void startDrawingRectangle(final Rectangle rec, final MouseEvent event) {
+        //Press == Start-Pos
+        final double startX = event.getSceneX();
+        final double startY = event.getSceneY();
+        this.pdfPreview.getChildren().add(rec);
+        rec.setX(startX);
+        rec.setY(startY);
+        event.consume();
+
+        //Ermöglich das Zeichnen während des Ziehens
+        pdfPreview.setOnMouseDragged(ev -> paintRectangleContinuously(startX, startY, rec, ev));
+
+        //Der Handler hier soll nicht nochmal aufgerufen werden
+        pdfPreview.setOnMousePressed(CreateTemplateController::doNothing);
+    }
+
+    private void finishDrawingRectangle(FieldTypeWrapper fieldType, Rectangle rec, Paint color, Scene scene, Stage stage, String oldTitle, MouseEvent ev) {
+        //Released == End-Pos
+
+        //Box im Preview
+        final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec, color);
+
+        //Panel in der Box rechts
+        final int count = this.datagrid.getRowCount();
+        final Rectangle dot = new Rectangle(10, 10, color);
+        final Label label = new Label(fieldType.toString());
+        final Button remove = new Button("Remove");
+        this.datagrid.addRow(count, dot, label, remove);
+        remove.setOnAction(e -> {
+            this.datagrid.getChildren().removeAll(dot, label, remove);
+            this.chosenFieldtypes.remove(box);
+            this.pdfPreview.getChildren().remove(rec);
+        });
+
+        this.chosenFieldtypes.add(box);
+
+        ev.consume();
+        //Die Handler sind fertig, also ersetzen mit welchen, die nichts tun
+        this.pdfPreview.setOnMouseReleased(CreateTemplateController::doNothing);
+        this.pdfPreview.setOnMouseDragged(CreateTemplateController::doNothing);
+        this.pdfPreview.setOnMouseEntered(CreateTemplateController::doNothing);
+        scene.setCursor(Cursor.DEFAULT);
+        stage.setTitle(oldTitle);
+    }
+
+    private void paintRectangleContinuously(double startX, double startY, Rectangle rec, MouseEvent ev) {
+        final ImageView imageView = this.pdfGridController.pdfPreviewImageView;
+
+        //Prüft das nicht über den Rand des Bildes gegangen wird.
+        if (ev.getX() > imageView.getX() && ev.getX() < imageView.getX() + imageView.getFitWidth()) {
+            final boolean isBackwardsDragged = startX > ev.getX();
+            if (isBackwardsDragged) {
+                rec.setX(ev.getX());
+            }
+
+            rec.setWidth(Math.abs(ev.getX() - startX));
+        }
+
+        if (ev.getY() > imageView.getY() && ev.getY() < imageView.getY() + imageView.getFitHeight()) {
+            final boolean isBackwardsDragged = startY > ev.getY();
+            if (isBackwardsDragged) {
+                rec.setY(ev.getY());
+            }
+
+            rec.setHeight(Math.abs(ev.getY() - startY));
+        }
+
+        ev.consume();
+    }
+
+    private List<FieldTypeWrapper> getAvailableFieldTypes() {
+        final Set<FieldType> fieldNames = getCurrentFieldNames();
+
+        return FieldType.getAllFieldTypes()
+                .stream()
+                .filter(Predicate.not(fieldNames::contains))
+                .sorted(Comparator.comparing(FieldType::getName))
+                .map(FieldTypeWrapper::new)
+                .toList();
     }
 
     private Set<FieldType> getCurrentFieldNames() {
@@ -290,10 +301,30 @@ public class CreateTemplateController implements Initializable {
                 || templateNameTextField.getText().isBlank();
     }
 
+    private static void doNothing(MouseEvent ev) {
+        //this should do nothing, used in the Handler to reset them
+    }
+
     private record Box(int page, FieldType type, Rectangle place, Paint color) {
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Box other)) {
+                return false;
+            }
+            return page == other.page
+                    && type == other.type
+                    && Objects.equals(place, other.place)
+                    && Objects.equals(color, other.color);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(page, type, place, color);
+        }
     }
 
     private record FieldTypeWrapper(FieldType type) {
+
         @Override
         public String toString() {
             return this.type.getName();
