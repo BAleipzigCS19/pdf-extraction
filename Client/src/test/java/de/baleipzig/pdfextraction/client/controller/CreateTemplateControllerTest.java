@@ -38,7 +38,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
     @Test
     void createTemplate() throws URISyntaxException {
-        PDFPreview.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Fahrzeugschein.pdf").toURI()));
+        PDFPreview.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Kfz-Anschreiben.pdf").toURI()));
 
         clickOn("#insuranceTextField").write("HUK");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
