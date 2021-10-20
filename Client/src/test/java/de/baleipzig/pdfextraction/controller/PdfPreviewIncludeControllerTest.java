@@ -16,7 +16,6 @@ class PdfPreviewIncludeControllerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-
         ControllerUtils.switchScene(stage, new PdfPreview());
     }
 

@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="450.0" prefWidth="600.0"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="800.0" prefWidth="1050.0"
           xmlns="http://javafx.com/javafx/17"
           fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
     <columnConstraints>

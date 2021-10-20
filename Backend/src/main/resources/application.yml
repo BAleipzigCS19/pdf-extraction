@@ -13,8 +13,3 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
-
-logging:
-  level:
-    root: INFO
-    de.baleipzig: DEBUG

@@ -3,7 +3,8 @@ package de.baleipzig.pdfextraction.client.controller;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.view.ActionView;
+import de.baleipzig.pdfextraction.client.utils.interfaces.Controller;
+import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
@@ -18,16 +19,16 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ImportController implements Initializable {
+public class ImportController implements Initializable, Controller {
 
     @FXML
-    public Button continueButton;
+    private Button continueButton;
 
     @FXML
-    public ComboBox<String> templateComboBox;
+    private ComboBox<String> templateComboBox;
 
     @FXML
-    public Button createTemplateButton;
+    private Button createTemplateButton;
 
     @Inject
     private TemplateConnector connector;
@@ -35,11 +36,11 @@ public class ImportController implements Initializable {
     @FXML
     private void continueButtonOnAction() {
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
-                new ActionView());
+                new Actions());
     }
 
     @FXML
-    public void createTemplateButtonOnAction() {
+    private void createTemplateButtonOnAction() {
 
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new CreateTemplate());

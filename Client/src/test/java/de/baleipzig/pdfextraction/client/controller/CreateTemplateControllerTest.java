@@ -2,7 +2,7 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.utils.PDFPreview;
+import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
@@ -14,6 +14,7 @@ import org.testfx.matcher.base.NodeMatchers;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -38,7 +39,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
     @Test
     void createTemplate() throws URISyntaxException {
-        PDFPreview.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Kfz-Anschreiben.pdf").toURI()));
+        PDFRenderer.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Kfz-Anschreiben.pdf").toURI()));
 
         clickOn("#insuranceTextField").write("HUK");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");
@@ -59,7 +60,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
                 .moveBy(-10, -10)
                 .release(MouseButton.PRIMARY);
 
-        clickOn("#createTemplateButton");
+        clickOn("#createTemplateButton").sleep(2, TimeUnit.SECONDS);
         clickOn("OK");
         verifyThat("#continueButton", NodeMatchers.isVisible());
     }

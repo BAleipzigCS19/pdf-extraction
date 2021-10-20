@@ -1,7 +1,6 @@
 package de.baleipzig.pdfextraction.client.connector;
 
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
-import jakarta.inject.Singleton;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,14 +14,11 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
-@Singleton
 public class TemplateConnector {
 
+    private static TemplateConnector instance;
     private final WebClient webClient;
 
-    public TemplateConnector() {
-        this("http://localhost:5050/rest");
-    }
 
     protected TemplateConnector(final String baseURl) {
         this.webClient = WebClient.builder()
@@ -32,6 +28,25 @@ public class TemplateConnector {
                     header.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                     header.set(HttpHeaders.CONTENT_ENCODING, MediaType.APPLICATION_JSON_VALUE);
                 }).build();
+    }
+
+    /**
+     * Returns the Singleton of this Class
+     *
+     * @return The one and only TemplateConnector
+     */
+    public static TemplateConnector getInstance() {
+        if (instance == null) {
+            //TODO: Configurable
+            return setInstance(new TemplateConnector("http://localhost:5050/rest"));
+        }
+
+        return instance;
+    }
+
+    protected static TemplateConnector setInstance(TemplateConnector toSet) {
+        instance = toSet;
+        return instance;
     }
 
     public Flux<String> getAllNames() {

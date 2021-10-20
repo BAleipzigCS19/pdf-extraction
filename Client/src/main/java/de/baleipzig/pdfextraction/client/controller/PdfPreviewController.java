@@ -1,7 +1,8 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.PDFPreview;
+import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.utils.interfaces.Controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
-public class PdfPreviewIncludeController implements Initializable {
+public class PdfPreviewController implements Initializable, Controller {
 
     @FXML
     public Button pageBackButton;
@@ -49,8 +50,8 @@ public class PdfPreviewIncludeController implements Initializable {
         pdfPreviewImageView.fitWidthProperty().bind(parentAnchorPane.widthProperty());
         pdfPreviewImageView.fitHeightProperty().bind(parentAnchorPane.heightProperty());
 
-        if (PDFPreview.getInstance().hasPreview()) {
-            updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
+        if (PDFRenderer.getInstance().hasPreview()) {
+            updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
@@ -82,8 +83,8 @@ public class PdfPreviewIncludeController implements Initializable {
                     return;
                 }
 
-                PDFPreview.getInstance().setPdfPath(first.toPath());
-                updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
+                PDFRenderer.getInstance().setPdfPath(first.toPath());
+                updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
                 event.consume();
@@ -94,16 +95,16 @@ public class PdfPreviewIncludeController implements Initializable {
     @FXML
     public void onClickPageBack() {
 
-        if (PDFPreview.getInstance().hasPreviousPage()) {
-            updatePdfPreview(PDFPreview.getInstance()::getPreviousPreview);
+        if (PDFRenderer.getInstance().hasPreviousPage()) {
+            updatePdfPreview(PDFRenderer.getInstance()::getPreviousPreview);
         }
     }
 
     @FXML
     public void onClickPageForward() {
 
-        if (PDFPreview.getInstance().hasNextPage()) {
-            updatePdfPreview(PDFPreview.getInstance()::getNextPreview);
+        if (PDFRenderer.getInstance().hasNextPage()) {
+            updatePdfPreview(PDFRenderer.getInstance()::getNextPreview);
         }
     }
 
@@ -121,15 +122,15 @@ public class PdfPreviewIncludeController implements Initializable {
 
         final Path pdfPath = selectedFile.toPath();
 
-        PDFPreview.getInstance().setPdfPath(pdfPath);
+        PDFRenderer.getInstance().setPdfPath(pdfPath);
         // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
-        updatePdfPreview(PDFPreview.getInstance()::getCurrentPreview);
+        updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
     }
 
     private void updatePdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("Seite: %d/%d".formatted(PDFPreview.getInstance().getCurrentPage() + 1, PDFPreview.getInstance().getNumberOfPages()));
+            pageIndexLabel.setText("Seite: %d/%d".formatted(PDFRenderer.getInstance().getCurrentPage() + 1, PDFRenderer.getInstance().getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()

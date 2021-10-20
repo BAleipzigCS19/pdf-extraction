@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -30,17 +31,21 @@ public class TemplateController {
     }
 
     @GetMapping(path = "template/names")
-    public ResponseEntity<List<String>> getAllNames() {
+    public ResponseEntity<Collection<String>> getAllNames() {
         LogManager.getLogger(TemplateController.class)
                 .atDebug()
                 .log("Received Request for all Names.");
 
-        final List<String> body = this.repo.findAll()
+        final Collection<String> listOfNames = this.repo.findAll()
                 .stream()
                 .map(Template::getName)
                 .toList();
 
-        return ResponseEntity.ok(body);
+        LogManager.getLogger(TemplateController.class)
+                .atTrace()
+                .log("Responding with {}", listOfNames);
+
+        return ResponseEntity.ok(listOfNames);
     }
 
     @GetMapping(path = "template")
@@ -86,11 +91,22 @@ public class TemplateController {
             return ResponseEntity.badRequest().build();
         }
 
-        final Template saved = this.repo.save(new Template(toSave.getName(), toSave.getConsumer(), mapToField(toSave.getFields())));
+        final Template template;
+        if (this.repo.existsTemplateByName(toSave.getName())) {
+            template = this.repo.findTemplateByName(toSave.getName());
+        } else {
+            template = new Template();
+        }
+
+        template.setName(toSave.getName());
+        template.setConsumer(toSave.getConsumer());
+        template.setFields(mapToField(toSave.getFields()));
+
+        final Template saved = this.repo.save(template);
         LogManager.getLogger(TemplateController.class)
                 .atDebug()
                 .log("Saved Entity {}", saved);
-        return ResponseEntity.created(URI.create("%s:%s/rest/template?name=%s".formatted(this.host, this.port, toSave.getName()))).build();
+        return ResponseEntity.created(URI.create("%s:%s/rest/template?name=%s".formatted(this.host, this.port, saved.getName()))).build();
     }
 
     private static boolean isValidDTO(final TemplateDTO dto) {

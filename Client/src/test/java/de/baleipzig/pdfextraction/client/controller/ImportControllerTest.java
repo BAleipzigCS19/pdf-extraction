@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.view.ImportView;
+import de.baleipzig.pdfextraction.client.view.Imports;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -17,7 +17,7 @@ class ImportControllerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        ControllerUtils.switchScene(stage, new ImportView());
+        ControllerUtils.switchScene(stage, new Imports());
     }
 
     @Test

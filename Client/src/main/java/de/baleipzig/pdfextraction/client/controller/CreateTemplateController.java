@@ -6,8 +6,9 @@ import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.utils.PDFPreview;
-import de.baleipzig.pdfextraction.client.view.ImportView;
+import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.utils.interfaces.Controller;
+import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -34,34 +35,37 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CreateTemplateController implements Initializable {
+public class CreateTemplateController implements Initializable, Controller {
 
     private final Set<Box> chosenFieldtypes = new HashSet<>();
 
     @FXML
-    public GridPane dataGridPane;
+    private GridPane dataGridPane;
 
     @FXML
-    public TextField insuranceTextField;
+    private TextField insuranceTextField;
 
     @FXML
-    public TextField templateNameTextField;
+    private TextField templateNameTextField;
 
     @FXML
-    public AnchorPane pdfPreview;
+    private AnchorPane pdfPreview;
 
     @FXML
-    public PdfPreviewIncludeController pdfGridController;
+    private PdfPreviewController pdfGridController;
 
     @FXML
-    public GridPane datagrid;
+    private GridPane datagrid;
 
     @Inject
     private TemplateConnector connector;
 
+    private static void doNothing(MouseEvent ev) {
+        //this should do nothing, used in the Handler to reset them
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(false));
 
         final EventHandler<ActionEvent> superForward = pdfGridController.pageForwardButton.getOnAction();
         this.pdfGridController.pageForwardButton.setOnAction(ev -> {
@@ -77,7 +81,7 @@ public class CreateTemplateController implements Initializable {
     }
 
     private void onPageTurn() {
-        final int currentPage = PDFPreview.getInstance().getCurrentPage();
+        final int currentPage = PDFRenderer.getInstance().getCurrentPage();
 
         final List<Rectangle> toAdd = chosenFieldtypes.stream()
                 .filter(b -> b.page == currentPage)
@@ -94,9 +98,9 @@ public class CreateTemplateController implements Initializable {
     }
 
     @FXML
-    public void addFieldButtonOnClick() {
+    private void addFieldButtonOnClick() {
 
-        if (!PDFPreview.getInstance().hasPreview()) {
+        if (!PDFRenderer.getInstance().hasPreview()) {
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", null, "Bitte wählen sie zuerst ein PDF aus.");
             return;
         }
@@ -148,13 +152,14 @@ public class CreateTemplateController implements Initializable {
 
         //Der Handler hier soll nicht nochmal aufgerufen werden
         pdfPreview.setOnMousePressed(CreateTemplateController::doNothing);
+        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(false);
     }
 
     private void finishDrawingRectangle(FieldTypeWrapper fieldType, Rectangle rec, Paint color, Scene scene, Stage stage, String oldTitle, MouseEvent ev) {
         //Released == End-Pos
 
         //Box im Preview
-        final Box box = new Box(PDFPreview.getInstance().getCurrentPage(), fieldType.type, rec, color);
+        final Box box = new Box(PDFRenderer.getInstance().getCurrentPage(), fieldType.type, rec, color);
 
         //Panel in der Box rechts
         final int count = this.datagrid.getRowCount();
@@ -238,9 +243,8 @@ public class CreateTemplateController implements Initializable {
         return freeToUse.get(random.nextInt(0, freeToUse.size() - 1));
     }
 
-    @SuppressWarnings({"java:S1854", "java:S1481", "java:S1135"}) //Remove when DB is merged (PAN-19)
-    public void createTemplateButtonOnAction() {
-
+    @FXML
+    private void createTemplateButtonOnAction() {
         if (isDataIncomplete()) {
             AlertUtils.showAlert(Alert.AlertType.ERROR,
                     "Fehler",
@@ -266,32 +270,41 @@ public class CreateTemplateController implements Initializable {
         }
 
         final TemplateDTO toSave = new TemplateDTO(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);//unused
-
-        this.connector.save(toSave)
-                .doOnSuccess(v -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                        "Erfolgreich",
-                        null,
-                        "Template wurde erstellt"
-                )))
-                .doOnError(err -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.ERROR,
-                        "Fehler",
-                        "Ein Fehler ist aufgetreten.",
-                        err.getLocalizedMessage()
-                )))
+        this.connector
+                .save(toSave)
+                .doOnSuccess(v -> Platform.runLater(this::onSuccessfulSave))
+                .doOnError(err -> Platform.runLater(() -> this.onFailedSave(err)))
                 .subscribe();
+    }
 
+    private void onSuccessfulSave() {
+        AlertUtils.showAlert(Alert.AlertType.INFORMATION,
+                "Erfolgreich",
+                null,
+                "Template wurde erstellt"
+        );
+
+        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(true);
 
         ControllerUtils.switchScene(
                 (Stage) this.dataGridPane.getScene().getWindow(),
-                new ImportView()
+                new Imports()
         );
     }
 
-    public void cancelButtonOnAction() {
+    private void onFailedSave(Throwable err) {
+        AlertUtils.showAlert(Alert.AlertType.ERROR,
+                "Fehler",
+                "Ein Fehler ist aufgetreten.",
+                err.getLocalizedMessage());
+    }
 
+    @FXML
+    private void cancelButtonOnAction() {
+        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(true);
         ControllerUtils.switchScene(
                 (Stage) this.dataGridPane.getScene().getWindow(),
-                new ImportView()
+                new Imports()
         );
     }
 
@@ -299,10 +312,6 @@ public class CreateTemplateController implements Initializable {
         return !getCurrentFieldNames().containsAll(FieldType.getAllFieldTypes())
                 || insuranceTextField.getText().isBlank()
                 || templateNameTextField.getText().isBlank();
-    }
-
-    private static void doNothing(MouseEvent ev) {
-        //this should do nothing, used in the Handler to reset them
     }
 
     private record Box(int page, FieldType type, Rectangle place, Paint color) {
