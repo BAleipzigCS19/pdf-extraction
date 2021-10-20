@@ -48,7 +48,8 @@ public final class ControllerUtils {
         }
     }
 
-    private static <T extends FXView> void injectInFields(T newView) throws IllegalAccessException {
+    private static <T extends FXView> void injectInFields(T newView)
+            throws IllegalAccessException {
         for (final Field c : newView.getAllController()) {
 
             final Object toCheck = getFromField(newView, c);
@@ -58,24 +59,26 @@ public final class ControllerUtils {
                 continue;
             }
             for (final Field field : injectableFields) {
+
+                final Object toInject = newView.getForField(field.getName(), field.getType());
+
+                if (toInject == null) {
+                    throw new IllegalArgumentException("Provider %s provided no value for field %s".formatted(newView.getClass().getName(), field));
+                }
                 doInjection(toCheck, newView, field);
             }
         }
     }
 
-    private static void doInjection(Object instance, InjectableProvider provider, Field field) throws IllegalAccessException {
+    private static void doInjection(Object instance, Object toSet, Field field)
+            throws IllegalAccessException {
         final boolean wasAccessible = field.canAccess(instance);
         try {
             if (!wasAccessible) {
                 field.setAccessible(true);
             }
 
-            final Object toInject = provider.getForField(field.getName(), field.getType());
-
-            if (toInject == null) {
-                throw new IllegalArgumentException("Provider %s provided no value for field %s".formatted(provider.getClass().getName(), field));
-            }
-            field.set(instance, toInject);
+            field.set(instance, toSet);
         } finally {
             if (!wasAccessible) {
                 field.setAccessible(false);
