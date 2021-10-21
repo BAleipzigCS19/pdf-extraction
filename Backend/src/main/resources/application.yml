@@ -1,0 +1,15 @@
+server:
+  port: 5050
+  host: http://localhost
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./database/dbFile
+    username: user
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
