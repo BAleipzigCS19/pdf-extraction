@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.utils;
 
+import jakarta.inject.Singleton;
 import javafx.scene.image.Image;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -10,28 +11,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-
+@Singleton
 public class PDFRenderer {
 
-    private static PDFRenderer instance;
     private RendererWrapper wrapper;
     private int numberOfPages = 0;
     private int currentPage = 0;
 
     private PDFRenderer() {
-    }
-
-    /**
-     * Returns the Singleton of this Class
-     *
-     * @return The one and only PDFPreview
-     */
-    public static PDFRenderer getInstance() {
-        if (instance == null) {
-            instance = new PDFRenderer();
-        }
-
-        return instance;
     }
 
     /**

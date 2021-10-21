@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import reactor.test.StepVerifier;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,11 +20,9 @@ class TemplateConnectorTest {
     private TemplateConnector connector;
 
     @BeforeEach
-    void setUp()
-            throws IOException {
+    void setUp() {
         this.mock = new MockWebServer();
-        this.mock.start();
-        this.connector = new TemplateConnector("http://%s:%s".formatted(this.mock.getHostName(), this.mock.getPort()));
+        this.connector = new TemplateConnector(this.mock.url("").toString());
     }
 
     @Test
@@ -73,6 +70,7 @@ class TemplateConnectorTest {
                 .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         StepVerifier.create(this.connector.getAllNames())
-                .expectError();
+                .expectError()
+                .verify();
     }
 }

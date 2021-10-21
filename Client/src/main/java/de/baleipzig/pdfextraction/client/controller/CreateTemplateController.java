@@ -7,7 +7,6 @@ import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
-import de.baleipzig.pdfextraction.client.utils.interfaces.Controller;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
@@ -35,9 +34,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CreateTemplateController implements Initializable, Controller {
+public class CreateTemplateController implements Initializable {
 
-    private final Set<Box> chosenFieldtypes = new HashSet<>();
+    private final Set<Box> chosenFieldTypes = new HashSet<>();
 
     @FXML
     private GridPane dataGridPane;
@@ -49,16 +48,19 @@ public class CreateTemplateController implements Initializable, Controller {
     private TextField templateNameTextField;
 
     @FXML
-    private AnchorPane pdfPreview;
+    public AnchorPane pdfAnchor;
 
     @FXML
-    private PdfPreviewController pdfGridController;
+    private PdfPreviewController pdfPreviewController;
 
     @FXML
     private GridPane datagrid;
 
     @Inject
-    private TemplateConnector connector;
+    protected TemplateConnector connector;
+
+    @Inject
+    protected PDFRenderer renderer;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them
@@ -67,32 +69,32 @@ public class CreateTemplateController implements Initializable, Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        final EventHandler<ActionEvent> superForward = pdfGridController.pageForwardButton.getOnAction();
-        this.pdfGridController.pageForwardButton.setOnAction(ev -> {
+        final EventHandler<ActionEvent> superForward = this.pdfPreviewController.pageForwardButton.getOnAction();
+        this.pdfPreviewController.pageForwardButton.setOnAction(ev -> {
             superForward.handle(ev);
             this.onPageTurn();
         });
 
-        final EventHandler<ActionEvent> superBackward = pdfGridController.pageBackButton.getOnAction();
-        this.pdfGridController.pageBackButton.setOnAction(ev -> {
+        final EventHandler<ActionEvent> superBackward = this.pdfPreviewController.pageBackButton.getOnAction();
+        this.pdfPreviewController.pageBackButton.setOnAction(ev -> {
             superBackward.handle(ev);
             this.onPageTurn();
         });
     }
 
     private void onPageTurn() {
-        final int currentPage = PDFRenderer.getInstance().getCurrentPage();
+        final int currentPage = this.renderer.getCurrentPage();
 
-        final List<Rectangle> toAdd = chosenFieldtypes.stream()
+        final List<Rectangle> toAdd = chosenFieldTypes.stream()
                 .filter(b -> b.page == currentPage)
                 .map(Box::place)
                 .toList();
 
-        final List<Rectangle> all = chosenFieldtypes.stream()
+        final List<Rectangle> all = chosenFieldTypes.stream()
                 .map(Box::place)
                 .toList();
 
-        final List<Node> children = this.pdfPreview.getChildren();
+        final List<Node> children = this.pdfAnchor.getChildren();
         children.removeAll(all);
         children.addAll(toAdd);
     }
@@ -100,7 +102,7 @@ public class CreateTemplateController implements Initializable, Controller {
     @FXML
     private void addFieldButtonOnClick() {
 
-        if (!PDFRenderer.getInstance().hasPreview()) {
+        if (!this.renderer.hasPreview()) {
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", null, "Bitte wählen sie zuerst ein PDF aus.");
             return;
         }
@@ -123,18 +125,18 @@ public class CreateTemplateController implements Initializable, Controller {
             final Paint color = getColor();
             rec.setStroke(color);
             rec.setFill(Color.TRANSPARENT);
-            final Scene scene = this.pdfPreview.getScene();
+            final Scene scene = this.pdfAnchor.getScene();
             final Stage stage = (Stage) scene.getWindow();
             final String oldTitle = stage.getTitle();
 
             stage.setTitle("%s| Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
 
-            this.pdfPreview.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
-            this.pdfPreview.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
+            this.pdfAnchor.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
+            this.pdfAnchor.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
 
-            this.pdfPreview.setOnMousePressed(event -> startDrawingRectangle(rec, event));
+            this.pdfAnchor.setOnMousePressed(event -> startDrawingRectangle(rec, event));
 
-            this.pdfPreview.setOnMouseReleased(ev -> finishDrawingRectangle(fieldType, rec, color, scene, stage, oldTitle, ev));
+            this.pdfAnchor.setOnMouseReleased(ev -> finishDrawingRectangle(fieldType, rec, color, scene, stage, oldTitle, ev));
         });
     }
 
@@ -142,24 +144,24 @@ public class CreateTemplateController implements Initializable, Controller {
         //Press == Start-Pos
         final double startX = event.getSceneX();
         final double startY = event.getSceneY();
-        this.pdfPreview.getChildren().add(rec);
+        this.pdfAnchor.getChildren().add(rec);
         rec.setX(startX);
         rec.setY(startY);
         event.consume();
 
         //Ermöglich das Zeichnen während des Ziehens
-        pdfPreview.setOnMouseDragged(ev -> paintRectangleContinuously(startX, startY, rec, ev));
+        this.pdfAnchor.setOnMouseDragged(ev -> paintRectangleContinuously(startX, startY, rec, ev));
 
         //Der Handler hier soll nicht nochmal aufgerufen werden
-        pdfPreview.setOnMousePressed(CreateTemplateController::doNothing);
-        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(false);
+        this.pdfAnchor.setOnMousePressed(CreateTemplateController::doNothing);
+        ((Stage) this.pdfAnchor.getScene().getWindow()).setResizable(false);
     }
 
     private void finishDrawingRectangle(FieldTypeWrapper fieldType, Rectangle rec, Paint color, Scene scene, Stage stage, String oldTitle, MouseEvent ev) {
         //Released == End-Pos
 
         //Box im Preview
-        final Box box = new Box(PDFRenderer.getInstance().getCurrentPage(), fieldType.type, rec, color);
+        final Box box = new Box(this.renderer.getCurrentPage(), fieldType.type, rec, color);
 
         //Panel in der Box rechts
         final int count = this.datagrid.getRowCount();
@@ -169,23 +171,23 @@ public class CreateTemplateController implements Initializable, Controller {
         this.datagrid.addRow(count, dot, label, remove);
         remove.setOnAction(e -> {
             this.datagrid.getChildren().removeAll(dot, label, remove);
-            this.chosenFieldtypes.remove(box);
-            this.pdfPreview.getChildren().remove(rec);
+            this.chosenFieldTypes.remove(box);
+            this.pdfAnchor.getChildren().remove(rec);
         });
 
-        this.chosenFieldtypes.add(box);
+        this.chosenFieldTypes.add(box);
 
         ev.consume();
         //Die Handler sind fertig, also ersetzen mit welchen, die nichts tun
-        this.pdfPreview.setOnMouseReleased(CreateTemplateController::doNothing);
-        this.pdfPreview.setOnMouseDragged(CreateTemplateController::doNothing);
-        this.pdfPreview.setOnMouseEntered(CreateTemplateController::doNothing);
+        this.pdfAnchor.setOnMouseReleased(CreateTemplateController::doNothing);
+        this.pdfAnchor.setOnMouseDragged(CreateTemplateController::doNothing);
+        this.pdfAnchor.setOnMouseEntered(CreateTemplateController::doNothing);
         scene.setCursor(Cursor.DEFAULT);
         stage.setTitle(oldTitle);
     }
 
     private void paintRectangleContinuously(double startX, double startY, Rectangle rec, MouseEvent ev) {
-        final ImageView imageView = this.pdfGridController.pdfPreviewImageView;
+        final ImageView imageView = this.pdfPreviewController.pdfPreviewImageView;
 
         //Prüft das nicht über den Rand des Bildes gegangen wird.
         if (ev.getX() > imageView.getX() && ev.getX() < imageView.getX() + imageView.getFitWidth()) {
@@ -221,13 +223,13 @@ public class CreateTemplateController implements Initializable, Controller {
     }
 
     private Set<FieldType> getCurrentFieldNames() {
-        return this.chosenFieldtypes.stream()
+        return this.chosenFieldTypes.stream()
                 .map(Box::type)
                 .collect(Collectors.toSet());
     }
 
     private Paint getColor() {
-        final Set<Paint> usedColors = this.chosenFieldtypes.stream()
+        final Set<Paint> usedColors = this.chosenFieldTypes.stream()
                 .map(Box::color)
                 .collect(Collectors.toSet());
 
@@ -246,18 +248,14 @@ public class CreateTemplateController implements Initializable, Controller {
     @FXML
     private void createTemplateButtonOnAction() {
         if (isDataIncomplete()) {
-            AlertUtils.showAlert(Alert.AlertType.ERROR,
-                    "Fehler",
-                    "Es müssen alle Felder ausgefüllt sein",
-                    ""
-            );
+            AlertUtils.showErrorAlert("Es müssen alle Felder ausgefüllt sein");
             return;
         }
 
-        final List<FieldDTO> fields = new ArrayList<>(this.chosenFieldtypes.size());
+        final List<FieldDTO> fields = new ArrayList<>(this.chosenFieldTypes.size());
 
-        final ImageView image = this.pdfGridController.pdfPreviewImageView;
-        for (final Box box : this.chosenFieldtypes) {
+        final ImageView image = this.pdfPreviewController.pdfPreviewImageView;
+        for (final Box box : this.chosenFieldTypes) {
             final Rectangle rec = box.place;
 
             //Hier sollten nicht die absolute Weite genommen werden, da wir das Bild ja skaliert haben
@@ -284,7 +282,7 @@ public class CreateTemplateController implements Initializable, Controller {
                 "Template wurde erstellt"
         );
 
-        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(true);
+        ((Stage) this.pdfAnchor.getScene().getWindow()).setResizable(true);
 
         ControllerUtils.switchScene(
                 (Stage) this.dataGridPane.getScene().getWindow(),
@@ -293,15 +291,12 @@ public class CreateTemplateController implements Initializable, Controller {
     }
 
     private void onFailedSave(Throwable err) {
-        AlertUtils.showAlert(Alert.AlertType.ERROR,
-                "Fehler",
-                "Ein Fehler ist aufgetreten.",
-                err.getLocalizedMessage());
+        AlertUtils.showErrorAlert(err);
     }
 
     @FXML
     private void cancelButtonOnAction() {
-        ((Stage) this.pdfPreview.getScene().getWindow()).setResizable(true);
+        ((Stage) this.pdfAnchor.getScene().getWindow()).setResizable(true);
         ControllerUtils.switchScene(
                 (Stage) this.dataGridPane.getScene().getWindow(),
                 new Imports()

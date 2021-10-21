@@ -2,10 +2,9 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
-import de.baleipzig.pdfextraction.client.utils.interfaces.Controller;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
-public class PdfPreviewController implements Initializable, Controller {
+public class PdfPreviewController implements Initializable {
 
     @FXML
     public Button pageBackButton;
@@ -42,6 +41,9 @@ public class PdfPreviewController implements Initializable, Controller {
     @FXML
     public Button chooseFileButton;
 
+    @Inject
+    private PDFRenderer renderer;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -50,8 +52,8 @@ public class PdfPreviewController implements Initializable, Controller {
         pdfPreviewImageView.fitWidthProperty().bind(parentAnchorPane.widthProperty());
         pdfPreviewImageView.fitHeightProperty().bind(parentAnchorPane.heightProperty());
 
-        if (PDFRenderer.getInstance().hasPreview()) {
-            updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
+        if (this.renderer.hasPreview()) {
+            updatePdfPreview(this.renderer::getCurrentPreview);
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
@@ -72,19 +74,19 @@ public class PdfPreviewController implements Initializable, Controller {
 
                 final List<File> files = dragboard.getFiles();
                 if (files.size() > 1) {
-                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es kann nur eine PDF-Datei analysiert werden.");
+                    AlertUtils.showErrorAlert("Es kann nur eine PDF-Datei analysiert werden.");
                     return;
                 }
 
                 final File first = files.get(0);
                 final boolean isCorrectFormat = first.getName().toLowerCase().endsWith(".pdf");
                 if (!isCorrectFormat) {
-                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", null, "Es werden nur PDF-Dateien unterstützt.");
+                    AlertUtils.showErrorAlert("Es werden nur PDF-Dateien unterstützt.");
                     return;
                 }
 
-                PDFRenderer.getInstance().setPdfPath(first.toPath());
-                updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
+                this.renderer.setPdfPath(first.toPath());
+                updatePdfPreview(this.renderer::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
                 event.consume();
@@ -95,16 +97,16 @@ public class PdfPreviewController implements Initializable, Controller {
     @FXML
     public void onClickPageBack() {
 
-        if (PDFRenderer.getInstance().hasPreviousPage()) {
-            updatePdfPreview(PDFRenderer.getInstance()::getPreviousPreview);
+        if (this.renderer.hasPreviousPage()) {
+            updatePdfPreview(this.renderer::getPreviousPreview);
         }
     }
 
     @FXML
     public void onClickPageForward() {
 
-        if (PDFRenderer.getInstance().hasNextPage()) {
-            updatePdfPreview(PDFRenderer.getInstance()::getNextPreview);
+        if (this.renderer.hasNextPage()) {
+            updatePdfPreview(this.renderer::getNextPreview);
         }
     }
 
@@ -122,22 +124,22 @@ public class PdfPreviewController implements Initializable, Controller {
 
         final Path pdfPath = selectedFile.toPath();
 
-        PDFRenderer.getInstance().setPdfPath(pdfPath);
+        this.renderer.setPdfPath(pdfPath);
         // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
-        updatePdfPreview(PDFRenderer.getInstance()::getCurrentPreview);
+        updatePdfPreview(this.renderer::getCurrentPreview);
     }
 
     private void updatePdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("Seite: %d/%d".formatted(PDFRenderer.getInstance().getCurrentPage() + 1, PDFRenderer.getInstance().getNumberOfPages()));
+            pageIndexLabel.setText("Seite: %d/%d".formatted(this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()
                     .setCause(e)
                     .log("Exception occurred while setting new Image.");
 
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Fehler", "Ein Fehler ist aufgetreten.", e.getLocalizedMessage());
+            AlertUtils.showErrorAlert(e);
         }
     }
 }

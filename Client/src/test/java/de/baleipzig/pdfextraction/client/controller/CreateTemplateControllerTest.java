@@ -2,6 +2,7 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.Injector;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import javafx.scene.input.MouseButton;
@@ -39,7 +40,8 @@ class CreateTemplateControllerTest extends ApplicationTest {
 
     @Test
     void createTemplate() throws URISyntaxException {
-        PDFRenderer.getInstance().setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Kfz-Anschreiben.pdf").toURI()));
+        PDFRenderer renderer = Injector.getSingleton(PDFRenderer.class);
+        renderer.setPdfPath(Path.of(CreateTemplateControllerTest.class.getResource("Kfz-Anschreiben.pdf").toURI()));
 
         clickOn("#insuranceTextField").write("HUK");
         clickOn("#templateNameTextField").write("HUK-Autoversicherung");

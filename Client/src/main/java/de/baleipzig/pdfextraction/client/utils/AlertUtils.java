@@ -2,6 +2,8 @@ package de.baleipzig.pdfextraction.client.utils;
 
 import javafx.scene.control.Alert;
 
+import java.util.Optional;
+
 public class AlertUtils {
 
     private AlertUtils() {
@@ -21,6 +23,28 @@ public class AlertUtils {
                                  final String content) {
 
         getAlert(alertType, title, header, content).show();
+    }
+
+    /**
+     * Creates an Error Alter with the given Throwable
+     *
+     * @param t Optional Exception that caused this Alert
+     */
+    public static void showErrorAlert(final Throwable t) {
+        final String errorMessage = Optional.ofNullable(t)
+                .map(Throwable::getLocalizedMessage)
+                .orElse("");
+
+        showErrorAlert(errorMessage);
+    }
+
+    /**
+     * Creates an Error Alter with the given Throwable
+     *
+     * @param errorMessage Additional Error-Message
+     */
+    public static void showErrorAlert(final String errorMessage) {
+        showAlert(Alert.AlertType.ERROR, "Fehler", null, "Ein Fehler ist aufgetreten.\n”" + errorMessage);
     }
 
     /**

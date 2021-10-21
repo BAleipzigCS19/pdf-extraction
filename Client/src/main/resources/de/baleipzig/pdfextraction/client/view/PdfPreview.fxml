@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="800.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/17"
+<GridPane prefHeight="800.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="de.baleipzig.pdfextraction.client.controller.PdfPreviewController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -15,16 +15,13 @@
     <children>
         <AnchorPane minHeight="0.0" minWidth="0.0">
             <children>
-                <BorderPane prefHeight="340.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0"
-                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <BorderPane prefHeight="340.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <center>
-                        <Label fx:id="addFileLabel" text="PDF-Datei per Drag&amp;Drop hinzufügen"
-                               BorderPane.alignment="CENTER"/>
+                        <Label fx:id="addFileLabel" text="PDF-Datei per Drag&amp;Drop hinzufügen" BorderPane.alignment="CENTER"/>
                     </center>
                 </BorderPane>
-                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0"/>
+                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             </children>
         </AnchorPane>
         <GridPane maxHeight="60.0" minHeight="60.0" GridPane.rowIndex="1">
@@ -37,11 +34,9 @@
             </rowConstraints>
             <children>
                 <Button fx:id="pageBackButton" mnemonicParsing="false" onAction="#onClickPageBack" text="&lt;-"/>
-                <Button fx:id="pageForwardButton" alignment="TOP_LEFT" mnemonicParsing="false"
-                        onAction="#onClickPageForward" text="-&gt;" GridPane.halignment="RIGHT"/>
+                <Button fx:id="pageForwardButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#onClickPageForward" text="-&gt;" GridPane.halignment="RIGHT"/>
                 <Label fx:id="pageIndexLabel" alignment="CENTER" text="Seitenzahl" GridPane.halignment="CENTER"/>
-                <Button fx:id="chooseFileButton" mnemonicParsing="false" onAction="#onClickChooseFile"
-                        text="Datei Auswählen" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+                <Button fx:id="chooseFileButton" mnemonicParsing="false" onAction="#onClickChooseFile" text="Datei Auswählen" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
             </children>
         </GridPane>
     </children>

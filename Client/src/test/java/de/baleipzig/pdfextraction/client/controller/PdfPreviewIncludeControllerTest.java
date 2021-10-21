@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.controller;
+package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.PdfPreview;
