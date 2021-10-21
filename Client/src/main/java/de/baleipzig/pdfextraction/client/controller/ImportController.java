@@ -8,10 +8,13 @@ import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
@@ -22,19 +25,25 @@ import java.util.ResourceBundle;
 public class ImportController implements Initializable {
 
     @FXML
+    public MenuBar menuBar;
+
+    @FXML
     private Button continueButton;
 
     @FXML
     private ComboBox<String> templateComboBox;
-
-    @FXML
-    private Button createTemplateButton;
 
     @Inject
     private TemplateConnector connector;
 
     @Inject
     private Job job;
+
+    @FXML
+    private MenuBarController menuBarController;
+
+    @FXML
+    private PdfPreviewController pdfPreviewController;
 
     @FXML
     private void continueButtonOnAction() {
@@ -70,6 +79,12 @@ public class ImportController implements Initializable {
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .subscribe(this::onRequestCompleted);
+
+        final EventHandler<ActionEvent> chooseFileMethod = this.menuBarController.chooseFile.getOnAction();
+        this.menuBarController.chooseFile.setOnAction(event -> {
+            chooseFileMethod.handle(event);
+            this.pdfPreviewController.updatePdfPreview();
+        });
     }
 
     private void onRequestCompleted(final String name) {

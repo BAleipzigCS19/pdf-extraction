@@ -55,6 +55,9 @@ public class CreateTemplateController implements Initializable {
     private PdfPreviewController pdfPreviewController;
 
     @FXML
+    private MenuBarController menuBarController;
+
+    @FXML
     private GridPane datagrid;
 
     @Inject
@@ -80,6 +83,15 @@ public class CreateTemplateController implements Initializable {
         this.pdfPreviewController.pageBackButton.setOnAction(ev -> {
             superBackward.handle(ev);
             this.onPageTurn();
+        });
+
+        // die zeile 88 holt sich die OnAction Methode von dem Item mit der id:chooseFile
+        final EventHandler<ActionEvent> chooseFileMethod = this.menuBarController.chooseFile.getOnAction();
+        this.menuBarController.chooseFile.setOnAction(event -> {
+            // hier wird der Code von der chooseFileMethod ausgeführt
+            chooseFileMethod.handle(event);
+            // hier wird der zusätzliche code der anschließend ausgeführt werden soll gecallt.
+            this.pdfPreviewController.updatePdfPreview();
         });
     }
 

@@ -36,7 +36,6 @@
                 <Button fx:id="pageBackButton" mnemonicParsing="false" onAction="#onClickPageBack" text="&lt;-"/>
                 <Button fx:id="pageForwardButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#onClickPageForward" text="-&gt;" GridPane.halignment="RIGHT"/>
                 <Label fx:id="pageIndexLabel" alignment="CENTER" text="Seitenzahl" GridPane.halignment="CENTER"/>
-                <Button fx:id="chooseFileButton" mnemonicParsing="false" onAction="#onClickChooseFile" text="Datei Auswählen" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
             </children>
         </GridPane>
     </children>
