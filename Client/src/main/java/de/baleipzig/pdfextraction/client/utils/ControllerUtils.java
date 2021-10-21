@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.utils;
 
+import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.FXView;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

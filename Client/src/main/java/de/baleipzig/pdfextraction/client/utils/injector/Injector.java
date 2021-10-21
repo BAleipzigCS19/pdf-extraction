@@ -1,7 +1,9 @@
-package de.baleipzig.pdfextraction.client.utils;
+package de.baleipzig.pdfextraction.client.utils.injector;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
@@ -20,10 +22,26 @@ public final class Injector {
      * @return An Instance of the given Class with injected Fields
      */
     public static <T> T createInstance(Class<T> toInstantiate) {
+        if (toInstantiate.isInterface()) {
+            return getImplementingClass(toInstantiate);
+        }
 
         final boolean isSingleton = toInstantiate.getAnnotation(Singleton.class) != null;
 
         return isSingleton ? getSingleton(toInstantiate) : getInstance(toInstantiate);
+    }
+
+    @SuppressWarnings("unchecked")//These Casts are safe
+    private static <T> T getImplementingClass(Class<T> interfaceToInstantiate) {
+        final Reflections reflections = new Reflections("de.baleipzig");
+        final Set<Class<?>> classes = reflections.get(Scanners.SubTypes.of(interfaceToInstantiate).asClass());
+        if (classes.isEmpty()) {
+            throw new IllegalArgumentException("Class \"%s\" has no implementation".formatted(interfaceToInstantiate.getName()));
+        }
+
+        final Optional<Class<?>> classWithHighestOrder = classes.stream()
+                .max(Comparator.comparingInt(c -> Optional.ofNullable(c.getAnnotation(ImplementationOrder.class)).map(ImplementationOrder::order).orElse(-1)));
+        return (T) createInstance(classWithHighestOrder.orElseThrow());
     }
 
     @SuppressWarnings("unchecked")//These Casts are safe
