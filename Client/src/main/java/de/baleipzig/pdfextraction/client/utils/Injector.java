@@ -76,7 +76,7 @@ public final class Injector {
             try {
                 doInjection(instance, toSet, f);
             } catch (IllegalAccessException e) {
-                LoggerFactory.getLogger(ControllerUtils.class)
+                LoggerFactory.getLogger(Inject.class)
                         .atError()
                         .setCause(e)
                         .addArgument(f.getType()::getName)
@@ -95,7 +95,7 @@ public final class Injector {
 
             return constructor.newInstance(parameter);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            LoggerFactory.getLogger(ControllerUtils.class)
+            LoggerFactory.getLogger(Inject.class)
                     .atError()
                     .setCause(e)
                     .addArgument(constructor.getDeclaringClass()::getName)
