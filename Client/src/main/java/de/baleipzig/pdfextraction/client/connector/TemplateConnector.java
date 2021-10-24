@@ -4,15 +4,20 @@ import de.baleipzig.pdfextraction.api.config.Config;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import jakarta.inject.Singleton;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -75,5 +80,58 @@ public class TemplateConnector {
                         return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
+    }
+
+    public Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile) {
+        if (!StringUtils.hasText(templateName)) {
+            return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
+        }
+
+        if (pathToFile == null) {
+            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
+        }
+
+        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
+
+        return this.webClient
+                .post()
+                .uri("/runAnalysis?name={name}", Map.of("name", templateName))
+                .body(BodyInserters.fromMultipartData(toSend))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return response.bodyToMono(new ParameterizedTypeReference<>() {
+                        });
+                    } else {
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
+                    }
+                });
+
+    }
+
+
+    public Mono<byte[]> createTestImage(final String templateName, final Path pathToFile) {
+        if (!StringUtils.hasText(templateName)) {
+            return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
+        }
+
+        if (pathToFile == null) {
+            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
+        }
+
+        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
+
+        return this.webClient
+                .post()
+                .uri("/test?name={name}", Map.of("name", templateName))
+                .body(BodyInserters.fromMultipartData(toSend))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return response.bodyToMono(new ParameterizedTypeReference<>() {
+                        });
+                    } else {
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
+                    }
+                });
+
     }
 }

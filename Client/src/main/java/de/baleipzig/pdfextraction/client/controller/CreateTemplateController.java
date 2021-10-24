@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -255,14 +256,15 @@ public class CreateTemplateController implements Initializable {
         final List<FieldDTO> fields = new ArrayList<>(this.chosenFieldTypes.size());
 
         final ImageView image = this.pdfPreviewController.pdfPreviewImageView;
+        final Bounds bounds = image.getBoundsInParent();
         for (final Box box : this.chosenFieldTypes) {
             final Rectangle rec = box.place;
 
             //Hier sollten nicht die absolute Weite genommen werden, da wir das Bild ja skaliert haben
-            final double percX = (rec.getX() - image.getX()) / image.getFitWidth();
-            final double percY = (rec.getY() - image.getY()) / image.getFitHeight();
-            final double percWidth = rec.getWidth() / image.getFitWidth();
-            final double percHeight = rec.getHeight() / image.getFitHeight();
+            final double percX = (rec.getX() - image.getX()) / bounds.getWidth();
+            final double percY = (rec.getY() - image.getY()) / bounds.getHeight();
+            final double percWidth = rec.getWidth() / bounds.getWidth();
+            final double percHeight = rec.getHeight() / bounds.getHeight();
 
             fields.add(new FieldDTO(box.type, box.page, percX, percY, percWidth, percHeight));
         }
