@@ -11,13 +11,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController" stylesheets="@stylesheet.css" prefHeight="800.0" prefWidth="1050.0">
+<BorderPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController">
     <top>
-        <fx:include source="MenuBar.fxml" fx:id="menuBar"/>
+        <fx:include fx:id="menuBar" source="MenuBar.fxml" />
     </top>
     <center>
-      <GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" >
+      <GridPane alignment="TOP_CENTER" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="772.5" prefWidth="1050.0">
           <columnConstraints>
               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -88,6 +87,9 @@
                   </GridPane.margin>
               </GridPane>
           </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
       </GridPane>
    </center>
 </BorderPane>
