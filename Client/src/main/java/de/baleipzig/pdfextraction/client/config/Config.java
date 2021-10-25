@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.api.config;
+package de.baleipzig.pdfextraction.client.config;
 
 import jakarta.inject.Singleton;
 
@@ -13,7 +13,6 @@ import java.util.Properties;
 public class Config {
 
     private static Path PATH_TO_CONFIG;
-
     public static void setPathToConfig(Path path) {
         PATH_TO_CONFIG = path;
     }
@@ -24,9 +23,8 @@ public class Config {
             throws IOException {
         final Properties props = getProperties();
 
-        this.serverURL = Objects.requireNonNull(props.getProperty("server.url"), "Server URL is missing");
+        this.serverURL = Objects.requireNonNull(props.getProperty("server.url"), "Server URL not set");
     }
-
 
     public String getServerURL() {
         return serverURL;

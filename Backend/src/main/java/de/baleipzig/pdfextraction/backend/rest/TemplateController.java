@@ -6,6 +6,7 @@ import de.baleipzig.pdfextraction.backend.entities.Field;
 import de.baleipzig.pdfextraction.backend.entities.Template;
 import de.baleipzig.pdfextraction.backend.repositories.TemplateRepository;
 import de.baleipzig.pdfextraction.backend.util.PDFUtils;
+import de.baleipzig.pdfextraction.backend.tesseract.Tess;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,16 +30,60 @@ import java.util.Map;
 @RequestMapping(path = "/rest/")
 public class TemplateController {
 
+    private final TemplateRepository repo;
+    private final Tess tess;
     @Value("${server.port}")
     private String port;
-
     @Value("${server.host}")
     private String host;
 
-    private final TemplateRepository repo;
-
-    public TemplateController(TemplateRepository repo) {
+    public TemplateController(TemplateRepository repo, Tess tess) {
         this.repo = repo;
+        this.tess = tess;
+    }
+
+    private static boolean isValidDTO(final TemplateDTO dto) {
+        final boolean areFieldsValid = dto != null && dto.getName() != null && !dto.getName().isBlank()
+                && dto.getConsumer() != null && !dto.getConsumer().isBlank()
+                && dto.getFields() != null && !dto.getFields().isEmpty();
+        if (!areFieldsValid) {
+            return false;
+        }
+
+        for (final FieldDTO field : dto.getFields()) {
+            if (!isFieldDTOValid(field)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isFieldDTOValid(FieldDTO field) {
+        if (field.getPage() < 0) {
+            return false;
+        }
+
+        if (field.getWidthPercentage() < 0 || field.getWidthPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getHeightPercentage() < 0 || field.getHeightPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getxPosPercentage() < 0 || field.getxPosPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getyPosPercentage() < 0 || field.getyPosPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getxPosPercentage() + field.getWidthPercentage() > 1) {
+            return false;
+        }
+
+        return field.getyPosPercentage() + field.getHeightPercentage() <= 1;
     }
 
     @GetMapping(path = "template/names")
@@ -181,42 +226,27 @@ public class TemplateController {
                 && dto.getFields() != null && !dto.getFields().isEmpty();
         if (!areFieldsValid) {
             return false;
+    @PostMapping(path = "tesseract")
+    public ResponseEntity<Map<String, String>> saveTemplate(@RequestPart("name") final String name, @RequestPart("content") final byte[] fileContent) {
+        if (!StringUtils.hasText(name) || !this.repo.existsTemplateByName(name) || fileContent == null || fileContent.length == 0) {
+            LoggerFactory.getLogger(TemplateController.class)
+                    .warn("Received invalid Request with name {}", name);
+            return ResponseEntity.badRequest().build();
         }
 
-        for (final FieldDTO field : dto.getFields()) {
-            if (!isFieldDTOValid(field)) {
-                return false;
-            }
-        }
-        return true;
-    }
+        final Template template = this.repo.findTemplateByName(name);
 
-    private static boolean isFieldDTOValid(FieldDTO field) {
-        if (field.getPage() < 0) {
-            return false;
-        }
+        try {
+            final Map<Field, String> read = this.tess.doOCR(template, fileContent);
+            final Map<String, String> result = new HashMap<>(read.size());
+            read.forEach((k, v) -> result.put(k.getType().getName(), v));
 
-        if (field.getWidthPercentage() < 0 || field.getWidthPercentage() > 1) {
-            return false;
+            return ResponseEntity.ok(result);
+        } catch (final UncheckedIOException e) {
+            LoggerFactory.getLogger(TemplateController.class)
+                    .error("Exception while running OCR.", e);
+            return ResponseEntity.internalServerError().build();
         }
-
-        if (field.getHeightPercentage() < 0 || field.getHeightPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getxPosPercentage() < 0 || field.getxPosPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getyPosPercentage() < 0 || field.getyPosPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getxPosPercentage() + field.getWidthPercentage() > 1) {
-            return false;
-        }
-
-        return field.getyPosPercentage() + field.getHeightPercentage() <= 1;
     }
 
     private List<FieldDTO> mapToFieldDTO(List<Field> fields) {
