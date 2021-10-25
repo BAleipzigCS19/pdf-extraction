@@ -83,33 +83,14 @@ public class TemplateConnector {
     }
 
     public Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile) {
-        if (!StringUtils.hasText(templateName)) {
-            return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
-        }
-
-        if (pathToFile == null) {
-            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
-        }
-
-        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
-
-        return this.webClient
-                .post()
-                .uri("/runAnalysis?name={name}", Map.of("name", templateName))
-                .body(BodyInserters.fromMultipartData(toSend))
-                .exchangeToMono(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToMono(new ParameterizedTypeReference<>() {
-                        });
-                    } else {
-                        return Mono.error(new IllegalStateException(response.statusCode().name()));
-                    }
-                });
-
+        return createRequest(templateName, pathToFile, "/runAnalysis");
     }
 
-
     public Mono<byte[]> createTestImage(final String templateName, final Path pathToFile) {
+        return createRequest(templateName, pathToFile, "/test");
+    }
+
+    private <T> Mono<T> createRequest(String templateName, Path pathToFile, String urlPath) {
         if (!StringUtils.hasText(templateName)) {
             return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
         }
@@ -122,7 +103,7 @@ public class TemplateConnector {
 
         return this.webClient
                 .post()
-                .uri("/test?name={name}", Map.of("name", templateName))
+                .uri(urlPath)
                 .body(BodyInserters.fromMultipartData(toSend))
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
@@ -132,6 +113,5 @@ public class TemplateConnector {
                         return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
-
     }
 }

@@ -11,10 +11,6 @@ public class Job {
     private String templateName;
     private Path pathToFile;
 
-    public Job() {
-        //empty Constructor
-    }
-
     public Path getPathToFile() {
         return pathToFile;
     }
