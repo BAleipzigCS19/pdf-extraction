@@ -41,6 +41,10 @@ public class TemplateController {
         this.repo = repo;
     }
 
+    /**
+     * //TODO noch ergänzen
+     * @return
+     */
     @GetMapping(path = "template/names")
     public ResponseEntity<Collection<String>> getAllNames() {
         LogManager.getLogger(TemplateController.class)
@@ -59,6 +63,10 @@ public class TemplateController {
         return ResponseEntity.ok(listOfNames);
     }
 
+    /**
+     * //TODO noch ergänzen
+     * @return
+     */
     @GetMapping(path = "template")
     public ResponseEntity<TemplateDTO> getForName(@RequestParam(name = "name") final String templateName) {
         if (templateName.isBlank()) {
@@ -93,6 +101,10 @@ public class TemplateController {
         }
     }
 
+    /**
+     * //TODO noch ergänzen
+     * @return
+     */
     @PutMapping(path = "template")
     public ResponseEntity<Void> saveTemplate(@RequestBody final TemplateDTO toSave) {
         if (!isValidDTO(toSave)) {
