@@ -89,7 +89,9 @@ public class PdfPreviewController implements Initializable {
                     return;
                 }
 
-                this.renderer.setPdfPath(first.toPath());
+                final Path pathToFile = first.toPath();
+                this.job.setPathToFile(pathToFile);
+                this.renderer.setPdfPath(pathToFile);
                 updatePdfPreview(this.renderer::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
