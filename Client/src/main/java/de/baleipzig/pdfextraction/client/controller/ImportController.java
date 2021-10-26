@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.client.controller;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ImportController implements Initializable {
@@ -31,8 +33,25 @@ public class ImportController implements Initializable {
     @Inject
     private TemplateConnector connector;
 
+    @Inject
+    private Job job;
+
     @FXML
     private void continueButtonOnAction() {
+        final Optional<String> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
+        if (chosenValue.isEmpty()) {
+            //Intentionally not checking if something is set in the job
+            AlertUtils.showErrorAlert("Bitte wählen sie erst eine Vorlage aus.");
+            return;
+        }
+
+        if (this.job.getPathToFile() == null) {
+            AlertUtils.showErrorAlert("Bitte wählen sie zuerst eine PDF Datei aus.");
+            return;
+        }
+
+        chosenValue.ifPresent(this.job::setTemplateName);
+
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
     }

@@ -22,6 +22,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
 
+    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
+
     // Im moment brauchen wir durch Spring die 2.x Versionen, NICHT die 3.x
     // https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime
     runtimeOnly("org.glassfish.jaxb:jaxb-runtime:2.3.5")
@@ -32,7 +35,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
-application{
+application {
     mainClass.set("de.baleipzig.pdfextraction.backend.Starter")
 }
 

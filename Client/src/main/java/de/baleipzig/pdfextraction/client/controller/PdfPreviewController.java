@@ -1,6 +1,7 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import jakarta.inject.Inject;
 import javafx.fxml.FXML;
@@ -44,6 +45,9 @@ public class PdfPreviewController implements Initializable {
     @Inject
     private PDFRenderer renderer;
 
+    @Inject
+    private Job job;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -85,7 +89,9 @@ public class PdfPreviewController implements Initializable {
                     return;
                 }
 
-                this.renderer.setPdfPath(first.toPath());
+                final Path pathToFile = first.toPath();
+                this.job.setPathToFile(pathToFile);
+                this.renderer.setPdfPath(pathToFile);
                 updatePdfPreview(this.renderer::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
@@ -124,6 +130,7 @@ public class PdfPreviewController implements Initializable {
 
         final Path pdfPath = selectedFile.toPath();
 
+        this.job.setPathToFile(pdfPath);
         this.renderer.setPdfPath(pdfPath);
         // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
         updatePdfPreview(this.renderer::getCurrentPreview);

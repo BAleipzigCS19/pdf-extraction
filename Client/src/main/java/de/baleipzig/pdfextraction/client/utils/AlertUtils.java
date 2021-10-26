@@ -44,7 +44,7 @@ public class AlertUtils {
      * @param errorMessage Additional Error-Message
      */
     public static void showErrorAlert(final String errorMessage) {
-        showAlert(Alert.AlertType.ERROR, "Fehler", null, "Ein Fehler ist aufgetreten.\n”" + errorMessage);
+        showAlert(Alert.AlertType.ERROR, "Fehler", null, "Ein Fehler ist aufgetreten.\n" + errorMessage);
     }
 
     /**
