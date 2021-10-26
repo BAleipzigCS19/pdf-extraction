@@ -10,7 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 @ImplementationOrder(order = Integer.MAX_VALUE)
@@ -28,6 +30,16 @@ public class TestConnector implements TemplateConnector {
     @Override
     public Mono<Void> save(TemplateDTO dto) {
         return Mono.empty();
+    }
+
+    @Override
+    public Mono<Map<String, String>> runJob(String templateName, Path pathToFile) {
+        return Mono.just(Map.of("Test A", "Content A"));
+    }
+
+    @Override
+    public Mono<byte[]> createTestImage(String templateName, Path pathToFile) {
+        return Mono.error(new UnsupportedOperationException("Not implemented."));
     }
 
     @NotNull
