@@ -22,7 +22,7 @@ class TemplateConnectorTest {
     @BeforeEach
     void setUp() {
         this.mock = new MockWebServer();
-        this.connector = new TemplateConnector(this.mock.url("").toString());
+        this.connector = new TemplateConnectorImpl(this.mock.url("").toString());
     }
 
     @Test

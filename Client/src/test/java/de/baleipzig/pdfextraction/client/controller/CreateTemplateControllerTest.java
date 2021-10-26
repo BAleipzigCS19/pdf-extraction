@@ -2,7 +2,7 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.utils.Injector;
+import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import javafx.scene.input.MouseButton;
