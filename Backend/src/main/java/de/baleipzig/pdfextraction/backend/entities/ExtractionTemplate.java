@@ -12,8 +12,7 @@ import java.util.Objects;
                 @UniqueConstraint(name = "unq_name", columnNames = {"name"})
         }
 )
-public class Template extends AbstractPersistable<Integer> {
-
+public class ExtractionTemplate extends AbstractPersistable<Integer> {
 
     private String name;
 
@@ -22,11 +21,11 @@ public class Template extends AbstractPersistable<Integer> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Field> fields;
 
-    public Template() {
+    public ExtractionTemplate() {
         //Empty Constructor for Serialization
     }
 
-    public Template(String name, String content, List<Field> fields) {
+    public ExtractionTemplate(String name, String content, List<Field> fields) {
         this.name = name;
         this.consumer = content;
         this.fields = fields;
@@ -58,7 +57,7 @@ public class Template extends AbstractPersistable<Integer> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Template other)) {
+        if (!(o instanceof ExtractionTemplate other)) {
             return true;
         }
         return Objects.equals(name, other.name) && Objects.equals(consumer, other.consumer);

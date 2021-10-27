@@ -1,11 +1,8 @@
-package de.baleipzig.pdfextraction.client.connector;
+package de.baleipzig.pdfextraction.client.connector.api;
 
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.nio.file.Path;
-import java.util.Map;
 
 public interface TemplateConnector {
 
@@ -14,8 +11,4 @@ public interface TemplateConnector {
     Mono<TemplateDTO> getForName(String name);
 
     Mono<Void> save(TemplateDTO dto);
-
-    Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile);
-
-    Mono<byte[]> createTestImage(final String templateName, final Path pathToFile);
 }

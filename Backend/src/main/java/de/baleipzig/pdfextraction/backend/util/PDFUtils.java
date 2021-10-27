@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.backend.util;
 
+import de.baleipzig.pdfextraction.backend.entities.ExtractionTemplate;
 import de.baleipzig.pdfextraction.backend.entities.Field;
-import de.baleipzig.pdfextraction.backend.entities.Template;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
@@ -26,7 +26,7 @@ public class PDFUtils {
      * @param fileContent Content-Array of the File
      * @return An Image of the first page with the Fields marked
      */
-    public static RenderedImage toImage(final Template template, final byte[] fileContent) {
+    public static RenderedImage toImage(final ExtractionTemplate template, final byte[] fileContent) {
         try (final PDDocument document = PDDocument.load(fileContent)) {
             final PDFRenderer renderer = new PDFRenderer(document);
             final BufferedImage image = renderer.renderImage(0);
@@ -60,7 +60,7 @@ public class PDFUtils {
      * @param fileContent Content of the PDF-File
      * @return Map of Fields and their resolved Text
      */
-    public static Map<Field, String> extract(final Template template, final byte[] fileContent) {
+    public static Map<Field, String> extract(final ExtractionTemplate template, final byte[] fileContent) {
         final Map<Field, String> result = new HashMap<>(template.getFields().size());
 
         try (final PDDocument document = PDDocument.load(fileContent)) {

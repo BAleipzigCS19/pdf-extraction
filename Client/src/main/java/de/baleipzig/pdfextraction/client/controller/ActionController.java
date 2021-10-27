@@ -1,6 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
+import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
@@ -27,7 +27,7 @@ public class ActionController {
     private Button backToImportButton;
 
     @Inject
-    private TemplateConnector connector;
+    private ExtractionConnector connector;
 
     @Inject
     private Job job;
