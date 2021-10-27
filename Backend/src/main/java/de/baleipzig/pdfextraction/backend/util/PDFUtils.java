@@ -12,12 +12,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PDFUtils {
+public final class PDFUtils {
 
     /**
      * Converts the first page to an Image to check the Box-placement
@@ -27,24 +28,24 @@ public class PDFUtils {
      * @return An Image of the first page with the Fields marked
      */
     public static RenderedImage toImage(final Template template, final byte[] fileContent) {
+        final int pageToRender = 0;
+
         try (final PDDocument document = PDDocument.load(fileContent)) {
             final PDFRenderer renderer = new PDFRenderer(document);
-            final BufferedImage image = renderer.renderImage(0);
-            final int totalHeight = image.getHeight();
-            final int totalWidth = image.getWidth();
+            final BufferedImage image = renderer.renderImage(pageToRender);
+            final Size size = getSize(image);
 
             final Graphics g = image.createGraphics();
             g.setColor(Color.RED);
-            for (Field f : template.getFields()) {
-                if (f.getPage() == 0) {
-                    final int xPos = (int) (f.getxPosPercentage() * totalWidth);
-                    final int yPos = (int) (f.getyPosPercentage() * totalHeight);
-                    final int width = (int) (f.getWidthPercentage() * totalWidth);
-                    final int height = (int) (f.getHeightPercentage() * totalHeight);
-
-                    g.drawRect(xPos, yPos, width, height);
-                    g.drawString(f.getType().getName(), xPos + 5, yPos + 10);
+            for (Field field : template.getFields()) {
+                if (field.getPage() != pageToRender) {
+                    continue;
                 }
+
+                final Rectangle2D rec = getRectangle(size, field);
+
+                g.drawRect((int) rec.getX(), (int) rec.getY(), (int) rec.getWidth(), (int) rec.getHeight());
+                g.drawString(field.getType().getName(), (int) rec.getX() + 5, (int) rec.getY() + 10);
             }
             g.dispose();
             return image;
@@ -56,33 +57,28 @@ public class PDFUtils {
     /**
      * Attempts to extract the information form the given PDF with the template
      *
-     * @param template    Template with the Fielddefinition
+     * @param fields      Collection of Fields to Extract
      * @param fileContent Content of the PDF-File
      * @return Map of Fields and their resolved Text
      */
-    public static Map<Field, String> extract(final Template template, final byte[] fileContent) {
-        final Map<Field, String> result = new HashMap<>(template.getFields().size());
+    public static Map<Field, String> extract(final Collection<Field> fields, final byte[] fileContent) {
+        final Map<Field, String> result = new HashMap<>(fields.size());
 
         try (final PDDocument document = PDDocument.load(fileContent)) {
             final PDFRenderer renderer = new PDFRenderer(document);
 
-            final Map<Integer, List<Field>> map = template.getFields()
+            final Map<Integer, List<Field>> map = fields
                     .stream()
                     .collect(Collectors.groupingBy(Field::getPage));
 
             for (Map.Entry<Integer, List<Field>> entry : map.entrySet()) {
                 final PDFTextStripperByArea stripper = new PDFTextStripperByArea();
                 final BufferedImage image = renderer.renderImage(entry.getKey());
-                final int totalHeight = image.getHeight();
-                final int totalWidth = image.getWidth();
+                final Size size = getSize(image);
 
-                for (final Field f : entry.getValue()) {
-                    final double xPos = f.getxPosPercentage() * totalWidth;
-                    final double yPos = f.getyPosPercentage() * totalHeight;
-                    final double width = f.getWidthPercentage() * totalWidth;
-                    final double height = f.getHeightPercentage() * totalHeight;
-
-                    stripper.addRegion(f.getType().name(), new Rectangle2D.Double(xPos, yPos, width, height));
+                for (final Field field : entry.getValue()) {
+                    final Rectangle2D rect = getRectangle(size, field);
+                    stripper.addRegion(field.getType().name(), rect);
                 }
 
                 stripper.extractRegions(document.getPage(entry.getKey()));
@@ -93,6 +89,21 @@ public class PDFUtils {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private static Rectangle2D getRectangle(Size size, Field f) {
+        final double xPos = f.getxPosPercentage() * size.width;
+        final double yPos = f.getyPosPercentage() * size.height;
+        final double width = f.getWidthPercentage() * size.width;
+        final double height = f.getHeightPercentage() * size.height;
+        return new Rectangle2D.Double(xPos, yPos, width, height);
+    }
+
+    private static Size getSize(final BufferedImage image) {
+        return new Size(image.getHeight(), image.getWidth());
+    }
+
+    private record Size(int height, int width) {
     }
 
     private PDFUtils() {
