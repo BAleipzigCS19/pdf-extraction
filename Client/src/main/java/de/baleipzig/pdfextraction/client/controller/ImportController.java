@@ -13,11 +13,26 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ImportController implements Initializable {
 
@@ -70,6 +85,83 @@ public class ImportController implements Initializable {
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .subscribe(this::onRequestCompleted);
+
+        updateDocument("KündigungKFZ.docx", "test.docx", "Test");
+        //readWordDocument();
+        //createWordDocument();
+    }
+
+    private void createWordDocument() {
+
+        XWPFDocument document = new XWPFDocument();
+        XWPFParagraph title = document.createParagraph();
+        title.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun titleRun = title.createRun();
+        titleRun.setText("Build Your REST API with Spring");
+        titleRun.setColor("009933");
+        titleRun.setBold(true);
+        titleRun.setFontFamily("Courier");
+        titleRun.setFontSize(20);
+
+        try {
+            FileOutputStream out = new FileOutputStream("test.docx");
+            document.write(out);
+            out.close();
+            document.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readWordDocument() {
+
+        try {
+            FileInputStream fis = new FileInputStream("KündigungKFZ.docx");
+            XWPFDocument xdoc = new XWPFDocument(OPCPackage.open(fis));
+            XWPFWordExtractor extractor = new XWPFWordExtractor(xdoc);
+            System.out.println(extractor.getText());
+
+            XWPFDocument document = new XWPFDocument();
+            XWPFParagraph title = document.createParagraph();
+            title.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun titleRun = title.createRun();
+            titleRun.setText(extractor.getText());
+
+            try {
+                FileOutputStream out = new FileOutputStream("test1.docx");
+                document.write(out);
+                out.close();
+                document.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void updateDocument(String input, String output, String name) {
+
+        try (XWPFDocument doc = new XWPFDocument(Files.newInputStream(Paths.get(input)))) {
+
+            List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
+
+            for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
+                for (XWPFRun xwpfRun : xwpfParagraph.getRuns()) {
+                    String docText = xwpfRun.getText(0);
+                    if (docText != null){
+                        docText = docText.replace("<Ablaufdatum>", name);
+                        xwpfRun.setText(docText, 0);
+                    }
+                }
+            }
+
+            try (FileOutputStream out = new FileOutputStream(output)) {
+                doc.write(out);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void onRequestCompleted(final String name) {
