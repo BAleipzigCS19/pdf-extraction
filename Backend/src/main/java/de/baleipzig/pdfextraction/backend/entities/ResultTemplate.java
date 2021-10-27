@@ -5,7 +5,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -52,9 +51,7 @@ public class ResultTemplate extends AbstractPersistable<Integer> {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), name);
-        result = 31 * result + Arrays.hashCode(content);
-        return result;
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override
