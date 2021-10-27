@@ -7,5 +7,12 @@ import java.util.Map;
 
 public interface Tess {
 
-    Map<Field, String> doBatchOCR(final Collection<Field> template, final byte[] fileContent);
+    /**
+     * Attempts to extract the given Fields from the given PDF with Tesseract
+     *
+     * @param fields      Fields to Extract
+     * @param fileContent PDF file
+     * @return Map of Fields to the Content that was extracted
+     */
+    Map<Field, String> doBatchOCR(final Collection<Field> fields, final byte[] fileContent);
 }

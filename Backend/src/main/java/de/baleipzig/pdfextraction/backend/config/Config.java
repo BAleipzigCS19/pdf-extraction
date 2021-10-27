@@ -16,8 +16,10 @@ import java.util.Properties;
 public class Config {
 
     private static Path PATH_TO_CONFIG;
+
     private final String tessPath;
     private final String tessLanguage;
+
     public Config()
             throws IOException {
         final Properties properties = getProperties();
@@ -26,14 +28,29 @@ public class Config {
         this.tessLanguage = Objects.requireNonNull(properties.getProperty("tess.language"), "Tesseract Language not set");
     }
 
+    /**
+     * Set's the path to the config file
+     *
+     * @param path Path to the config file
+     */
     public static void setPathToConfig(Path path) {
         PATH_TO_CONFIG = path;
     }
 
+    /**
+     * Gets the path to the tesseract Data
+     *
+     * @return Path to tesseract data
+     */
     public String getTessPath() {
         return tessPath;
     }
 
+    /**
+     * Gets the language to use for tesseract, in the format of ISO 639-3
+     *
+     * @return Language for tesseract
+     */
     public String getTessLanguage() {
         return tessLanguage;
     }
