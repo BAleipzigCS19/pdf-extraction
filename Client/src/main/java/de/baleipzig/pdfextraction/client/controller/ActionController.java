@@ -31,7 +31,6 @@ public class ActionController {
 
     @FXML
     private void backToImportButtonOnAction() {
-        ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(),
-                new Imports());
+        ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(), new Imports());
     }
 }

@@ -5,6 +5,7 @@ import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
+import de.baleipzig.pdfextraction.client.view.TemplateOverview;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,6 +19,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ImportController implements Initializable {
+
+    @FXML
+    public Button showTemplatesButton;
 
     @FXML
     private Button continueButton;
@@ -55,5 +59,11 @@ public class ImportController implements Initializable {
 
     private void onRequestCompleted(final String name) {
         this.templateComboBox.getItems().add(name);
+    }
+
+    public void showTemplates() {
+
+        ControllerUtils.switchScene((Stage) this.showTemplatesButton.getScene().getWindow(),
+                new TemplateOverview());
     }
 }
