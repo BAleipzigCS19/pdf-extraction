@@ -117,7 +117,7 @@ public class PdfPreviewController implements Initializable {
     }
 
     @FXML
-    public void onClickChooseFile() {
+    private void onClickChooseFile() {
         // Filechooser
         final Stage current = (Stage) this.chooseFileButton.getScene().getWindow();
         final FileChooser fileChooser = new FileChooser();

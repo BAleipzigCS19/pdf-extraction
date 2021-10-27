@@ -41,6 +41,11 @@ public class TemplateController {
         this.repo = repo;
     }
 
+    /**
+     * Loads all Names of all saved Templates in the DB
+     *
+     * @return A Collection of all names of all saved templates
+     */
     @GetMapping(path = "template/names")
     public ResponseEntity<Collection<String>> getAllNames() {
         LogManager.getLogger(TemplateController.class)
@@ -59,6 +64,12 @@ public class TemplateController {
         return ResponseEntity.ok(listOfNames);
     }
 
+    /**
+     * Attempts to load the Template with the given name from the Database
+     *
+     * @param templateName Name of the Template to load
+     * @return The template with the given name if it exists
+     */
     @GetMapping(path = "template")
     public ResponseEntity<TemplateDTO> getForName(@RequestParam(name = "name") final String templateName) {
         if (templateName.isBlank()) {
@@ -93,6 +104,12 @@ public class TemplateController {
         }
     }
 
+    /**
+     * Saves the given Template in the Database, overrides any previously saved Template with the same name.
+     *
+     * @param toSave Template to save
+     * @return If the Saving was successfull or not via HTTP-Codes
+     */
     @PutMapping(path = "template")
     public ResponseEntity<Void> saveTemplate(@RequestBody final TemplateDTO toSave) {
         if (!isValidDTO(toSave)) {
