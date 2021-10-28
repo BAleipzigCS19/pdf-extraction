@@ -85,6 +85,7 @@ public class ImportController implements Initializable {
             chooseFileMethod.handle(event);
             this.pdfPreviewController.updatePdfPreview();
         });
+
     }
 
     private void onRequestCompleted(final String name) {

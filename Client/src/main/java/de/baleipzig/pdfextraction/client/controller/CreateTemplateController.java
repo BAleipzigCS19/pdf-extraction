@@ -93,6 +93,7 @@ public class CreateTemplateController implements Initializable {
             // hier wird der zusätzliche code der anschließend ausgeführt werden soll gecallt.
             this.pdfPreviewController.updatePdfPreview();
         });
+
     }
 
     private void onPageTurn() {
