@@ -8,6 +8,8 @@
          fx:controller="de.baleipzig.pdfextraction.client.controller.MenuBarController">
   <Menu mnemonicParsing="false" text="File">
     <MenuItem fx:id="chooseFile" mnemonicParsing="false" onAction="#onChooseFile" text="Datei Auswählen"/>
+  </Menu>
+  <Menu mnemonicParsing="false" text="Template">
     <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate" text="Template erstellen"/>
   </Menu>
   <Menu mnemonicParsing="false" text="Help">

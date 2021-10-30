@@ -1,0 +1,43 @@
+.button-blue {
+    -fx-background-color: #013780;
+    -jfx-button-type: RAISED;
+    -fx-text-fill: WHITE;
+}
+
+.button-blue:hover {
+    -fx-background-color: #2157A0;
+}
+
+.button-white {
+    -fx-background-color: WHITE;
+    -jfx-button-type: RAISED;
+    -fx-text-fill: #2157A0;
+}
+
+.button-white:hover {
+    -fx-background-color: #dedede;
+}
+
+.check-box {
+    -jfx-focus-color : #013780;
+}
+
+.ueberschrift {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 16px;
+    -fx-text-fill: #2157A0;
+}
+
+#addField {
+    -fx-font-size: 18px;
+    -fx-font-weight: BOLD;
+    -fx-background-radius: 20%;
+}
+
+.label-datagrid {
+    -fx-background-color: #2157A0;
+    -fx-text-fill: WHITE;
+    -fx-label-padding: 5px 20px 5px 20px;
+    -fx-background-radius: 10px;
+    -fx-min-width: 200;
+}

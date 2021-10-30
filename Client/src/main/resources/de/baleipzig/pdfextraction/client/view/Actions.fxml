@@ -10,7 +10,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController" stylesheets="@stylesheet.css">
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController" stylesheets="@css/ViewStylesheet.css">
     <top>
         <fx:include source="MenuBar.fxml"/>
     </top>
@@ -36,12 +38,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" />
                   </rowConstraints>
                   <children>
-                      <CheckBox fx:id="createTerminationCheckBox" mnemonicParsing="false" text="Kündigung erstellen" GridPane.rowIndex="1" />
+                      <JFXCheckBox fx:id="createTerminationCheckBox" mnemonicParsing="false" text="Kündigung erstellen" GridPane.rowIndex="1" />
                   </children>
               </GridPane>
-              <Button fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction" text="Aktion durchführen" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-              <Label text="Aktionen" />
-              <Button fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction" text="Zurück" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+              <JFXButton fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction" text="Aktion durchführen" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" styleClass="button-blue"/>
+              <Label text="Bitte wählen Sie eine Aktion" styleClass="ueberschrift"/>
+              <JFXButton fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction" text="Zurück" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" styleClass="button-white"/>
           </children>
           <padding>
               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

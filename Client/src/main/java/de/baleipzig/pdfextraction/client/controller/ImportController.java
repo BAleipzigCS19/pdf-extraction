@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
@@ -13,7 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class ImportController implements Initializable {
     private Button continueButton;
 
     @FXML
-    private ComboBox<String> templateComboBox;
+    private JFXComboBox<Label> templateComboBox;
 
     @Inject
     private TemplateConnector connector;
@@ -89,6 +90,6 @@ public class ImportController implements Initializable {
     }
 
     private void onRequestCompleted(final String name) {
-        this.templateComboBox.getItems().add(name);
+        this.templateComboBox.getItems().add(new Label(name));
     }
 }

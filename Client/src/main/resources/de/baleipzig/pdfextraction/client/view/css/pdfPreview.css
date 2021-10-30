@@ -1,0 +1,8 @@
+.button-navigation {
+    -fx-background-color: WHITE;
+    -fx-text-fill: #013780;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-font-weight: BOLD;
+    -fx-font-size: 16px;
+}

@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXButton;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
@@ -179,9 +180,11 @@ public class CreateTemplateController implements Initializable {
 
         //Panel in der Box rechts
         final int count = this.datagrid.getRowCount();
-        final Rectangle dot = new Rectangle(10, 10, color);
+        final Rectangle dot = new Rectangle(20, 20, color);
         final Label label = new Label(fieldType.toString());
-        final Button remove = new Button("Remove");
+        label.getStyleClass().add("label-datagrid");
+        final JFXButton remove = new JFXButton("Remove");
+        remove.getStyleClass().add("button-white");
         this.datagrid.addRow(count, dot, label, remove);
         remove.setOnAction(e -> {
             this.datagrid.getChildren().removeAll(dot, label, remove);

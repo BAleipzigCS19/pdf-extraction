@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController">
+<BorderPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController">
     <top>
         <fx:include fx:id="menuBar" source="MenuBar.fxml" />
     </top>
@@ -27,16 +21,19 @@
           <children>
               <AnchorPane fx:id="pdfAnchor">
                   <children>
-                      <fx:include fx:id="pdfPreview" source="PdfPreview.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                      <fx:include fx:id="pdfPreview" source="PdfPreview.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
                   </children>
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
               </AnchorPane>
               <GridPane fx:id="dataGridPane" GridPane.columnIndex="1">
                   <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   </columnConstraints>
                   <rowConstraints>
-                      <RowConstraints maxHeight="120.0" minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="143.0" minHeight="120.0" prefHeight="143.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="30.0" minHeight="17.0" prefHeight="17.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   </rowConstraints>
@@ -51,11 +48,14 @@
                           <children>
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                   <children>
-                                      <Label text="Versicherung" />
+                                      <Label styleClass="ueberschrift" text="Versicherung">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" top="10.0" />
+                                 </VBox.margin></Label>
                                       <TextField fx:id="insuranceTextField" />
-                                      <Label text="Templatename">
+                                      <Label styleClass="ueberschrift" text="Templatename">
                                           <VBox.margin>
-                                              <Insets top="10.0" />
+                                              <Insets bottom="5.0" top="20.0" />
                                           </VBox.margin>
                                       </Label>
                                       <TextField fx:id="templateNameTextField" />
@@ -63,17 +63,20 @@
                               </VBox>
                           </children>
                       </GridPane>
-                      <Label text="zu ermittelnde Daten" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                      <Button fx:id="addFieldButton" mnemonicParsing="false" onAction="#addFieldButtonOnClick" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                      <Button fx:id="createTemplateButton" mnemonicParsing="false" onAction="#createTemplateButtonOnAction" text="Template speichern" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                      <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonOnAction" text="Abbrechen" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                      <JFXButton id="addField" fx:id="addFieldButton" alignment="CENTER" mnemonicParsing="false" onAction="#addFieldButtonOnClick" styleClass="button-blue" text="+" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets right="150.0" />
+                     </GridPane.margin></JFXButton>
+                      <Label styleClass="ueberschrift" text="Daten Ermitteln" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                      <JFXButton fx:id="createTemplateButton" mnemonicParsing="false" onAction="#createTemplateButtonOnAction" styleClass="button-blue" text="Template speichern" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                      <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonOnAction" styleClass="button-white" text="Abbrechen" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                           <children>
-                              <GridPane fx:id="datagrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane fx:id="datagrid" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                   <columnConstraints>
-                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0" prefWidth="111.0" />
+                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="237.0" minWidth="10.0" prefWidth="237.0" />
+                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="102.0" />
                                   </columnConstraints>
                                   <rowConstraints>
                                       <RowConstraints minHeight="10.0" prefHeight="30.0" />
