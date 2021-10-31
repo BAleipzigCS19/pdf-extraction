@@ -13,9 +13,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -28,6 +32,9 @@ public class ActionController implements Initializable{
     private CheckBox createTerminationCheckBox;
 
     @FXML
+    private CheckBox createTestImage;
+
+    @FXML
     private Button backToImportButton;
 
     @Inject
@@ -38,10 +45,27 @@ public class ActionController implements Initializable{
 
     @FXML
     private void runActionButtonOnAction() {
+        if (this.createTestImage.isSelected()) {
+            this.connector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
+                    .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                    .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
+                    .subscribe();
+        }
+
+
         this.connector.runJob(this.job.getTemplateName(), this.job.getPathToFile())
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
                 .subscribe();
+    }
+
+    private void onTestImage(final Image image) {
+        final Dialog<Void> dialog = new Dialog<>();
+        final DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
+        dialogPane.getChildren().add(new ImageView(image));
+        dialogPane.setMinSize(image.getWidth() + 100, image.getHeight());
+        dialog.show();
     }
 
     private void onSuccess(final Map<String, String> result) {

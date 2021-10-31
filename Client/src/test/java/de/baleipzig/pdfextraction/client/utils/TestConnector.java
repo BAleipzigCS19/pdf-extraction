@@ -6,6 +6,7 @@ import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;
 import jakarta.inject.Singleton;
+import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,7 +39,7 @@ public class TestConnector implements TemplateConnector {
     }
 
     @Override
-    public Mono<byte[]> createTestImage(String templateName, Path pathToFile) {
+    public Mono<Image> createTestImage(String templateName, Path pathToFile) {
         return Mono.error(new UnsupportedOperationException("Not implemented."));
     }
 

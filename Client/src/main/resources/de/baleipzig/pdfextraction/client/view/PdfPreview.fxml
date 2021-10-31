@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
-<GridPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@css/pdfPreview.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.PdfPreviewController">
+<GridPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@css/pdfPreview.css"
+          xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="de.baleipzig.pdfextraction.client.controller.PdfPreviewController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
     </rowConstraints>
     <children>
         <AnchorPane minHeight="0.0" minWidth="0.0">
             <children>
-                <BorderPane prefHeight="756.0" prefWidth="1050.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <BorderPane prefHeight="756.0" prefWidth="1050.0" AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <center>
-                        <Label fx:id="addFileLabel" text="PDF-Datei per Drag&amp;Drop hinzufügen" BorderPane.alignment="CENTER" />
+                        <Label fx:id="addFileLabel" text="PDF-Datei per Drag&amp;Drop hinzufügen"
+                               BorderPane.alignment="CENTER"/>
                     </center>
                 </BorderPane>
-                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true" x="5.0" y="5.0"
+                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0"
+                           AnchorPane.topAnchor="5.0"/>
             </children>
         </AnchorPane>
-        <JFXButton fx:id="pageBackButton" mnemonicParsing="false" onAction="#onClickPageBack" styleClass="button-navigation" text="&lt;" GridPane.rowIndex="1">
-         <GridPane.margin>
-            <Insets bottom="-10.0" left="5.0" />
-         </GridPane.margin>
+        <JFXButton fx:id="pageBackButton" mnemonicParsing="false" onAction="#onClickPageBack"
+                   styleClass="button-navigation" text="&lt;" GridPane.rowIndex="1">
         </JFXButton>
-        <Label fx:id="pageIndexLabel" alignment="CENTER" text="Seitenzahl" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-         <GridPane.margin>
-            <Insets bottom="-10.0" />
-         </GridPane.margin></Label>
-        <JFXButton fx:id="pageForwardButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#onClickPageForward" styleClass="button-navigation" text="&gt;" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-         <GridPane.margin>
-            <Insets bottom="-10.0" right="5.0" />
-         </GridPane.margin>
+        <Label fx:id="pageIndexLabel" alignment="CENTER" text="Seitenzahl" GridPane.halignment="CENTER"
+               GridPane.rowIndex="1">
+        </Label>
+        <JFXButton fx:id="pageForwardButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#onClickPageForward"
+                   styleClass="button-navigation" text="&gt;" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         </JFXButton>
     </children>
 </GridPane>

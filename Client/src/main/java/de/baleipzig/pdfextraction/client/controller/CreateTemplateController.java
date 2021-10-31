@@ -261,8 +261,8 @@ public class CreateTemplateController implements Initializable {
             final Rectangle rec = box.place;
 
             //Hier sollten nicht die absolute Weite genommen werden, da wir das Bild ja skaliert haben
-            final double percX = (rec.getX() - image.getX()) / bounds.getWidth();
-            final double percY = (rec.getY() - image.getY()) / bounds.getHeight();
+            final double percX = (rec.getX() - AnchorPane.getLeftAnchor(image)) / bounds.getWidth();
+            final double percY = (rec.getY() - AnchorPane.getTopAnchor(image)) / bounds.getHeight();
             final double percWidth = rec.getWidth() / bounds.getWidth();
             final double percHeight = rec.getHeight() / bounds.getHeight();
 
