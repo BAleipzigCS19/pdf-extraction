@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.client.connector;
 
-import de.baleipzig.pdfextraction.api.config.Config;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import de.baleipzig.pdfextraction.client.config.Config;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;
 import jakarta.inject.Singleton;
 import javafx.scene.image.Image;
@@ -32,7 +32,7 @@ public final class TemplateConnectorImpl implements TemplateConnector {
     private final WebClient webClient;
 
     public TemplateConnectorImpl(Config config) {
-        this(config.getServerURL());
+        this(config.getServerURL() + "/rest");
     }
 
     TemplateConnectorImpl(final String baseURl) {

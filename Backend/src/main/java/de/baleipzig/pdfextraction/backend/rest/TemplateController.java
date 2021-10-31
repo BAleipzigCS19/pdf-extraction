@@ -2,9 +2,11 @@ package de.baleipzig.pdfextraction.backend.rest;
 
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.backend.entities.Field;
 import de.baleipzig.pdfextraction.backend.entities.Template;
 import de.baleipzig.pdfextraction.backend.repositories.TemplateRepository;
+import de.baleipzig.pdfextraction.backend.tesseract.Tess;
 import de.baleipzig.pdfextraction.backend.util.PDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.LoggerFactory;
@@ -26,16 +28,60 @@ import java.util.*;
 @RequestMapping(path = "/rest/")
 public class TemplateController {
 
+    private final TemplateRepository repo;
+    private final Tess tess;
     @Value("${server.port}")
     private String port;
-
     @Value("${server.host}")
     private String host;
 
-    private final TemplateRepository repo;
-
-    public TemplateController(TemplateRepository repo) {
+    public TemplateController(TemplateRepository repo, Tess tess) {
         this.repo = repo;
+        this.tess = tess;
+    }
+
+    private static boolean isValidDTO(final TemplateDTO dto) {
+        final boolean areFieldsValid = dto != null && dto.getName() != null && !dto.getName().isBlank()
+                && dto.getConsumer() != null && !dto.getConsumer().isBlank()
+                && dto.getFields() != null && !dto.getFields().isEmpty();
+        if (!areFieldsValid) {
+            return false;
+        }
+
+        for (final FieldDTO field : dto.getFields()) {
+            if (!isFieldDTOValid(field)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isFieldDTOValid(FieldDTO field) {
+        if (field.getPage() < 0) {
+            return false;
+        }
+
+        if (field.getWidthPercentage() < 0 || field.getWidthPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getHeightPercentage() < 0 || field.getHeightPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getxPosPercentage() < 0 || field.getxPosPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getyPosPercentage() < 0 || field.getyPosPercentage() > 1) {
+            return false;
+        }
+
+        if (field.getxPosPercentage() + field.getWidthPercentage() > 1) {
+            return false;
+        }
+
+        return field.getyPosPercentage() + field.getHeightPercentage() <= 1;
     }
 
     /**
@@ -183,58 +229,52 @@ public class TemplateController {
 
         final Template template = this.repo.findTemplateByName(templateName);
 
-        final Map<Field, String> extracted = PDFUtils.extract(template, content);
-        final Map<String, String> result = new HashMap<>(extracted.size());
-        extracted.keySet().forEach(f -> result.put(f.getType().getName(), extracted.get(f)));
+        final Map<String, String> result = extractFields(template.getFields(), content);
+
+        LoggerFactory.getLogger(getClass())
+                .trace("Returning OCR result: {}", result);
 
         return ResponseEntity.ok(result);
     }
 
-    private static boolean isValidDTO(final TemplateDTO dto) {
-        final boolean areFieldsValid = dto != null && dto.getName() != null && !dto.getName().isBlank()
-                && dto.getConsumer() != null && !dto.getConsumer().isBlank()
-                && dto.getFields() != null && !dto.getFields().isEmpty();
-        if (!areFieldsValid) {
-            return false;
-        }
+    private Map<String, String> extractFields(final Collection<Field> fields, final byte[] content) {
+        final Map<Field, String> extracted = PDFUtils.extract(fields, content);
+        final Map<String, String> result = new HashMap<>(extracted.size());
 
-        for (final FieldDTO field : dto.getFields()) {
-            if (!isFieldDTOValid(field)) {
-                return false;
+        final Collection<Field> emptyFields = new ArrayList<>(fields.size());
+        for (final Map.Entry<Field, String> entry : extracted.entrySet()) {
+            final Field field = entry.getKey();
+            String value = entry.getValue();
+            if (!StringUtils.hasText(value)) {
+                emptyFields.add(field);
+            } else {
+                result.put(field.getType().getName(), value);
             }
         }
-        return true;
+
+        if (!emptyFields.isEmpty()) {
+            LoggerFactory.getLogger(TemplateController.class)
+                    .debug("Could not extract Text with PDFBox for fields {}", emptyFields.stream().map(Field::getType).map(FieldType::getName).toList());
+
+            final Map<Field, String> tessResult = this.tess.doBatchOCR(emptyFields, content);
+            tessResult.forEach((k, v) -> result.put(k.getType().getName(), v));
+        }
+
+        final List<String> keyWithNoValue = result.entrySet()
+                .stream()
+                .filter(e -> !StringUtils.hasText(e.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if (!keyWithNoValue.isEmpty()) {
+            LoggerFactory.getLogger(getClass())
+                    .warn("Could not find extract any Text for Fields: {}", keyWithNoValue);
+        }
+
+        return result;
     }
 
-    private static boolean isFieldDTOValid(FieldDTO field) {
-        if (field.getPage() < 0) {
-            return false;
-        }
-
-        if (field.getWidthPercentage() < 0 || field.getWidthPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getHeightPercentage() < 0 || field.getHeightPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getxPosPercentage() < 0 || field.getxPosPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getyPosPercentage() < 0 || field.getyPosPercentage() > 1) {
-            return false;
-        }
-
-        if (field.getxPosPercentage() + field.getWidthPercentage() > 1) {
-            return false;
-        }
-
-        return field.getyPosPercentage() + field.getHeightPercentage() <= 1;
-    }
-
-    private List<FieldDTO> mapToFieldDTO(List<Field> fields) {
+    private static List<FieldDTO> mapToFieldDTO(List<Field> fields) {
         return fields.stream()
                 .map(TemplateController::mapToFieldDTO)
                 .toList();
@@ -245,7 +285,7 @@ public class TemplateController {
                 f.getWidthPercentage(), f.getHeightPercentage());
     }
 
-    private List<Field> mapToField(List<FieldDTO> fields) {
+    private static List<Field> mapToField(List<FieldDTO> fields) {
         return fields.stream()
                 .map(TemplateController::mapToField)
                 .toList();
