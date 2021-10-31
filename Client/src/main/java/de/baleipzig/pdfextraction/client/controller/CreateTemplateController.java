@@ -157,8 +157,8 @@ public class CreateTemplateController implements Initializable {
 
     private void startDrawingRectangle(final Rectangle rec, final MouseEvent event) {
         //Press == Start-Pos
-        final double startX = event.getSceneX();
-        final double startY = event.getSceneY();
+        final double startX = event.getX();
+        final double startY = event.getY();
         this.pdfAnchor.getChildren().add(rec);
         rec.setX(startX);
         rec.setY(startY);

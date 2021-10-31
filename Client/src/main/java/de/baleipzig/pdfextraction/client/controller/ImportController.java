@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class ImportController implements Initializable {
 
     @FXML
     private void continueButtonOnAction() {
-        final Optional<String> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
+        final Optional<Label> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
         if (chosenValue.isEmpty()) {
             //Intentionally not checking if something is set in the job
             AlertUtils.showErrorAlert("Bitte wählen sie erst eine Vorlage aus.");
@@ -60,7 +61,9 @@ public class ImportController implements Initializable {
             return;
         }
 
-        chosenValue.ifPresent(this.job::setTemplateName);
+        chosenValue
+                .map(Labeled::getText)
+                .ifPresent(this.job::setTemplateName);
 
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
