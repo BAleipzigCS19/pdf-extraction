@@ -113,7 +113,9 @@ public class PdfPreviewController implements Initializable {
 
     public void updatePdfPreview() {
         // der restliche code wird in MenuBarController ausgeführt
-        loadPdfPreview(this.renderer::getCurrentPreview);
+        if (this.renderer.hasPreview()){
+            loadPdfPreview(this.renderer::getCurrentPreview);
+        }
     }
 
     private void loadPdfPreview(final Supplier<Image> image) {
