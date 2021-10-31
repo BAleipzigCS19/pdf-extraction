@@ -30,6 +30,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
     implementation("org.apache.pdfbox:pdfbox:2.0.24")
+    // https://mvnrepository.com/artifact/com.jfoenix/jfoenix
+    implementation("com.jfoenix:jfoenix:9.0.10")
 
     // https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")

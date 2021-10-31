@@ -1,17 +1,17 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXButton;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -40,6 +40,9 @@ public class CreateTemplateController implements Initializable {
     private final Set<Box> chosenFieldTypes = new HashSet<>();
 
     @FXML
+    public MenuBar menuBar;
+
+    @FXML
     private GridPane dataGridPane;
 
     @FXML
@@ -53,6 +56,9 @@ public class CreateTemplateController implements Initializable {
 
     @FXML
     private PdfPreviewController pdfPreviewController;
+
+    @FXML
+    private MenuBarController menuBarController;
 
     @FXML
     private GridPane datagrid;
@@ -69,18 +75,10 @@ public class CreateTemplateController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        final EventHandler<ActionEvent> superForward = this.pdfPreviewController.pageForwardButton.getOnAction();
-        this.pdfPreviewController.pageForwardButton.setOnAction(ev -> {
-            superForward.handle(ev);
-            this.onPageTurn();
-        });
-
-        final EventHandler<ActionEvent> superBackward = this.pdfPreviewController.pageBackButton.getOnAction();
-        this.pdfPreviewController.pageBackButton.setOnAction(ev -> {
-            superBackward.handle(ev);
-            this.onPageTurn();
-        });
+        ControllerUtils.changeFocusOnControlParent(menuBar);
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, this::onPageTurn);
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, this::onPageTurn);
+        EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
     }
 
     private void onPageTurn() {
@@ -130,7 +128,7 @@ public class CreateTemplateController implements Initializable {
             final Stage stage = (Stage) scene.getWindow();
             final String oldTitle = stage.getTitle();
 
-            stage.setTitle("%s| Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
+            stage.setTitle("%s | Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
 
             this.pdfAnchor.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
             this.pdfAnchor.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
@@ -143,8 +141,8 @@ public class CreateTemplateController implements Initializable {
 
     private void startDrawingRectangle(final Rectangle rec, final MouseEvent event) {
         //Press == Start-Pos
-        final double startX = event.getSceneX();
-        final double startY = event.getSceneY();
+        final double startX = event.getX();
+        final double startY = event.getY();
         this.pdfAnchor.getChildren().add(rec);
         rec.setX(startX);
         rec.setY(startY);
@@ -166,9 +164,11 @@ public class CreateTemplateController implements Initializable {
 
         //Panel in der Box rechts
         final int count = this.datagrid.getRowCount();
-        final Rectangle dot = new Rectangle(10, 10, color);
+        final Rectangle dot = new Rectangle(20, 20, color);
         final Label label = new Label(fieldType.toString());
-        final Button remove = new Button("Remove");
+        label.getStyleClass().add("label-datagrid");
+        final JFXButton remove = new JFXButton("Remove");
+        remove.getStyleClass().add("button-white");
         this.datagrid.addRow(count, dot, label, remove);
         remove.setOnAction(e -> {
             this.datagrid.getChildren().removeAll(dot, label, remove);
@@ -261,8 +261,8 @@ public class CreateTemplateController implements Initializable {
             final Rectangle rec = box.place;
 
             //Hier sollten nicht die absolute Weite genommen werden, da wir das Bild ja skaliert haben
-            final double percX = (rec.getX() - image.getX()) / bounds.getWidth();
-            final double percY = (rec.getY() - image.getY()) / bounds.getHeight();
+            final double percX = (rec.getX() - AnchorPane.getLeftAnchor(image)) / bounds.getWidth();
+            final double percY = (rec.getY() - AnchorPane.getTopAnchor(image)) / bounds.getHeight();
             final double percWidth = rec.getWidth() / bounds.getWidth();
             final double percHeight = rec.getHeight() / bounds.getHeight();
 

@@ -22,6 +22,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
 
+
+    // https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j
+    implementation("net.sourceforge.tess4j:tess4j:4.5.5")
+
     // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
     implementation("org.apache.pdfbox:pdfbox:2.0.24")
 

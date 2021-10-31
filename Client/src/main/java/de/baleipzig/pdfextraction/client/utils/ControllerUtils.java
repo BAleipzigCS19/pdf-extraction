@@ -2,9 +2,11 @@ package de.baleipzig.pdfextraction.client.utils;
 
 import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.FXView;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -33,6 +35,15 @@ public final class ControllerUtils {
             AlertUtils.showErrorAlert(e);
             throw new UncheckedIOException(e);
         }
+    }
+
+
+    /**
+     * set's the focus, so that not the first element in the scene is autofocused
+     * @param control
+     */
+    public static void changeFocusOnControlParent(Control control){
+        Platform.runLater(() -> control.getParent().requestFocus());
     }
 
 }

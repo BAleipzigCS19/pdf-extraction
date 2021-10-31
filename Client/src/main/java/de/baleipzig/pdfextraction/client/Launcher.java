@@ -1,6 +1,6 @@
 package de.baleipzig.pdfextraction.client;
 
-import de.baleipzig.pdfextraction.api.config.Config;
+import de.baleipzig.pdfextraction.client.config.Config;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import javafx.application.Application;
@@ -23,6 +23,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(final Stage stage) {
+        stage.setTitle("pdf-extraction");
         ControllerUtils.switchScene(stage, new Imports());
     }
 }
