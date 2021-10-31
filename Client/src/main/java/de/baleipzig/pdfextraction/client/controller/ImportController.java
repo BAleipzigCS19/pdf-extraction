@@ -4,13 +4,12 @@ import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -84,12 +83,7 @@ public class ImportController implements Initializable {
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .subscribe(name -> Platform.runLater(() -> onRequestCompleted(name)));
 
-        final EventHandler<ActionEvent> chooseFileMethod = this.menuBarController.chooseFile.getOnAction();
-        this.menuBarController.chooseFile.setOnAction(event -> {
-            chooseFileMethod.handle(event);
-            this.pdfPreviewController.updatePdfPreview();
-        });
-
+        EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
     }
 
     private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {

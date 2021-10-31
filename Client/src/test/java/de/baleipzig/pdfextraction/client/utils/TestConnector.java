@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.client.util;
+package de.baleipzig.pdfextraction.client.utils;
 
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;

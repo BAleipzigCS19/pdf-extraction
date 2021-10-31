@@ -7,19 +7,21 @@ import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -73,28 +75,9 @@ public class CreateTemplateController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        final EventHandler<ActionEvent> superForward = this.pdfPreviewController.pageForwardButton.getOnAction();
-        this.pdfPreviewController.pageForwardButton.setOnAction(ev -> {
-            superForward.handle(ev);
-            this.onPageTurn();
-        });
-
-        final EventHandler<ActionEvent> superBackward = this.pdfPreviewController.pageBackButton.getOnAction();
-        this.pdfPreviewController.pageBackButton.setOnAction(ev -> {
-            superBackward.handle(ev);
-            this.onPageTurn();
-        });
-
-        // die zeile 88 holt sich die OnAction Methode von dem Item mit der id:chooseFile
-        final EventHandler<ActionEvent> chooseFileMethod = this.menuBarController.chooseFile.getOnAction();
-        this.menuBarController.chooseFile.setOnAction(event -> {
-            // hier wird der Code von der chooseFileMethod ausgeführt
-            chooseFileMethod.handle(event);
-            // hier wird der zusätzliche code der anschließend ausgeführt werden soll gecallt.
-            this.pdfPreviewController.updatePdfPreview();
-        });
-
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, this::onPageTurn);
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, this::onPageTurn);
+        EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
     }
 
     private void onPageTurn() {
