@@ -4,6 +4,7 @@ import de.baleipzig.pdfextraction.api.config.Config;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;
 import jakarta.inject.Singleton;
+import javafx.scene.image.Image;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +94,32 @@ public final class TemplateConnectorImpl implements TemplateConnector {
         return createRequest(templateName, pathToFile, "/runAnalysis");
     }
 
-    public Mono<byte[]> createTestImage(final String templateName, final Path pathToFile) {
-        return createRequest(templateName, pathToFile, "/test");
+    public Mono<Image> createTestImage(final String templateName, final Path pathToFile) {
+        if (!StringUtils.hasText(templateName)) {
+            return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
+        }
+
+        if (pathToFile == null) {
+            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
+        }
+
+        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
+
+        final Base64.Decoder decoder = Base64.getDecoder();
+        return this.webClient
+                .post()
+                .uri("/test")
+                .body(BodyInserters.fromMultipartData(toSend))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return response.bodyToMono(String.class);
+                    } else {
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
+                    }
+                })
+                .map(decoder::decode)
+                .map(ByteArrayInputStream::new)
+                .map(Image::new);
     }
 
     private <T> Mono<T> createRequest(String templateName, Path pathToFile, String urlPath) {

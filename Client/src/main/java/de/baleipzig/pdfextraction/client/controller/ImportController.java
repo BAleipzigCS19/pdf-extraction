@@ -1,8 +1,10 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
@@ -11,24 +13,27 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ImportController implements Initializable {
 
     @FXML
+    public MenuBar menuBar;
+
+    @FXML
     private Button continueButton;
 
     @FXML
-    private ComboBox<String> templateComboBox;
-
-    @FXML
-    private Button createTemplateButton;
+    private JFXComboBox<Label> templateComboBox;
 
     @Inject
     private TemplateConnector connector;
@@ -37,8 +42,14 @@ public class ImportController implements Initializable {
     private Job job;
 
     @FXML
+    private MenuBarController menuBarController;
+
+    @FXML
+    private PdfPreviewController pdfPreviewController;
+
+    @FXML
     private void continueButtonOnAction() {
-        final Optional<String> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
+        final Optional<Label> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
         if (chosenValue.isEmpty()) {
             //Intentionally not checking if something is set in the job
             AlertUtils.showErrorAlert("Bitte wählen sie erst eine Vorlage aus.");
@@ -50,7 +61,7 @@ public class ImportController implements Initializable {
             return;
         }
 
-        chosenValue.ifPresent(this.job::setTemplateName);
+        chosenValue.map(Labeled::getText).ifPresent(this.job::setTemplateName);
 
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
@@ -65,14 +76,33 @@ public class ImportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        ControllerUtils.changeFocusOnControlParent(menuBar);
+
         this.connector.getAllNames()
+                .collectList()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(this::onRequestCompleted);
+                .subscribe(name -> Platform.runLater(() -> onRequestCompleted(name)));
+
+        EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
     }
 
-    private void onRequestCompleted(final String name) {
-        this.templateComboBox.getItems().add(name);
+    private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
+
+        return comboBoxItems.stream()
+                .filter(l -> templateName.equals(l.getText()))
+                .findFirst();
+    }
+
+    private void onRequestCompleted(final List<String> name) {
+
+        final List<Label> labels = name.stream().map(Label::new).toList();
+        this.templateComboBox.getItems().addAll(labels);
+
+        Optional.ofNullable(job.getTemplateName())
+                .flatMap(templateName -> getLabelMatching(templateName, labels))
+                .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
     }
 }

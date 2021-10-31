@@ -1,6 +1,7 @@
 package de.baleipzig.pdfextraction.client.connector;
 
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import javafx.scene.image.Image;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -17,5 +18,5 @@ public interface TemplateConnector {
 
     Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile);
 
-    Mono<byte[]> createTestImage(final String templateName, final Path pathToFile);
+    Mono<Image> createTestImage(final String templateName, final Path pathToFile);
 }

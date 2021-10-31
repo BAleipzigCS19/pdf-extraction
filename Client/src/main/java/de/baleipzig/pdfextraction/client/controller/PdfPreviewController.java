@@ -13,8 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -39,9 +37,6 @@ public class PdfPreviewController implements Initializable {
     @FXML
     public ImageView pdfPreviewImageView;
 
-    @FXML
-    public Button chooseFileButton;
-
     @Inject
     private PDFRenderer renderer;
 
@@ -57,7 +52,7 @@ public class PdfPreviewController implements Initializable {
         pdfPreviewImageView.fitHeightProperty().bind(parentAnchorPane.heightProperty());
 
         if (this.renderer.hasPreview()) {
-            updatePdfPreview(this.renderer::getCurrentPreview);
+            loadPdfPreview(this.renderer::getCurrentPreview);
         } else {
             pageIndexLabel.setText("Seitenanzahl");
         }
@@ -92,7 +87,7 @@ public class PdfPreviewController implements Initializable {
                 final Path pathToFile = first.toPath();
                 this.job.setPathToFile(pathToFile);
                 this.renderer.setPdfPath(pathToFile);
-                updatePdfPreview(this.renderer::getCurrentPreview);
+                loadPdfPreview(this.renderer::getCurrentPreview);
             } finally {
                 event.setDropCompleted(true);
                 event.consume();
@@ -104,7 +99,7 @@ public class PdfPreviewController implements Initializable {
     public void onClickPageBack() {
 
         if (this.renderer.hasPreviousPage()) {
-            updatePdfPreview(this.renderer::getPreviousPreview);
+            loadPdfPreview(this.renderer::getPreviousPreview);
         }
     }
 
@@ -112,31 +107,18 @@ public class PdfPreviewController implements Initializable {
     public void onClickPageForward() {
 
         if (this.renderer.hasNextPage()) {
-            updatePdfPreview(this.renderer::getNextPreview);
+            loadPdfPreview(this.renderer::getNextPreview);
         }
     }
 
-    @FXML
-    private void onClickChooseFile() {
-        // Filechooser
-        final Stage current = (Stage) this.chooseFileButton.getScene().getWindow();
-        final FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().setAll(List.of(new FileChooser.ExtensionFilter("PDFs", "*.pdf")));
-        final File selectedFile = fileChooser.showOpenDialog(current);
-        if (selectedFile == null) {
-            //User canceled the dialog
-            return;
+    public void updatePdfPreview() {
+        // der restliche code wird in MenuBarController ausgeführt
+        if (this.renderer.hasPreview()){
+            loadPdfPreview(this.renderer::getCurrentPreview);
         }
-
-        final Path pdfPath = selectedFile.toPath();
-
-        this.job.setPathToFile(pdfPath);
-        this.renderer.setPdfPath(pdfPath);
-        // die aktuelle Seitenzahl soll resetet werden wenn eine neue Datei geladen wird
-        updatePdfPreview(this.renderer::getCurrentPreview);
     }
 
-    private void updatePdfPreview(final Supplier<Image> image) {
+    private void loadPdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
             pageIndexLabel.setText("Seite: %d/%d".formatted(this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));

@@ -23,6 +23,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(final Stage stage) {
+        stage.setTitle("pdf-extraction");
         ControllerUtils.switchScene(stage, new Imports());
     }
 }
