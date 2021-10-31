@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController" stylesheets="@css/ViewStylesheet.css">
+<BorderPane stylesheets="@css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
    <top>
-       <fx:include source="MenuBar.fxml" fx:id="menuBar"/>
+       <fx:include fx:id="menuBar" source="MenuBar.fxml" />
    </top>
     <center>
       <GridPane prefHeight="772.5" prefWidth="1050.0">
@@ -49,7 +42,7 @@
                           <children>
                               <VBox>
                                   <children>
-                                      <Label text="Templates" styleClass="header"/>
+                                      <Label styleClass="header" text="Templates" />
                                       <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="160.0" promptText="Template auswählen" styleClass="check-box">
                                           <VBox.margin>
                                               <Insets top="10.0" />
@@ -64,14 +57,14 @@
                       </AnchorPane>
                       <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                           <content>
-                              <Label text="Ermittelte Daten" styleClass="header">
+                              <Label styleClass="header" text="Ermittelte Daten">
                                   <padding>
                                       <Insets bottom="10.0" />
                                   </padding>
                               </Label>
                           </content>
                       </ScrollPane>
-                      <JFXButton fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" text="Weiter" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" styleClass="button-blue"/>
+                      <JFXButton fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" styleClass="button-blue" text="Weiter" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                   </children>
                   <padding>
                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

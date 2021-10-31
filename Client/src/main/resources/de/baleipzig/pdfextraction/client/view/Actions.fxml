@@ -12,7 +12,7 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController" stylesheets="@css/ViewStylesheet.css">
     <top>
-        <fx:include source="MenuBar.fxml"/>
+        <fx:include source="MenuBar.fxml" fx:id="menuBar"/>
     </top>
     <center>
       <GridPane prefHeight="772.5" prefWidth="1050.0" vgap="10.0">

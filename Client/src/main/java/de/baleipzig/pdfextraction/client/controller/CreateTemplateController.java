@@ -18,10 +18,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +38,9 @@ import java.util.stream.Stream;
 public class CreateTemplateController implements Initializable {
 
     private final Set<Box> chosenFieldTypes = new HashSet<>();
+
+    @FXML
+    public MenuBar menuBar;
 
     @FXML
     private GridPane dataGridPane;
@@ -75,6 +75,7 @@ public class CreateTemplateController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ControllerUtils.changeFocusOnControlParent(menuBar);
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);

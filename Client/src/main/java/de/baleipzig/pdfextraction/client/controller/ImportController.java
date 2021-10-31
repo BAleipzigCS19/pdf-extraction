@@ -76,6 +76,9 @@ public class ImportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        ControllerUtils.changeFocusOnControlParent(menuBar);
+
         this.connector.getAllNames()
                 .collectList()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)

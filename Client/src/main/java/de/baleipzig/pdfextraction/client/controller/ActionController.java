@@ -8,14 +8,21 @@ import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-public class ActionController {
+public class ActionController implements Initializable{
+
+    @FXML
+    public MenuBar menuBar;
 
     @FXML
     private CheckBox createTerminationCheckBox;
@@ -53,5 +60,11 @@ public class ActionController {
     private void backToImportButtonOnAction() {
         ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(),
                 new Imports());
+    }
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        ControllerUtils.changeFocusOnControlParent(menuBar);
     }
 }
