@@ -1,8 +1,10 @@
 package de.baleipzig.pdfextraction.backend.rest;
 
+import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.backend.entities.ExtractionTemplate;
 import de.baleipzig.pdfextraction.backend.entities.Field;
 import de.baleipzig.pdfextraction.backend.repositories.TemplateRepository;
+import de.baleipzig.pdfextraction.backend.tesseract.Tess;
 import de.baleipzig.pdfextraction.backend.util.PDFUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -18,8 +20,7 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -27,14 +28,16 @@ import java.util.Map;
 public class ExtractionController {
 
     private final TemplateRepository repo;
+    private final Tess tess;
 
-    public ExtractionController(TemplateRepository repo) {
+    public ExtractionController(TemplateRepository repo, Tess tess) {
         this.repo = repo;
+        this.tess = tess;
     }
 
     @PostMapping(value = "test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<byte[]> createTestImage(@RequestPart(value = "name") final String templateName, @RequestPart("content") final byte[] content) {
-        ResponseEntity<byte[]> errorResponse = checkRequest(templateName, content);
+    public ResponseEntity<String> createTestImage(@RequestPart(value = "name") final String templateName, @RequestPart("content") final byte[] content) {
+        ResponseEntity<String> errorResponse = checkRequest(templateName, content);
         if (errorResponse != null) {
             return errorResponse;
         }
@@ -45,7 +48,8 @@ public class ExtractionController {
             final RenderedImage image = PDFUtils.toImage(template, content);
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
             ImageIO.write(image, "PNG", stream);
-            return ResponseEntity.ok().body(stream.toByteArray());
+
+            return ResponseEntity.ok().body(Base64.getEncoder().encodeToString(stream.toByteArray()));
         } catch (final UncheckedIOException | IOException e) {
             LoggerFactory.getLogger(getClass())
                     .error("Exception while converting page.", e);
@@ -62,11 +66,49 @@ public class ExtractionController {
 
         final ExtractionTemplate template = this.repo.findTemplateByName(templateName);
 
-        final Map<Field, String> extracted = PDFUtils.extract(template, content);
-        final Map<String, String> result = new HashMap<>(extracted.size());
-        extracted.keySet().forEach(f -> result.put(f.getType().getName(), extracted.get(f)));
+        final Map<String, String> result = extractFields(template.getFields(), content);
+
+        LoggerFactory.getLogger(getClass())
+                .trace("Returning OCR result: {}", result);
 
         return ResponseEntity.ok(result);
+    }
+
+    private Map<String, String> extractFields(final Collection<Field> fields, final byte[] content) {
+        final Map<Field, String> extracted = PDFUtils.extract(fields, content);
+        final Map<String, String> result = new HashMap<>(extracted.size());
+
+        final Collection<Field> emptyFields = new ArrayList<>(fields.size());
+        for (final Map.Entry<Field, String> entry : extracted.entrySet()) {
+            final Field field = entry.getKey();
+            String value = entry.getValue();
+            if (!StringUtils.hasText(value)) {
+                emptyFields.add(field);
+            } else {
+                result.put(field.getType().getName(), value);
+            }
+        }
+
+        if (!emptyFields.isEmpty()) {
+            LoggerFactory.getLogger(TemplateController.class)
+                    .debug("Could not extract Text with PDFBox for fields {}", emptyFields.stream().map(Field::getType).map(FieldType::getName).toList());
+
+            final Map<Field, String> tessResult = this.tess.doBatchOCR(emptyFields, content);
+            tessResult.forEach((k, v) -> result.put(k.getType().getName(), v));
+        }
+
+        final List<String> keyWithNoValue = result.entrySet()
+                .stream()
+                .filter(e -> !StringUtils.hasText(e.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if (!keyWithNoValue.isEmpty()) {
+            LoggerFactory.getLogger(getClass())
+                    .warn("Could not find extract any Text for Fields: {}", keyWithNoValue);
+        }
+
+        return result;
     }
 
     private <T> ResponseEntity<T> checkRequest(String templateName, byte[] content) {

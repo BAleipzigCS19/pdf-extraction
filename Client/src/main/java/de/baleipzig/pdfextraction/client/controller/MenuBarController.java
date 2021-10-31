@@ -5,7 +5,6 @@ import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;

@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 
 public final class PDFUtils {
 
+    private PDFUtils() {
+    }
+
     /**
      * Converts the first page to an Image to check the Box-placement
      *
@@ -104,8 +107,5 @@ public final class PDFUtils {
     }
 
     private record Size(int height, int width) {
-    }
-
-    private PDFUtils() {
     }
 }

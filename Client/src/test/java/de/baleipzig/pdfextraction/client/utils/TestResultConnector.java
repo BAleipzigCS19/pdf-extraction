@@ -1,4 +1,4 @@
-package de.baleipzig.pdfextraction.client.util;
+package de.baleipzig.pdfextraction.client.utils;
 
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;

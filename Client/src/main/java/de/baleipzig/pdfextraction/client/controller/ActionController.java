@@ -9,21 +9,16 @@ import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class ActionController implements Initializable{
+public class ActionController implements Initializable {
 
     @FXML
     public MenuBar menuBar;

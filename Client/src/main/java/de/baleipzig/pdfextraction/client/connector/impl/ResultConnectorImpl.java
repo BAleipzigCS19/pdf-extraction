@@ -1,6 +1,6 @@
 package de.baleipzig.pdfextraction.client.connector.impl;
 
-import de.baleipzig.pdfextraction.api.config.Config;
+import de.baleipzig.pdfextraction.client.config.Config;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;
 import org.springframework.core.ParameterizedTypeReference;

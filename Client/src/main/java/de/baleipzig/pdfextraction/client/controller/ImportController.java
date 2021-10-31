@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import com.jfoenix.controls.JFXComboBox;
+import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
@@ -17,22 +17,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.ResourceBundle;
 

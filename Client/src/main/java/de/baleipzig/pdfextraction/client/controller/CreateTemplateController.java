@@ -41,33 +41,24 @@ public class CreateTemplateController implements Initializable {
 
     @FXML
     public MenuBar menuBar;
-
-    @FXML
-    private GridPane dataGridPane;
-
-    @FXML
-    private TextField insuranceTextField;
-
-    @FXML
-    private TextField templateNameTextField;
-
     @FXML
     public AnchorPane pdfAnchor;
-
-    @FXML
-    private PdfPreviewController pdfPreviewController;
-
-    @FXML
-    private MenuBarController menuBarController;
-
-    @FXML
-    private GridPane datagrid;
-
     @Inject
     protected TemplateConnector connector;
-
     @Inject
     protected PDFRenderer renderer;
+    @FXML
+    private GridPane dataGridPane;
+    @FXML
+    private TextField insuranceTextField;
+    @FXML
+    private TextField templateNameTextField;
+    @FXML
+    private PdfPreviewController pdfPreviewController;
+    @FXML
+    private MenuBarController menuBarController;
+    @FXML
+    private GridPane datagrid;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them
