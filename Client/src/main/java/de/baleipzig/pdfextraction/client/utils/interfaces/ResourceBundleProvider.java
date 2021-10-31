@@ -32,5 +32,4 @@ public interface ResourceBundleProvider {
             throw new UncheckedIOException(e);
         }
     }
-
 }

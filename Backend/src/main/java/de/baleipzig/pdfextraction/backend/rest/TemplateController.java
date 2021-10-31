@@ -181,7 +181,7 @@ public class TemplateController {
     }
 
     @PostMapping(value = "test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<byte[]> createTestImage(@RequestPart(value = "name") final String templateName, @RequestPart("content") final byte[] content) {
+    public ResponseEntity<String> createTestImage(@RequestPart(value = "name") final String templateName, @RequestPart("content") final byte[] content) {
         if (!StringUtils.hasText(templateName) || content == null || content.length == 0) {
             LoggerFactory.getLogger(TemplateController.class)
                     .warn("Received invalid Request {} : {}", templateName, content != null ? new String(content) : "<null>");
@@ -202,7 +202,8 @@ public class TemplateController {
             final RenderedImage image = PDFUtils.toImage(template, content);
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
             ImageIO.write(image, "PNG", stream);
-            return ResponseEntity.ok().body(stream.toByteArray());
+
+            return ResponseEntity.ok().body(Base64.getEncoder().encodeToString(stream.toByteArray()));
         } catch (final UncheckedIOException | IOException e) {
             LoggerFactory.getLogger(TemplateController.class)
                     .error("Exception while converting page.", e);
