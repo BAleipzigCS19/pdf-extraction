@@ -21,9 +21,6 @@ public class ActionController {
     private CheckBox createTerminationCheckBox;
 
     @FXML
-    private Button runActionButton;
-
-    @FXML
     private Button backToImportButton;
 
     @Inject

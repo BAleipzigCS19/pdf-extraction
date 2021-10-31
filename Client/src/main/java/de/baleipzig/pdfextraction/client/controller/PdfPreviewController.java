@@ -37,9 +37,6 @@ public class PdfPreviewController implements Initializable {
     @FXML
     public ImageView pdfPreviewImageView;
 
-    @FXML
-    public Button chooseFileButton;
-
     @Inject
     private PDFRenderer renderer;
 

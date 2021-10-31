@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -42,7 +40,7 @@
                   </children>
               </GridPane>
               <JFXButton fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction" text="Aktion durchführen" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" styleClass="button-blue"/>
-              <Label text="Bitte wählen Sie eine Aktion" styleClass="ueberschrift"/>
+              <Label text="Bitte wählen Sie eine Aktion" styleClass="header"/>
               <JFXButton fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction" text="Zurück" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" styleClass="button-white"/>
           </children>
           <padding>

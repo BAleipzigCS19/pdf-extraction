@@ -1,6 +1,7 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
@@ -29,6 +30,9 @@ public class MenuBarController {
     @Inject
     private PDFRenderer renderer;
 
+    @Inject
+    private Job job;
+
     @FXML
     private void onCreateTemplate() {
 
@@ -37,7 +41,7 @@ public class MenuBarController {
     }
 
     @FXML
-    public void onChooseFile(ActionEvent actionEvent) {
+    public void onChooseFile() {
         // Filechooser
         final Stage current = (Stage) this.menuBar.getScene().getWindow();
         final FileChooser fileChooser = new FileChooser();
@@ -50,6 +54,7 @@ public class MenuBarController {
         }
 
         final Path pdfPath = selectedFile.toPath();
+        job.setPathToFile(pdfPath);
         this.renderer.setPdfPath(pdfPath);
     }
 }

@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -61,9 +62,7 @@ public class ImportController implements Initializable {
             return;
         }
 
-        chosenValue
-                .map(Labeled::getText)
-                .ifPresent(this.job::setTemplateName);
+        chosenValue.map(Labeled::getText).ifPresent(this.job::setTemplateName);
 
         ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
@@ -79,10 +78,11 @@ public class ImportController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.connector.getAllNames()
+                .collectList()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(this::onRequestCompleted);
+                .subscribe(name -> Platform.runLater(() -> onRequestCompleted(name)));
 
         final EventHandler<ActionEvent> chooseFileMethod = this.menuBarController.chooseFile.getOnAction();
         this.menuBarController.chooseFile.setOnAction(event -> {
@@ -92,7 +92,20 @@ public class ImportController implements Initializable {
 
     }
 
-    private void onRequestCompleted(final String name) {
-        this.templateComboBox.getItems().add(new Label(name));
+    private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
+
+        return comboBoxItems.stream()
+                .filter(l -> templateName.equals(l.getText()))
+                .findFirst();
+    }
+
+    private void onRequestCompleted(final List<String> name) {
+
+        final List<Label> labels = name.stream().map(Label::new).toList();
+        this.templateComboBox.getItems().addAll(labels);
+
+        Optional.ofNullable(job.getTemplateName())
+                .flatMap(templateName -> getLabelMatching(templateName, labels))
+                .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
     }
 }

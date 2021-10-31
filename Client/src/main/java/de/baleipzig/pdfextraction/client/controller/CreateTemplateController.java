@@ -144,7 +144,7 @@ public class CreateTemplateController implements Initializable {
             final Stage stage = (Stage) scene.getWindow();
             final String oldTitle = stage.getTitle();
 
-            stage.setTitle("%s| Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
+            stage.setTitle("%s | Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
 
             this.pdfAnchor.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
             this.pdfAnchor.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
