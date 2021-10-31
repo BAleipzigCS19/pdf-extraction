@@ -49,7 +49,7 @@ public final class ExtractionConnectorImpl extends AbstractConnector implements 
         final Base64.Decoder decoder = Base64.getDecoder();
         return this.webClient
                 .post()
-                .uri("/test")
+                .uri("/extraction/test")
                 .body(BodyInserters.fromMultipartData(toSend))
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {

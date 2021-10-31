@@ -22,7 +22,7 @@ abstract class AbstractConnector {
 
     protected AbstractConnector(final String baseURl) {
         this.webClient = WebClient.builder()
-                .baseUrl(baseURl)
+                .baseUrl(baseURl + "/rest")
                 .defaultHeaders(header -> {
                     header.set(HttpHeaders.ACCEPT_CHARSET, "utf-8");
                     header.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
