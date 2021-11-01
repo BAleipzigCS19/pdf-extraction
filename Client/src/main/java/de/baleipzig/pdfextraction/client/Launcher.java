@@ -5,9 +5,11 @@ import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.springframework.cglib.core.Local;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class Launcher extends Application {
 
@@ -18,6 +20,7 @@ public class Launcher extends Application {
                 .orElse("./config.properties");
         Config.setPathToConfig(Path.of(pathToConfig));
 
+        Locale.setDefault(Locale.GERMAN);
         launch(args);
     }
 

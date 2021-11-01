@@ -5,7 +5,6 @@ import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -15,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 public class MenuBarController {
 
@@ -26,6 +26,12 @@ public class MenuBarController {
 
     @FXML
     public MenuBar menuBar;
+
+    @FXML
+    public MenuItem english;
+
+    @FXML
+    public MenuItem deutsch;
 
     @Inject
     private PDFRenderer renderer;
@@ -57,4 +63,18 @@ public class MenuBarController {
         job.setPathToFile(pdfPath);
         this.renderer.setPdfPath(pdfPath);
     }
+
+
+    public void onChangeLanguage(Locale locale) {
+        Locale.setDefault(locale);
+        ControllerUtils.reloadScene((Stage) menuBar.getScene().getWindow());
+    }
+
+    public void onChangeLanguageGerman() {
+        onChangeLanguage(Locale.GERMAN);
+    }
+
+    public void onChangeLanguageEnglish() { onChangeLanguage(Locale.ENGLISH); }
+
+
 }

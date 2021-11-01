@@ -53,8 +53,6 @@ public class PdfPreviewController implements Initializable {
 
         if (this.renderer.hasPreview()) {
             loadPdfPreview(this.renderer::getCurrentPreview);
-        } else {
-            pageIndexLabel.setText("Seitenanzahl");
         }
 
         parentAnchorPane.setOnDragOver(event -> {
@@ -121,7 +119,7 @@ public class PdfPreviewController implements Initializable {
     private void loadPdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("Seite: %d/%d".formatted(this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
+            pageIndexLabel.setText(pageIndexLabel.getText() + " %d/%d".formatted(this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane stylesheets="@css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
+<BorderPane stylesheets="@../css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ImportController">
    <top>
        <fx:include fx:id="menuBar" source="MenuBar.fxml" />
    </top>
@@ -21,11 +21,8 @@
           <children>
               <AnchorPane>
                   <children>
-                      <fx:include fx:id="pdfPreview" source="PdfPreview.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                      <fx:include fx:id="pdfPreview" source="PdfPreview.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   </children>
-                  <GridPane.margin>
-                      <Insets left="10.0" right="10.0" top="10.0" />
-                  </GridPane.margin>
               </AnchorPane>
               <GridPane prefHeight="481.0" prefWidth="363.0" GridPane.columnIndex="1">
                   <columnConstraints>
@@ -42,8 +39,8 @@
                           <children>
                               <VBox>
                                   <children>
-                                      <Label styleClass="header" text="Templates" />
-                                      <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="160.0" promptText="Template auswählen" styleClass="check-box">
+                                      <Label styleClass="header" text="%templatesHeader" />
+                                      <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="160.0" promptText="%templateComboBox" styleClass="check-box">
                                           <VBox.margin>
                                               <Insets top="10.0" />
                                           </VBox.margin>
@@ -57,14 +54,14 @@
                       </AnchorPane>
                       <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                           <content>
-                              <Label styleClass="header" text="Ermittelte Daten">
+                              <Label styleClass="header" text="%collectedDataHeader">
                                   <padding>
                                       <Insets bottom="10.0" />
                                   </padding>
                               </Label>
                           </content>
                       </ScrollPane>
-                      <JFXButton fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" styleClass="button-blue" text="Weiter" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                      <JFXButton fx:id="continueButton" mnemonicParsing="false" onAction="#continueButtonOnAction" styleClass="button-blue" text="%continueButton" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                   </children>
                   <padding>
                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

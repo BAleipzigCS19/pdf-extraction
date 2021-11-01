@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController"
-            stylesheets="@css/ViewStylesheet.css">
+            stylesheets="@../css/ViewStylesheet.css">
     <top>
         <fx:include source="MenuBar.fxml" fx:id="menuBar"/>
     </top>
@@ -35,17 +35,17 @@
                     </rowConstraints>
                     <children>
                         <JFXCheckBox fx:id="createTerminationCheckBox" mnemonicParsing="false"
-                                     text="Kündigung erstellen" GridPane.rowIndex="1"/>
-                        <JFXCheckBox fx:id="createTestImage" mnemonicParsing="false" text="Test-Bild erstellen"
+                                     text="%createCancellationCheckBox" GridPane.rowIndex="1"/>
+                        <JFXCheckBox fx:id="createTestImage" mnemonicParsing="false" text="%createTestImageCheckBox"
                                      GridPane.rowIndex="2"/>
                     </children>
                 </GridPane>
                 <JFXButton fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction"
-                           text="Aktion durchführen" GridPane.halignment="RIGHT" GridPane.rowIndex="2"
+                           text="%runActionButton" GridPane.halignment="RIGHT" GridPane.rowIndex="2"
                            GridPane.valignment="BOTTOM" styleClass="button-blue"/>
-                <Label text="Bitte wählen Sie eine Aktion" styleClass="header"/>
+                <Label text="%pleaseChooseAnActionLabel" styleClass="header"/>
                 <JFXButton fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction"
-                           text="Zurück" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM"
+                           text="%backButton" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM"
                            styleClass="button-white"/>
             </children>
             <padding>

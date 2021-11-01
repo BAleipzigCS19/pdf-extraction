@@ -16,6 +16,8 @@ import java.util.Locale;
 
 public final class ControllerUtils {
 
+    private static FXView currentView;
+
     private ControllerUtils() {
     }
 
@@ -31,10 +33,13 @@ public final class ControllerUtils {
             final Scene scene = new Scene(parent);
             current.setScene(scene);
             current.show();
+
+            currentView = newView;
         } catch (IOException e) {
             AlertUtils.showErrorAlert(e);
             throw new UncheckedIOException(e);
         }
+
     }
 
 
@@ -44,6 +49,14 @@ public final class ControllerUtils {
      */
     public static void changeFocusOnControlParent(Control control){
         Platform.runLater(() -> control.getParent().requestFocus());
+    }
+
+    /**
+     *
+     * @param stage
+     */
+    public static void reloadScene(Stage stage){
+        ControllerUtils.switchScene(stage, currentView);
     }
 
 }

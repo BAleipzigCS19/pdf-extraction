@@ -21,7 +21,7 @@ public interface ResourceBundleProvider {
      * @return The created ResourcesBundle of the given Locale. Never null
      */
     default ResourceBundle getBundle(Locale locale) {
-        final String bundlePath = getClass().getSimpleName() + locale.toLanguageTag() + DEFAULT_RB_ENDING;
+        final String bundlePath = "languages/language_" + locale.toLanguageTag() + DEFAULT_RB_ENDING;
 
         try (final InputStream stream = getClass().getResourceAsStream(bundlePath)) {
             final InputStream actualStream = Optional.ofNullable(stream)
