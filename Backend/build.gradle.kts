@@ -22,6 +22,15 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
 
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/xdocreport
+    implementation("fr.opensagres.xdocreport:xdocreport:2.0.2")
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.velocity
+    implementation("fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.velocity:2.0.2")
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.freemarker
+    implementation("fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker:2.0.2")
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.odt.odfdom
+    implementation("fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.odt.odfdom:2.0.2")
+
 
     // https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j
     implementation("net.sourceforge.tess4j:tess4j:4.5.5")

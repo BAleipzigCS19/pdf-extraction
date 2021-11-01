@@ -6,15 +6,13 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Collection;
 
-@RestController("/rest/results")
+@RestController
+@RequestMapping("/rest/results")
 public class ResultController {
 
     @Value("${server.port}")
@@ -58,7 +56,7 @@ public class ResultController {
 
         final ResultTemplate template;
         if (this.repo.existsTemplateByName(name)) {
-            template = this.repo.findTemplateByName(name);
+            template = this.repo.findResultByName(name);
         } else {
             template = new ResultTemplate();
         }

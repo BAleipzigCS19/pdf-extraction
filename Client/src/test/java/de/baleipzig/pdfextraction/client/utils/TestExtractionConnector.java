@@ -11,8 +11,13 @@ import java.util.Map;
 @ImplementationOrder(order = Integer.MAX_VALUE)
 public class TestExtractionConnector implements ExtractionConnector {
     @Override
-    public Mono<Map<String, String>> runJob(String templateName, Path pathToFile) {
+    public Mono<Map<String, String>> extractOnly(String templateName, Path pathToFile) {
         return Mono.just(Map.of("Test A", "Content A"));
+    }
+
+    @Override
+    public Mono<byte[]> runJob(String templateName, Path pathToFile, String resultName) {
+        return Mono.error(new UnsupportedOperationException("Not implemented."));
     }
 
     @Override

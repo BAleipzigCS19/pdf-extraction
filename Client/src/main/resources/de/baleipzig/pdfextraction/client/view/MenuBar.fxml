@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<MenuBar xmlns:fx="http://javafx.com/fxml/1" fx:id="menuBar" xmlns="http://javafx.com/javafx/17"
-         fx:controller="de.baleipzig.pdfextraction.client.controller.MenuBarController">
+
+<MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.MenuBarController">
     <Menu mnemonicParsing="false" text="File">
-        <MenuItem fx:id="chooseFile" mnemonicParsing="false" onAction="#onChooseFile" text="Datei Auswählen"/>
+        <MenuItem fx:id="chooseFile" mnemonicParsing="false" onAction="#onChooseFile" text="Datei Auswählen" />
     </Menu>
     <Menu mnemonicParsing="false" text="Template">
-        <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate"
-                  text="Template erstellen"/>
+        <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate" text="Template erstellen" />
     </Menu>
+   <Menu mnemonicParsing="false" text="Vorlagen">
+     <items>
+       <MenuItem mnemonicParsing="false" onAction="#onSaveResultTemplate" text="Vorlage hochladen" />
+     </items>
+   </Menu>
     <Menu mnemonicParsing="false" text="Help">
-        <MenuItem mnemonicParsing="false" text="About"/>
+        <MenuItem mnemonicParsing="false" text="About" />
     </Menu>
 </MenuBar>

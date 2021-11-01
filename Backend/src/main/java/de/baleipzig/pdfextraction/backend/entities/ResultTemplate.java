@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.backend.entities;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.util.Objects;
@@ -15,6 +16,8 @@ import java.util.Objects;
 )
 public class ResultTemplate extends AbstractPersistable<Integer> {
     private String name;
+
+    @Lob
     private byte[] content;
 
     public ResultTemplate() {

@@ -32,20 +32,15 @@ abstract class AbstractConnector {
 
 
     protected <T> Mono<T> createRequest(String templateName, Path pathToFile, String urlPath) {
-        if (!StringUtils.hasText(templateName)) {
-            return Mono.error(new IllegalArgumentException("Invalid Name \"%s\"".formatted(templateName)));
+        Mono<T> errorResponse = checkArgs(templateName, pathToFile);
+        if (errorResponse != null) {
+            return errorResponse;
         }
-
-        if (pathToFile == null) {
-            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
-        }
-
-        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
 
         return this.webClient
                 .post()
                 .uri(urlPath)
-                .body(BodyInserters.fromMultipartData(toSend))
+                .body(BodyInserters.fromMultipartData(getMultiMap(templateName, pathToFile)))
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
                         return response.bodyToMono(new ParameterizedTypeReference<>() {
@@ -54,5 +49,41 @@ abstract class AbstractConnector {
                         return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 });
+    }
+
+    protected <T> Mono<T> createRequest(String templateName, Path pathToFile, String urlPath, final Class<T> clazz) {
+        Mono<T> errorResponse = checkArgs(templateName, pathToFile);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+
+        return this.webClient
+                .post()
+                .uri(urlPath)
+                .body(BodyInserters.fromMultipartData(getMultiMap(templateName, pathToFile)))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return response.bodyToMono(clazz);
+                    } else {
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
+                    }
+                });
+    }
+
+    protected MultiValueMap<String, Object> getMultiMap(String templateName, Path pathToFile) {
+        return CollectionUtils.toMultiValueMap(
+                Map.of("name", List.of(templateName),
+                        "content", List.of(new FileSystemResource(pathToFile))));
+    }
+
+    protected  <T> Mono<T> checkArgs(String templateName, Path pathToFile) {
+        if (!StringUtils.hasText(templateName)) {
+            return Mono.error(new IllegalArgumentException("Invalid Name \"%s\"".formatted(templateName)));
+        }
+
+        if (pathToFile == null) {
+            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
+        }
+        return null;
     }
 }

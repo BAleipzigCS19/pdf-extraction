@@ -7,5 +7,5 @@ public interface ResultRepository extends JpaRepository<ResultTemplate, Integer>
 
     boolean existsTemplateByName(String name);
 
-    ResultTemplate findTemplateByName(String name);
+    ResultTemplate findResultByName(String name);
 }

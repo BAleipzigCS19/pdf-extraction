@@ -7,8 +7,6 @@ import javafx.scene.image.Image;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
@@ -30,27 +28,25 @@ public final class ExtractionConnectorImpl extends AbstractConnector implements 
     }
 
     @Override
-    public Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile) {
+    public Mono<Map<String, String>> extractOnly(final String templateName, final Path pathToFile) {
         return createRequest(templateName, pathToFile, "/extraction/run");
     }
 
     @Override
-    public Mono<Image> createTestImage(final String templateName, final Path pathToFile) {
-        if (!StringUtils.hasText(templateName)) {
-            return Mono.error(new IllegalArgumentException("Invalid Template Name \"%s\"".formatted(templateName)));
+    public Mono<byte[]> runJob(final String templateName, final Path pathToFile, final String resultName) {
+        Mono<byte[]> errorResponse = checkArgs(templateName, pathToFile);
+        if (errorResponse != null) {
+            return errorResponse;
         }
-
-        if (pathToFile == null) {
-            return Mono.error(new IllegalArgumentException("The Path to the File cannot be null."));
-        }
-
-        final MultiValueMap<String, Object> toSend = CollectionUtils.toMultiValueMap(Map.of("name", List.of(templateName), "content", List.of(new FileSystemResource(pathToFile))));
 
         final Base64.Decoder decoder = Base64.getDecoder();
         return this.webClient
                 .post()
-                .uri("/extraction/test")
-                .body(BodyInserters.fromMultipartData(toSend))
+                .uri("/extraction")
+                .body(BodyInserters.fromMultipartData(CollectionUtils.toMultiValueMap(
+                        Map.of("templateName", List.of(templateName),
+                                "content", List.of(new FileSystemResource(pathToFile)),
+                                "resultName", List.of(resultName)))))
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
                         return response.bodyToMono(String.class);
@@ -58,6 +54,13 @@ public final class ExtractionConnectorImpl extends AbstractConnector implements 
                         return Mono.error(new IllegalStateException(response.statusCode().name()));
                     }
                 })
+                .map(decoder::decode);
+    }
+
+    @Override
+    public Mono<Image> createTestImage(final String templateName, final Path pathToFile) {
+        final Base64.Decoder decoder = Base64.getDecoder();
+        return this.createRequest(templateName, pathToFile, "/extraction/test", String.class)
                 .map(decoder::decode)
                 .map(ByteArrayInputStream::new)
                 .map(Image::new);

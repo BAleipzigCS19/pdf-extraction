@@ -36,10 +36,6 @@ dependencies {
     // https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
 
-    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    implementation("org.apache.poi:poi-ooxml:5.0.0")
-
-
     implementation("org.reflections:reflections:0.10.1")
 
     compileOnly("org.slf4j:slf4j-api:2.0.0-alpha5")
