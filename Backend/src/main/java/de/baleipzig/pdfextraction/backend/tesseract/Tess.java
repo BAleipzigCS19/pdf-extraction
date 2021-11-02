@@ -1,7 +1,9 @@
 package de.baleipzig.pdfextraction.backend.tesseract;
 
 import de.baleipzig.pdfextraction.backend.entities.Field;
+import net.sourceforge.tess4j.TesseractException;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -14,5 +16,6 @@ public interface Tess {
      * @param fileContent PDF file
      * @return Map of Fields to the Content that was extracted
      */
-    Map<Field, String> doBatchOCR(final Collection<Field> fields, final byte[] fileContent);
+    Map<Field, String> doBatchOCR(final Collection<Field> fields, final byte[] fileContent)
+            throws IOException, TesseractException;
 }

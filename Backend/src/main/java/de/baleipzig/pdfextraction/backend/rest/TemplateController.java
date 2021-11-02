@@ -51,6 +51,12 @@ public class TemplateController {
         return ResponseEntity.ok(listOfNames);
     }
 
+    /**
+     * Return the Template where the name matches, if it exists.
+     *
+     * @param templateName Name of the Template to search + return
+     * @return Template
+     */
     @GetMapping
     public ResponseEntity<TemplateDTO> getForName(@RequestParam(name = "name") final String templateName) {
         if (templateName.isBlank()) {

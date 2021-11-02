@@ -15,18 +15,29 @@ import java.util.Collection;
 @RequestMapping("/rest/results")
 public class ResultController {
 
+    private final ResultRepository repo;
     @Value("${server.port}")
     private String port;
-
     @Value("${server.host}")
     private String host;
-
-    private final ResultRepository repo;
 
     public ResultController(ResultRepository repo) {
         this.repo = repo;
     }
 
+    private static boolean isValidDTO(final String name, final byte[] content) {
+        if (!StringUtils.hasText(name)) {
+            return false;
+        }
+
+        return content != null && content.length > 0;
+    }
+
+    /**
+     * Loads all Names of all saved Result-Templates in the DB
+     *
+     * @return A Collection of all names of all saved templates
+     */
     @GetMapping(path = "names")
     public ResponseEntity<Collection<String>> getAllNames() {
         LogManager.getLogger(getClass())
@@ -45,8 +56,16 @@ public class ResultController {
         return ResponseEntity.ok(listOfNames);
     }
 
+    /**
+     * Saves the Result-Template in the DB
+     *
+     * @param name    Name of the Result-Template
+     * @param content Content of the Template
+     * @return If the Saving was successful or not via HTTP-Codes
+     */
     @PutMapping
-    public ResponseEntity<Void> saveTemplate(@RequestPart("name") final String name, @RequestPart("content") final byte[] content) {
+    public ResponseEntity<Void> saveTemplate(@RequestPart("name") final String name,
+                                             @RequestPart("content") final byte[] content) {
         if (!isValidDTO(name, content)) {
             LogManager.getLogger(getClass())
                     .atError()
@@ -69,13 +88,5 @@ public class ResultController {
                 .atDebug()
                 .log("Saved Entity {}", saved);
         return ResponseEntity.created(URI.create("%s:%s/rest/template?name=%s".formatted(this.host, this.port, saved.getName()))).build();
-    }
-
-    private static boolean isValidDTO(final String name, final byte[] content) {
-        if (!StringUtils.hasText(name)) {
-            return false;
-        }
-
-        return content != null && content.length > 0;
     }
 }
