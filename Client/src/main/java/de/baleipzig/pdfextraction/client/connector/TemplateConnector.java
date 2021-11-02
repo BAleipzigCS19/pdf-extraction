@@ -1,79 +1,53 @@
 package de.baleipzig.pdfextraction.client.connector;
 
-import de.baleipzig.pdfextraction.api.config.Config;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
-import jakarta.inject.Singleton;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
+import javafx.scene.image.Image;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.nio.file.Path;
 import java.util.Map;
 
-@Singleton
-public class TemplateConnector {
+public interface TemplateConnector {
 
-    private final WebClient webClient;
+    /**
+     * Provides the Names of all saved Templates in the Backend
+     *
+     * @return Flux of TemplateNames or error Flux
+     */
+    Flux<String> getAllNames();
 
+    /**
+     * Loads the Template Object with the given Name.
+     *
+     * @param templateName Name of the template to load.
+     * @return Mono of the loaded Template or error Mono
+     */
+    Mono<TemplateDTO> getForName(String templateName);
 
-    public TemplateConnector(Config config) {
-        this(config.getServerURL());
-    }
+    /**
+     * Saves the given Template in the Backend
+     *
+     * @param dto Template to save
+     * @return empty Mono or error Mono
+     */
+    Mono<Void> save(TemplateDTO dto);
 
-    protected TemplateConnector(final String baseURl) {
-        this.webClient = WebClient.builder()
-                .baseUrl(baseURl)
-                .defaultHeaders(header -> {
-                    header.set(HttpHeaders.ACCEPT_CHARSET, "utf-8");
-                    header.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                    header.set(HttpHeaders.CONTENT_ENCODING, MediaType.APPLICATION_JSON_VALUE);
-                }).build();
-    }
+    /**
+     * Actually executes an extraction of the PDF with the given template
+     *
+     * @param templateName Name of the Template to use
+     * @param pathToFile   Path to the PDF to use
+     * @return Map of fieldtype-names to their extracted Result
+     */
+    Mono<Map<String, String>> runJob(final String templateName, final Path pathToFile);
 
-    public Flux<String> getAllNames() {
-        return this.webClient.method(HttpMethod.GET)
-                .uri("/template/names")
-                .exchangeToMono(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToMono(new ParameterizedTypeReference<List<String>>() {
-                        });
-                    } else {
-                        return Mono.error(new IllegalStateException(response.statusCode().name()));
-                    }
-                })
-                .flatMapMany(Flux::fromIterable);
-    }
-
-    public Mono<TemplateDTO> getForName(final String name) {
-        return this.webClient.method(HttpMethod.GET)
-                .uri("/template?name={name}", Map.of("name", name))
-                .exchangeToMono(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToMono(new ParameterizedTypeReference<>() {
-                        });
-                    } else {
-                        return Mono.error(new IllegalStateException(response.statusCode().name()));
-                    }
-                });
-    }
-
-    public Mono<Void> save(final TemplateDTO dto) {
-        return this.webClient
-                .method(HttpMethod.PUT)
-                .uri("/template")
-                .body(BodyInserters.fromValue(dto))
-                .exchangeToMono(response -> {
-                    if (response.statusCode().equals(HttpStatus.CREATED)) {
-                        return Mono.empty();
-                    } else {
-                        return Mono.error(new IllegalStateException(response.statusCode().name()));
-                    }
-                });
-    }
+    /**
+     * Creates an Image of the first Page of the given PDF with the Boxes of the given Template drawn to check if the Template matches the PDF
+     *
+     * @param templateName Name of the template to draw
+     * @param pathToFile   Path to the PDF to use
+     * @return Image
+     */
+    Mono<Image> createTestImage(final String templateName, final Path pathToFile);
 }

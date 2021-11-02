@@ -19,7 +19,7 @@ public class Template extends AbstractPersistable<Integer> {
 
     private String consumer;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Field> fields;
 
     public Template() {

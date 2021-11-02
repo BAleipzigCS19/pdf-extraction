@@ -17,3 +17,6 @@ gradle-app.setting
 
 #Database file
 *.db
+
+#Config files
+**/config.properties

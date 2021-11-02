@@ -30,9 +30,13 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
     implementation("org.apache.pdfbox:pdfbox:2.0.24")
+    // https://mvnrepository.com/artifact/com.jfoenix/jfoenix
+    implementation("com.jfoenix:jfoenix:9.0.10")
 
     // https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+
+    implementation("org.reflections:reflections:0.10.1")
 
     compileOnly("org.slf4j:slf4j-api:2.0.0-alpha5")
     runtimeOnly("ch.qos.logback:logback-classic:1.3.0-alpha10")
