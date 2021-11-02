@@ -1,10 +1,16 @@
 package de.baleipzig.pdfextraction.client.utils;
 
+import de.baleipzig.pdfextraction.client.view.Actions;
+import jakarta.inject.Inject;
 import javafx.scene.control.Alert;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public class AlertUtils {
+
+    @Inject
+    private SceneHandler sceneHandler;
 
     private AlertUtils() {
     }
@@ -39,12 +45,12 @@ public class AlertUtils {
     }
 
     /**
-     * Creates an Error Alter with the given Throwable
+     * Creates an Error Alter with the given error Message
      *
      * @param errorMessage Additional Error-Message
      */
     public static void showErrorAlert(final String errorMessage) {
-        showAlert(Alert.AlertType.ERROR, "Fehler", null, "Ein Fehler ist aufgetreten.\n" + errorMessage);
+        showAlert(Alert.AlertType.ERROR, "Error", null, getStandardMessage() + errorMessage);
     }
 
     /**
@@ -65,5 +71,13 @@ public class AlertUtils {
         alert.setHeaderText(header);
         alert.setContentText(content);
         return alert;
+    }
+
+    /**
+     * Gets the standard first Line in the Error Message in the correct Language
+     * @return the standard of the error Message
+     */
+    public static String getStandardMessage(){
+        return new LanguageHandler().getCurrentBundle().getString("errorMessageFirstLine") + "\n";
     }
 }

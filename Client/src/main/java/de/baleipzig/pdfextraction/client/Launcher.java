@@ -1,17 +1,20 @@
 package de.baleipzig.pdfextraction.client;
 
 import de.baleipzig.pdfextraction.client.config.Config;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
+import de.baleipzig.pdfextraction.client.utils.SceneHandler;
 import de.baleipzig.pdfextraction.client.view.Imports;
+import jakarta.inject.Inject;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.springframework.cglib.core.Local;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
 
 public class Launcher extends Application {
+
+    @Inject
+    SceneHandler sceneHandler;
 
     public static void main(String[] args) {
         final String pathToConfig = Arrays.stream(args)
@@ -27,6 +30,6 @@ public class Launcher extends Application {
     @Override
     public void start(final Stage stage) {
         stage.setTitle("pdf-extraction");
-        ControllerUtils.switchScene(stage, new Imports());
+        sceneHandler.switchScene(stage, new Imports());
     }
 }

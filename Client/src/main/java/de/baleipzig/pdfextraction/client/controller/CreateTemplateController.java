@@ -5,10 +5,7 @@ import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
-import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.utils.EventUtils;
-import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
@@ -35,7 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CreateTemplateController implements Initializable {
+public class CreateTemplateController extends Controller implements Initializable{
 
     private final Set<Box> chosenFieldTypes = new HashSet<>();
 
@@ -75,7 +72,7 @@ public class CreateTemplateController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ControllerUtils.changeFocusOnControlParent(menuBar);
+        changeFocusOnControlParent(menuBar);
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
@@ -102,21 +99,21 @@ public class CreateTemplateController implements Initializable {
     private void addFieldButtonOnClick() {
 
         if (!this.renderer.hasPreview()) {
-            AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", null, "Bitte wählen sie zuerst ein PDF aus.");
+            AlertUtils.showAlert(Alert.AlertType.WARNING, getResource("warningTitle"), null, getResource("alertChoosePDF"));
             return;
         }
 
         final List<FieldTypeWrapper> fieldTypes = getAvailableFieldTypes();
 
         if (fieldTypes.isEmpty()) {
-            AlertUtils.showAlert(Alert.AlertType.WARNING, "Warnung", "", "Es sind bereits alle verfügbaren Typen hinzugefügt worden.");
+            AlertUtils.showAlert(Alert.AlertType.WARNING, getResource("warningTitle"), "", getResource("alertAllTypesUsed"));
             return;
         }
 
 
         final ChoiceDialog<FieldTypeWrapper> dialog = new ChoiceDialog<>(fieldTypes.iterator().next(), fieldTypes);
-        dialog.setTitle("Feld-Typ");
-        dialog.setHeaderText("Wähle einen Feld-Typ");
+        dialog.setTitle(getResource("titleAddFieldDialog"));
+        dialog.setHeaderText(getResource("headerAddFieldDialog"));
 
 
         dialog.showAndWait().ifPresent(fieldType -> {
@@ -128,7 +125,7 @@ public class CreateTemplateController implements Initializable {
             final Stage stage = (Stage) scene.getWindow();
             final String oldTitle = stage.getTitle();
 
-            stage.setTitle("%s | Auswählen: %s".formatted(oldTitle != null ? oldTitle : "", fieldType));
+            stage.setTitle("%s | %s: %s".formatted(oldTitle != null ? oldTitle : "", getResource("choose"), fieldType));
 
             this.pdfAnchor.setOnMouseEntered(event -> scene.setCursor(Cursor.CROSSHAIR));
             this.pdfAnchor.setOnMouseExited(event -> scene.setCursor(Cursor.DEFAULT));
@@ -249,7 +246,7 @@ public class CreateTemplateController implements Initializable {
     @FXML
     private void createTemplateButtonOnAction() {
         if (isDataIncomplete()) {
-            AlertUtils.showErrorAlert("Es müssen alle Felder ausgefüllt sein");
+            AlertUtils.showErrorAlert(getResource("alertFillAllFields"));
             return;
         }
 
@@ -279,17 +276,14 @@ public class CreateTemplateController implements Initializable {
 
     private void onSuccessfulSave() {
         AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                "Erfolgreich",
+                getResource("successTitle"),
                 null,
-                "Template wurde erstellt"
+                getResource("alertTemplateCreated")
         );
 
         ((Stage) this.pdfAnchor.getScene().getWindow()).setResizable(true);
 
-        ControllerUtils.switchScene(
-                (Stage) this.dataGridPane.getScene().getWindow(),
-                new Imports()
-        );
+        switchScene((Stage) this.dataGridPane.getScene().getWindow(), new Imports());
     }
 
     private void onFailedSave(Throwable err) {
@@ -299,10 +293,7 @@ public class CreateTemplateController implements Initializable {
     @FXML
     private void cancelButtonOnAction() {
         ((Stage) this.pdfAnchor.getScene().getWindow()).setResizable(true);
-        ControllerUtils.switchScene(
-                (Stage) this.dataGridPane.getScene().getWindow(),
-                new Imports()
-        );
+        switchScene((Stage) this.dataGridPane.getScene().getWindow(), new Imports());
     }
 
     private boolean isDataIncomplete() {

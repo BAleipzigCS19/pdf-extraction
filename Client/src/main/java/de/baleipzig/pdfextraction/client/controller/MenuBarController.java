@@ -1,6 +1,5 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
-public class MenuBarController {
+public class MenuBarController extends Controller{
 
     @FXML
     public MenuItem chooseFile;
@@ -42,8 +41,7 @@ public class MenuBarController {
     @FXML
     private void onCreateTemplate() {
 
-        ControllerUtils.switchScene((Stage) this.menuBar.getScene().getWindow(),
-                new CreateTemplate());
+        switchScene((Stage) this.menuBar.getScene().getWindow(), new CreateTemplate());
     }
 
     @FXML
@@ -64,10 +62,13 @@ public class MenuBarController {
         this.renderer.setPdfPath(pdfPath);
     }
 
-
+    /**
+     * changes the Language Locale and reloads the Scene with the new Ressource Bundle
+     * @param locale
+     */
     public void onChangeLanguage(Locale locale) {
         Locale.setDefault(locale);
-        ControllerUtils.reloadScene((Stage) menuBar.getScene().getWindow());
+        reloadScene((Stage) menuBar.getScene().getWindow());
     }
 
     public void onChangeLanguageGerman() {

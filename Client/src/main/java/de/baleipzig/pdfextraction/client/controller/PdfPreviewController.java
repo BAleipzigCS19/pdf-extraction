@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
-public class PdfPreviewController implements Initializable {
+public class PdfPreviewController extends Controller implements Initializable {
 
     @FXML
     public Button pageBackButton;
@@ -71,14 +71,14 @@ public class PdfPreviewController implements Initializable {
 
                 final List<File> files = dragboard.getFiles();
                 if (files.size() > 1) {
-                    AlertUtils.showErrorAlert("Es kann nur eine PDF-Datei analysiert werden.");
+                    AlertUtils.showErrorAlert(getResource("alertOnlyOnePDFCanBeEdited"));
                     return;
                 }
 
                 final File first = files.get(0);
                 final boolean isCorrectFormat = first.getName().toLowerCase().endsWith(".pdf");
                 if (!isCorrectFormat) {
-                    AlertUtils.showErrorAlert("Es werden nur PDF-Dateien unterstützt.");
+                    AlertUtils.showErrorAlert(getResource("alertOnlyPDFsupport"));
                     return;
                 }
 

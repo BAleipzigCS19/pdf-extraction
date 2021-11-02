@@ -2,24 +2,25 @@ package de.baleipzig.pdfextraction.client.utils;
 
 import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.FXView;
-import javafx.application.Platform;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Control;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
-public final class ControllerUtils {
 
-    private static FXView currentView;
+@Singleton
+public class SceneHandler {
 
-    private ControllerUtils() {
-    }
+    @Inject
+    LanguageHandler languageHandler;
+
+    private FXView currentView;
 
     /**
      * Switches from the current Scene over to the new Scene
@@ -27,9 +28,9 @@ public final class ControllerUtils {
      * @param current The current Stage
      * @param newView The Scene to switch to
      */
-    public static <T extends FXView> void switchScene(final Stage current, final T newView) {
+    public <T extends FXView> void switchScene(final Stage current, final T newView) {
         try {
-            final Parent parent = FXMLLoader.load(newView.getFXML(), newView.getBundle(Locale.getDefault()), null, Injector::createInstance, StandardCharsets.UTF_8);
+            final Parent parent = FXMLLoader.load(newView.getFXML(), this.languageHandler.getCurrentBundle(), null, Injector::createInstance, StandardCharsets.UTF_8);
             final Scene scene = new Scene(parent);
             current.setScene(scene);
             current.show();
@@ -42,21 +43,11 @@ public final class ControllerUtils {
 
     }
 
-
     /**
-     * set's the focus, so that not the first element in the scene is autofocused
-     * @param control
+     * reloads the current Scene
+     * @param stage The current Stage
      */
-    public static void changeFocusOnControlParent(Control control){
-        Platform.runLater(() -> control.getParent().requestFocus());
+    public void reloadScene(Stage stage){
+        switchScene(stage, currentView);
     }
-
-    /**
-     *
-     * @param stage
-     */
-    public static void reloadScene(Stage stage){
-        ControllerUtils.switchScene(stage, currentView);
-    }
-
 }

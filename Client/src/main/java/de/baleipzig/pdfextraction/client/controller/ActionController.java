@@ -2,7 +2,6 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
@@ -19,11 +18,10 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class ActionController implements Initializable{
+public class ActionController extends Controller implements Initializable{
 
     @FXML
     public MenuBar menuBar;
@@ -82,13 +80,13 @@ public class ActionController implements Initializable{
 
     @FXML
     private void backToImportButtonOnAction() {
-        ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(),
+        switchScene((Stage) this.backToImportButton.getScene().getWindow(),
                 new Imports());
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ControllerUtils.changeFocusOnControlParent(menuBar);
+        changeFocusOnControlParent(menuBar);
     }
 }
