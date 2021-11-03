@@ -13,6 +13,9 @@ public final class EventUtils {
     private static final String ERR_MSG_ACTION = "The provided Action cannot be null";
     private static final String ERR_MSG_PROVIDER = "The provider cannot be null";
 
+    private EventUtils() {
+    }
+
     /**
      * Chains the given Action after the one that is set in the Button
      *
@@ -73,8 +76,5 @@ public final class EventUtils {
                     base.handle(ev);
                     toChain.handle(ev);
                 });
-    }
-
-    private EventUtils() {
     }
 }

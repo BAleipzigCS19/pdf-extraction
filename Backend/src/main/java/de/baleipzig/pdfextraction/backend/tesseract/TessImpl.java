@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +44,8 @@ public class TessImpl implements Tess {
     }
 
     @Override
-    public Map<Field, String> doBatchOCR(final Collection<Field> fields, final byte[] fileContent) {
+    public Map<Field, String> doBatchOCR(final Collection<Field> fields, final byte[] fileContent)
+            throws IOException, TesseractException {
         final Map<Field, String> result = new HashMap<>(fields.size());
 
         try (final PDDocument document = PDDocument.load(fileContent)) {
@@ -53,14 +53,10 @@ public class TessImpl implements Tess {
 
             for (final Field field : fields) {
                 final BufferedImage image = renderer.renderImageWithDPI(field.getPage(), 300, ImageType.GRAY);
-                result.put(field, this.tesseract.doOCR(image, getSize(field, image)));
+                result.put(field, this.tesseract.doOCR(image, getSize(field, image)).trim());
             }
 
             return result;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } catch (TesseractException e) {
-            throw new UncheckedIOException(new IOException(e));
         }
     }
 }
