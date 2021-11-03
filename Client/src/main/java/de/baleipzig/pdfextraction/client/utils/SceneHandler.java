@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 public class SceneHandler {
 
     @Inject
-    LanguageHandler languageHandler;
+    private LanguageHandler languageHandler;
 
     private FXView currentView;
 
@@ -45,9 +45,10 @@ public class SceneHandler {
 
     /**
      * reloads the current Scene
+     *
      * @param stage The current Stage
      */
-    public void reloadScene(Stage stage){
+    public void reloadScene(Stage stage) {
         switchScene(stage, currentView);
     }
 }

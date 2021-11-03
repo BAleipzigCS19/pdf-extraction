@@ -46,7 +46,7 @@ public class LanguageHandler {
                 // wenn das current Bundle null ist kommt direkt false zurück
                 .orElse(false);
         // ist current Bundle == null oder ist nicht equal der Default Locale wird das entsprechende Ressource Bundle geladen
-        if (!isEqual){
+        if (!isEqual) {
             currentBundle = loadBundle(Locale.getDefault());
         }
         return currentBundle;

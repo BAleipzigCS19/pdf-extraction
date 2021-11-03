@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
-public class MenuBarController extends Controller{
+public class MenuBarController extends Controller {
 
     @FXML
     public MenuItem chooseFile;
@@ -64,6 +64,7 @@ public class MenuBarController extends Controller{
 
     /**
      * changes the Language Locale and reloads the Scene with the new Ressource Bundle
+     *
      * @param locale
      */
     public void onChangeLanguage(Locale locale) {
@@ -75,7 +76,9 @@ public class MenuBarController extends Controller{
         onChangeLanguage(Locale.GERMAN);
     }
 
-    public void onChangeLanguageEnglish() { onChangeLanguage(Locale.ENGLISH); }
+    public void onChangeLanguageEnglish() {
+        onChangeLanguage(Locale.ENGLISH);
+    }
 
 
 }

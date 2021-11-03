@@ -1,10 +1,9 @@
 package de.baleipzig.pdfextraction.client.utils;
 
-import de.baleipzig.pdfextraction.client.view.Actions;
+import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import jakarta.inject.Inject;
 import javafx.scene.control.Alert;
 
-import java.util.Locale;
 import java.util.Optional;
 
 public class AlertUtils {
@@ -75,9 +74,10 @@ public class AlertUtils {
 
     /**
      * Gets the standard first Line in the Error Message in the correct Language
+     *
      * @return the standard of the error Message
      */
-    public static String getStandardMessage(){
-        return new LanguageHandler().getCurrentBundle().getString("errorMessageFirstLine") + "\n";
+    public static String getStandardMessage() {
+        return Injector.createInstance(LanguageHandler.class).getCurrentBundle().getString("errorMessageFirstLine") + "\n";
     }
 }

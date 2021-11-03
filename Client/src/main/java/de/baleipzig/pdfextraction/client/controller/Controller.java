@@ -17,23 +17,24 @@ abstract class Controller {
     @Inject
     private LanguageHandler languageHandler;
 
-    protected String getResource(String key){
+    protected String getResource(String key) {
         return languageHandler.getCurrentBundle().getString(key);
     }
 
-    protected void switchScene(Stage current, FXView view){
+    protected void switchScene(Stage current, FXView view) {
         this.sceneHandler.switchScene(current, view);
     }
 
-    protected void reloadScene(Stage current){
+    protected void reloadScene(Stage current) {
         sceneHandler.reloadScene(current);
     }
 
     /**
      * set's the focus, so that not the first element in the scene is autofocused
+     *
      * @param control The GUI element on which parent the focus is set
      */
-    protected void changeFocusOnControlParent(Control control){
+    protected void changeFocusOnControlParent(Control control) {
         Platform.runLater(() -> control.getParent().requestFocus());
     }
 }
