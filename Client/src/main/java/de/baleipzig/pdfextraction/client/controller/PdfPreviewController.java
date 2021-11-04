@@ -119,7 +119,7 @@ public class PdfPreviewController extends Controller implements Initializable {
     private void loadPdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("%s: %d/%d".formatted(pageIndexLabel.getText(), this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
+            pageIndexLabel.setText("%s: %d/%d".formatted(getResource("pageNumberLabel"), this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()

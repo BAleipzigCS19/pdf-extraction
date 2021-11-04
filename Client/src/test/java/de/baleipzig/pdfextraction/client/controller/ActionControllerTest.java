@@ -32,9 +32,9 @@ class ActionControllerTest extends ApplicationTest {
     @Test
     void verifyViewComponents() {
 
-        verifyThat("#runActionButton", LabeledMatchers.hasText("Aktion durchführen"));
-        verifyThat("#backToImportButton", LabeledMatchers.hasText("Zurück"));
-        verifyThat("#createTerminationCheckBox", LabeledMatchers.hasText("Kündigung erstellen"));
+        verifyThat("#runActionButton", NodeMatchers.isVisible());
+        verifyThat("#backToImportButton", NodeMatchers.isVisible());
+        verifyThat("#createTerminationCheckBox", NodeMatchers.isVisible());
     }
 
     @Test

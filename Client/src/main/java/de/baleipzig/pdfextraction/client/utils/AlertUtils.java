@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 
 import java.util.Optional;
 
+
 public class AlertUtils {
 
     @Inject

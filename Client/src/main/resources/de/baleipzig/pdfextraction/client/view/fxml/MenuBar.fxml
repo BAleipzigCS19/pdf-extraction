@@ -5,14 +5,14 @@
 <?import javafx.scene.control.MenuItem?>
 
 <MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="de.baleipzig.pdfextraction.client.controller.MenuBarController">
-  <Menu mnemonicParsing="false" text="%file">
+         fx:controller="de.baleipzig.pdfextraction.client.controller.MenuBarController" >
+  <Menu fx:id="fileMenu" mnemonicParsing="false" text="%file" >
     <MenuItem fx:id="chooseFile" mnemonicParsing="false" onAction="#onChooseFile" text="%chooseFile"/>
   </Menu>
-  <Menu mnemonicParsing="false" text="%templateMenu">
+  <Menu fx:id="templateMenuID" mnemonicParsing="false" text="%templateMenu">
     <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate" text="%createTemplate"/>
   </Menu>
-  <Menu mnemonicParsing="false" text="%LanguageMenu">
+  <Menu fx:id="languageMenuID" mnemonicParsing="false" text="%LanguageMenu">
     <MenuItem fx:id="deutsch" mnemonicParsing="false" onAction="#onChangeLanguageGerman" text="%changeLanguageGerman"/>
     <MenuItem fx:id="english" mnemonicParsing="false" onAction="#onChangeLanguageEnglish" text="%changeLanguageEnglish"/>
   </Menu>

@@ -30,12 +30,10 @@ class PdfPreviewIncludeControllerTest extends ApplicationTest {
 
     @Test
     void verifyViewComponents() {
-
-        FxAssert.verifyThat("#pageForwardButton", LabeledMatchers.hasText("->"));
+        FxAssert.verifyThat("#pageForwardButton", LabeledMatchers.hasText(">"));
         FxAssert.verifyThat("#pageForwardButton", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#pageBackButton", LabeledMatchers.hasText("<-"));
+        FxAssert.verifyThat("#pageBackButton", LabeledMatchers.hasText("<"));
         FxAssert.verifyThat("#pageBackButton", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#chooseFileButton", NodeMatchers.isVisible());
         FxAssert.verifyThat("#pageIndexLabel", NodeMatchers.isVisible());
     }
 }
