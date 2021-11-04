@@ -4,6 +4,10 @@ import com.jfoenix.controls.JFXButton;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
+import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
+import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.EventUtils;
+import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Imports;
@@ -38,33 +42,24 @@ public class CreateTemplateController extends Controller implements Initializabl
 
     @FXML
     public MenuBar menuBar;
-
-    @FXML
-    private GridPane dataGridPane;
-
-    @FXML
-    private TextField insuranceTextField;
-
-    @FXML
-    private TextField templateNameTextField;
-
     @FXML
     public AnchorPane pdfAnchor;
-
-    @FXML
-    private PdfPreviewController pdfPreviewController;
-
-    @FXML
-    private MenuBarController menuBarController;
-
-    @FXML
-    private GridPane datagrid;
-
     @Inject
     protected TemplateConnector connector;
-
     @Inject
     protected PDFRenderer renderer;
+    @FXML
+    private GridPane dataGridPane;
+    @FXML
+    private TextField insuranceTextField;
+    @FXML
+    private TextField templateNameTextField;
+    @FXML
+    private PdfPreviewController pdfPreviewController;
+    @FXML
+    private MenuBarController menuBarController;
+    @FXML
+    private GridPane datagrid;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them

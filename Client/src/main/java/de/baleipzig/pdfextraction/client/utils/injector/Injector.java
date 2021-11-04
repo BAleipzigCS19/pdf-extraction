@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
@@ -15,6 +16,9 @@ import java.util.stream.Stream;
 
 public final class Injector {
     private static final Map<Class<?>, Object> singletonMap = new ConcurrentHashMap<>();
+    private static final Reflections reflections = new Reflections(new ConfigurationBuilder()
+            .forPackage("de.baleipzig")
+            .setScanners(Scanners.SubTypes));
 
     /**
      * Creates an Instance of the given Class and injects and fields marked with {@link Inject} on this field
@@ -34,7 +38,6 @@ public final class Injector {
 
     @SuppressWarnings("unchecked")//These Casts are safe
     private static <T> T getImplementingClass(Class<T> interfaceToInstantiate) {
-        final Reflections reflections = new Reflections("de.baleipzig");
         final Set<Class<?>> classes = reflections.get(Scanners.SubTypes.of(interfaceToInstantiate).asClass());
         if (classes.isEmpty()) {
             throw new IllegalArgumentException("Class \"%s\" has no implementation".formatted(interfaceToInstantiate.getName()));
