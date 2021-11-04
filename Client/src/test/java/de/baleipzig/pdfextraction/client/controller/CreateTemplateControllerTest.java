@@ -1,12 +1,13 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.api.fields.FieldType;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
-import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.utils.SceneHandler;
+import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -15,6 +16,7 @@ import org.testfx.matcher.base.NodeMatchers;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static org.testfx.api.FxAssert.verifyThat;
@@ -22,10 +24,15 @@ import static org.testfx.api.FxAssert.verifyThat;
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class CreateTemplateControllerTest extends ApplicationTest {
 
+    @BeforeAll
+    static void beforeAll() {
+        Locale.setDefault(Locale.GERMAN);
+    }
+
     @Override
     public void start(Stage stage) {
 
-        ControllerUtils.switchScene(stage, new CreateTemplate());
+        Injector.createInstance(SceneHandler.class).switchScene(stage, new CreateTemplate());
     }
 
     @Test
@@ -62,8 +69,7 @@ class CreateTemplateControllerTest extends ApplicationTest {
                 .moveBy(-10, -10)
                 .release(MouseButton.PRIMARY);
 
-        clickOn("#createTemplateButton").sleep(2, TimeUnit.SECONDS);
-        clickOn("OK");
+        clickOn("#createTemplateButton").clickOn("OK");
         verifyThat("#continueButton", NodeMatchers.isVisible());
     }
 
