@@ -87,8 +87,9 @@ public class ActionController extends Controller implements Initializable{
 
     private void onSuccess(final byte[] pdfBytes) {
         final FileChooser chooser = new FileChooser();
-        chooser.setTitle("Ergebnis Speichern unter");
+        chooser.setTitle(getResource("%safeoutcomeFileChooser"));
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("pdf", "*.pdf"));
         final File toSave = chooser.showSaveDialog(this.menuBar.getScene().getWindow());
         if (toSave == null) {
             return;
