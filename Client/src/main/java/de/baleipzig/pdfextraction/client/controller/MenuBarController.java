@@ -33,12 +33,6 @@ public class MenuBarController extends Controller {
     @FXML
     public MenuBar menuBar;
 
-    @FXML
-    public MenuItem english;
-
-    @FXML
-    public MenuItem deutsch;
-
     @Inject
     private PDFRenderer renderer;
 

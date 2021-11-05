@@ -50,7 +50,7 @@ public class AlertUtils {
      * @param errorMessage Additional Error-Message
      */
     public static void showErrorAlert(final String errorMessage) {
-        showAlert(Alert.AlertType.ERROR, "Error", null, getStandardMessage() + errorMessage);
+        showAlert(Alert.AlertType.ERROR, getAlertRessource("errorTitle"), null, getAlertRessource("errorMessageFirstLine") + errorMessage);
     }
 
     /**
@@ -78,7 +78,7 @@ public class AlertUtils {
      *
      * @return the standard of the error Message
      */
-    public static String getStandardMessage() {
-        return Injector.createInstance(LanguageHandler.class).getCurrentBundle().getString("errorMessageFirstLine") + "\n";
+    public static String getAlertRessource(String key) {
+        return Injector.createInstance(LanguageHandler.class).getCurrentBundle().getString(key) + "\n";
     }
 }

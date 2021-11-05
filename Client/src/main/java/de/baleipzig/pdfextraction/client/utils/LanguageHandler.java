@@ -37,15 +37,15 @@ public class LanguageHandler {
         }
     }
 
+    /**
+     * loads the current Bundle if its not already set, or if the current Bundle is currently null
+     * @return the current set resource Bundle
+     */
     public ResourceBundle getCurrentBundle() {
         final boolean isEqual = Optional.ofNullable(currentBundle)
-                // das ist bloß ein Cast auf die Locale wenn current Bundle nicht null ist
                 .map(ResourceBundle::getLocale)
-                // nach dem Cast wird geprüft ob die Locale in current Bundle schon die Default Locale ist
                 .map(Locale.getDefault()::equals)
-                // wenn das current Bundle null ist kommt direkt false zurück
                 .orElse(false);
-        // ist current Bundle == null oder ist nicht equal der Default Locale wird das entsprechende Ressource Bundle geladen
         if (!isEqual) {
             currentBundle = loadBundle(Locale.getDefault());
         }

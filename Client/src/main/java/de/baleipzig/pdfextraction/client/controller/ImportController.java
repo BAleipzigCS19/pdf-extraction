@@ -15,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +27,6 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
-
-    @FXML
-    public GridPane pdfPreview;
 
     @FXML
     private Button continueButton;
