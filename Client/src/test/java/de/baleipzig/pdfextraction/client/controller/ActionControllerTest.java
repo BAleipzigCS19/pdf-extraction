@@ -5,6 +5,7 @@ import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -45,8 +46,8 @@ class ActionControllerTest extends ApplicationTest {
     }
 
     @Test
+    @Disabled("Without choosing a Template and an PDF it can't continue.")
     void runAction() {
-
         clickOn("#runActionButton");
         verifyThat("OK", NodeMatchers.isVisible());
         clickOn("OK");

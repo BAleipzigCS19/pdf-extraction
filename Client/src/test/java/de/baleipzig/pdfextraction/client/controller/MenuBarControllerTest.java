@@ -68,7 +68,7 @@ class MenuBarControllerTest extends ApplicationTest {
 
     @Test
     void changeLangauage(){
-        verifyThat("#templateHeader", LabeledMatchers.hasText("Vorlagen"));
+        verifyThat("#templateHeader", LabeledMatchers.hasText("Schablonen"));
         clickOn("#languageMenuID");
         clickOn("#english");
         verifyThat("#templateHeader", LabeledMatchers.hasText("Templates"));

@@ -22,10 +22,11 @@ class EventUtilsTest {
         });
     }
 
+
     private static void checkTimings(final AtomicReference<Instant> original, final AtomicReference<Instant> chained) {
         Assertions.assertNotNull(original.get());
         Assertions.assertNotNull(chained.get());
-        Assertions.assertTrue(original.get().isBefore(chained.get()));
+        Assertions.assertTrue(original.get().compareTo(chained.get()) <= 0);
     }
 
     @Test
@@ -111,9 +112,5 @@ class EventUtilsTest {
         Assertions.assertNotNull(ref.get());
     }
 
-    private static void checkTimings(final AtomicReference<Instant> original, final AtomicReference<Instant> chained) {
-        Assertions.assertNotNull(original.get());
-        Assertions.assertNotNull(chained.get());
-        Assertions.assertTrue(original.get().compareTo(chained.get()) <= 0);
-    }
+
 }
