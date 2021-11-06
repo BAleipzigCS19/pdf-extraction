@@ -13,10 +13,6 @@ import java.util.Properties;
 public class Config {
 
     private static Path PATH_TO_CONFIG;
-    public static void setPathToConfig(Path path) {
-        PATH_TO_CONFIG = path;
-    }
-
     private final String serverURL;
 
     public Config()
@@ -24,6 +20,10 @@ public class Config {
         final Properties props = getProperties();
 
         this.serverURL = Objects.requireNonNull(props.getProperty("server.url"), "Server URL not set");
+    }
+
+    public static void setPathToConfig(Path path) {
+        PATH_TO_CONFIG = path;
     }
 
     public String getServerURL() {

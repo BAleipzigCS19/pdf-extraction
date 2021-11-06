@@ -3,8 +3,8 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@css/ViewStylesheet.css"
-            xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="800.0" prefWidth="1050.0"
+            stylesheets="@css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2"
             fx:controller="de.baleipzig.pdfextraction.client.controller.CreateTemplateController">
     <top>
         <fx:include fx:id="menuBar" source="MenuBar.fxml"/>

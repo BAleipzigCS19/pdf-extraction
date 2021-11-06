@@ -4,8 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<GridPane prefHeight="800.0" prefWidth="1050.0" stylesheets="@css/pdfPreview.css"
-          xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="800.0" prefWidth="1050.0"
+          stylesheets="@css/pdfPreview.css" xmlns="http://javafx.com/javafx/11.0.2"
           fx:controller="de.baleipzig.pdfextraction.client.controller.PdfPreviewController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>

@@ -40,9 +40,10 @@ public final class ControllerUtils {
 
     /**
      * set's the focus, so that not the first element in the scene is autofocused
+     *
      * @param control
      */
-    public static void changeFocusOnControlParent(Control control){
+    public static void changeFocusOnControlParent(Control control) {
         Platform.runLater(() -> control.getParent().requestFocus());
     }
 

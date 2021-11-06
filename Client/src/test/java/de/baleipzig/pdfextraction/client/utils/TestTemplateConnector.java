@@ -3,21 +3,16 @@ package de.baleipzig.pdfextraction.client.utils;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
-import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
+import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.injector.ImplementationOrder;
-import jakarta.inject.Singleton;
-import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
-@Singleton
 @ImplementationOrder(order = Integer.MAX_VALUE)
-public class TestConnector implements TemplateConnector {
+public class TestTemplateConnector implements TemplateConnector {
     @Override
     public Flux<String> getAllNames() {
         return Flux.just("Template A", "Template B", "Template C");
@@ -31,16 +26,6 @@ public class TestConnector implements TemplateConnector {
     @Override
     public Mono<Void> save(TemplateDTO dto) {
         return Mono.empty();
-    }
-
-    @Override
-    public Mono<Map<String, String>> runJob(String templateName, Path pathToFile) {
-        return Mono.just(Map.of("Test A", "Content A"));
-    }
-
-    @Override
-    public Mono<Image> createTestImage(String templateName, Path pathToFile) {
-        return Mono.error(new UnsupportedOperationException("Not implemented."));
     }
 
     @NotNull

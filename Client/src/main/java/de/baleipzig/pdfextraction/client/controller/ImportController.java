@@ -1,7 +1,7 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import com.jfoenix.controls.JFXComboBox;
-import de.baleipzig.pdfextraction.client.connector.TemplateConnector;
+import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;

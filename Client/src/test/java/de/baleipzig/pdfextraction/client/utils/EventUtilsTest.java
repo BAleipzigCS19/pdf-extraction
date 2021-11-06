@@ -22,6 +22,12 @@ class EventUtilsTest {
         });
     }
 
+    private static void checkTimings(final AtomicReference<Instant> original, final AtomicReference<Instant> chained) {
+        Assertions.assertNotNull(original.get());
+        Assertions.assertNotNull(chained.get());
+        Assertions.assertTrue(original.get().isBefore(chained.get()));
+    }
+
     @Test
     @DisplayName("Test if the action runs actually after on a Button with Runnable")
     void testButtonRunnable() {
@@ -49,7 +55,6 @@ class EventUtilsTest {
 
         checkTimings(original, chained);
     }
-
 
     @Test
     @DisplayName("Test if the action runs actually after on a Menu Item with Runnable")
@@ -93,7 +98,6 @@ class EventUtilsTest {
         Assertions.assertNotNull(ref.get());
     }
 
-
     @Test
     @DisplayName("Test if the Chain is working even with a null as previous onAction")
     void testDefault() {
@@ -105,11 +109,5 @@ class EventUtilsTest {
         button.fire();
 
         Assertions.assertNotNull(ref.get());
-    }
-
-    private static void checkTimings(final AtomicReference<Instant> original, final AtomicReference<Instant> chained) {
-        Assertions.assertNotNull(original.get());
-        Assertions.assertNotNull(chained.get());
-        Assertions.assertTrue(original.get().isBefore(chained.get()));
     }
 }
