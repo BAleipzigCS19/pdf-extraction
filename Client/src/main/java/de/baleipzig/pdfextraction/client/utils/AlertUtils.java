@@ -1,16 +1,12 @@
 package de.baleipzig.pdfextraction.client.utils;
 
 import de.baleipzig.pdfextraction.client.utils.injector.Injector;
-import jakarta.inject.Inject;
 import javafx.scene.control.Alert;
 
 import java.util.Optional;
 
 
 public class AlertUtils {
-
-    @Inject
-    private SceneHandler sceneHandler;
 
     private AlertUtils() {
     }

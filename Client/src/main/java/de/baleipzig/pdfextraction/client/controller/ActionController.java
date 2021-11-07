@@ -66,7 +66,7 @@ public class ActionController extends Controller implements Initializable{
         if (this.createTerminationCheckBox.isSelected()) {
             final String resultName = this.resultCombobox.getSelectionModel().getSelectedItem();
             if (!StringUtils.hasText(resultName)) {
-                AlertUtils.showErrorAlert("Bitte wählen sie eine Vorlage aus.");
+                AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
                 return;
             }
 
@@ -87,7 +87,7 @@ public class ActionController extends Controller implements Initializable{
 
     private void onSuccess(final byte[] pdfBytes) {
         final FileChooser chooser = new FileChooser();
-        chooser.setTitle(getResource("%safeoutcomeFileChooser"));
+        chooser.setTitle(getResource("safeoutcomeFileChooser"));
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("pdf", "*.pdf"));
         final File toSave = chooser.showSaveDialog(this.menuBar.getScene().getWindow());
@@ -97,7 +97,7 @@ public class ActionController extends Controller implements Initializable{
 
         try {
             Files.write(toSave.toPath(), pdfBytes);
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, "Datei gespeichert");
+            AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, getResource("alertFileSaved"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,9 +119,9 @@ public class ActionController extends Controller implements Initializable{
         }
 
         AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                "Erfolgreich",
-                "Aktion ausgeführt",
-                "Die Aktion wurde erfolgreich ausgeführt.\n\n" + sb);
+                getResource("successTitle"),
+                getResource("actionCompleted"),
+                getResource("alertActionCompleted") + "\n\n" + sb);
     }
 
     @FXML
