@@ -8,12 +8,13 @@
     </Menu>
     <Menu mnemonicParsing="false" text="Template">
         <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate" text="Template erstellen" />
+        <MenuItem fx:id="showTemplates" mnemonicParsing="false" onAction="#onShowTemplates" text="Templates anzeigen"/>
     </Menu>
    <Menu mnemonicParsing="false" text="Vorlagen">
      <items>
        <MenuItem mnemonicParsing="false" onAction="#onSaveResultTemplate" text="Vorlage hochladen" />
      </items>
-   </Menu>
+  </Menu>
     <Menu mnemonicParsing="false" text="Help">
         <MenuItem mnemonicParsing="false" text="About" />
     </Menu>

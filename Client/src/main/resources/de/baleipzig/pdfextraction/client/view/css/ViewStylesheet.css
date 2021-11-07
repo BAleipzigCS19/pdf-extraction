@@ -35,3 +35,8 @@
     -fx-background-radius: 10px;
     -fx-min-width: 200;
 }
+
+.template-item{
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+}

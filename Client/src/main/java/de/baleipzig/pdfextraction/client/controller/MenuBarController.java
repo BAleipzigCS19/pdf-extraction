@@ -6,6 +6,7 @@ import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
+import de.baleipzig.pdfextraction.client.view.TemplateOverview;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -47,6 +48,13 @@ public class MenuBarController {
 
         ControllerUtils.switchScene((Stage) this.menuBar.getScene().getWindow(),
                 new CreateTemplate());
+    }
+
+    @FXML
+    public void onShowTemplates() {
+
+        ControllerUtils.switchScene((Stage) this.menuBar.getScene().getWindow(),
+                new TemplateOverview());
     }
 
     @FXML

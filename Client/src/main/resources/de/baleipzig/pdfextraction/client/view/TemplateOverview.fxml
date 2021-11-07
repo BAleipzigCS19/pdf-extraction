@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox fx:id="contentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.TemplateOverviewController" />
+<BorderPane stylesheets="@css/ViewStylesheet.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.TemplateOverviewController">
+   <top>
+      <fx:include fx:id="menuBar" source="MenuBar.fxml" />
+   </top>
+   <center>
+      <VBox fx:id="contentPane" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
