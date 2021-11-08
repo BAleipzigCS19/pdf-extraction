@@ -1,5 +1,5 @@
 #Path to installed Tesseract
-tess.path=/usr/share/tessdata
+tess.path=<your Tesseract installation>
 
 #ISO 639-3
 tess.language=deu

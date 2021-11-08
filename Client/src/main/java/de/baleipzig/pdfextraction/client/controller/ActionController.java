@@ -4,13 +4,16 @@ import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +28,7 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class ActionController implements Initializable {
+public class ActionController extends Controller implements Initializable{
 
     @FXML
     public MenuBar menuBar;
@@ -63,7 +66,7 @@ public class ActionController implements Initializable {
         if (this.createTerminationCheckBox.isSelected()) {
             final String resultName = this.resultCombobox.getSelectionModel().getSelectedItem();
             if (!StringUtils.hasText(resultName)) {
-                AlertUtils.showErrorAlert("Bitte wählen sie eine Vorlage aus.");
+                AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
                 return;
             }
 
@@ -84,8 +87,9 @@ public class ActionController implements Initializable {
 
     private void onSuccess(final byte[] pdfBytes) {
         final FileChooser chooser = new FileChooser();
-        chooser.setTitle("Ergebnis Speichern unter");
+        chooser.setTitle(getResource("safeoutcomeFileChooser"));
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("pdf", "*.pdf"));
         final File toSave = chooser.showSaveDialog(this.menuBar.getScene().getWindow());
         if (toSave == null) {
             return;
@@ -93,7 +97,7 @@ public class ActionController implements Initializable {
 
         try {
             Files.write(toSave.toPath(), pdfBytes);
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, "Datei gespeichert");
+            AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, getResource("alertFileSaved"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -115,21 +119,21 @@ public class ActionController implements Initializable {
         }
 
         AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                "Erfolgreich",
-                "Aktion ausgeführt",
-                "Die Aktion wurde erfolgreich ausgeführt.\n\n" + sb);
+                getResource("successTitle"),
+                getResource("actionCompleted"),
+                getResource("alertActionCompleted") + "\n\n" + sb);
     }
 
     @FXML
     private void backToImportButtonOnAction() {
-        ControllerUtils.switchScene((Stage) this.backToImportButton.getScene().getWindow(),
+        switchScene((Stage) this.backToImportButton.getScene().getWindow(),
                 new Imports());
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ControllerUtils.changeFocusOnControlParent(menuBar);
+        changeFocusOnControlParent(menuBar);
 
         this.resultConnector.getAllNames()
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))

@@ -3,7 +3,6 @@ package de.baleipzig.pdfextraction.client.controller;
 import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.view.Actions;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class ImportController implements Initializable {
+public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
@@ -52,32 +51,32 @@ public class ImportController implements Initializable {
         final Optional<Label> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
         if (chosenValue.isEmpty()) {
             //Intentionally not checking if something is set in the job
-            AlertUtils.showErrorAlert("Bitte wählen sie erst eine Vorlage aus.");
+            AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
             return;
         }
 
         if (this.job.getPathToFile() == null) {
-            AlertUtils.showErrorAlert("Bitte wählen sie zuerst eine PDF Datei aus.");
+            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
             return;
         }
 
         chosenValue.map(Labeled::getText).ifPresent(this.job::setTemplateName);
 
-        ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
+        switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
     }
 
     @FXML
     private void createTemplateButtonOnAction() {
 
-        ControllerUtils.switchScene((Stage) this.continueButton.getScene().getWindow(),
+        switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new CreateTemplate());
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        ControllerUtils.changeFocusOnControlParent(menuBar);
+        changeFocusOnControlParent(menuBar);
 
         this.connector.getAllNames()
                 .collectList()

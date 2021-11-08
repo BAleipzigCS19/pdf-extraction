@@ -12,7 +12,7 @@ public interface FXMLProvider {
      * @return The Link to the FXML, never null
      */
     default URL getFXML() {
-        return Objects.requireNonNull(getClass().getResource(getClass().getSimpleName() + DEFAULT_FXML_ENDING));
+        return Objects.requireNonNull(getClass().getResource("fxml/" + getClass().getSimpleName() + DEFAULT_FXML_ENDING));
     }
 
 }

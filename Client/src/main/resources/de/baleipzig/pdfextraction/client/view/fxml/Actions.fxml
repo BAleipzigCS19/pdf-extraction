@@ -4,8 +4,9 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<BorderPane stylesheets="@css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController">
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.baleipzig.pdfextraction.client.controller.ActionController"
+            stylesheets="@../css/ViewStylesheet.css">
     <top>
         <fx:include fx:id="menuBar" source="MenuBar.fxml" />
     </top>
@@ -31,14 +32,20 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                     </rowConstraints>
                     <children>
-                        <JFXCheckBox fx:id="createTerminationCheckBox" mnemonicParsing="false" text="Kündigung erstellen" GridPane.rowIndex="1" />
+                        <JFXCheckBox fx:id="createTerminationCheckBox" mnemonicParsing="false"
+                                     text="%createCancellationCheckBox" GridPane.rowIndex="1"/>
                         <JFXComboBox fx:id="resultCombobox" prefWidth="150.0" styleClass="check-box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <JFXCheckBox fx:id="createTestImage" mnemonicParsing="false" text="Test-Bild erstellen" GridPane.rowIndex="2" />
+                        <JFXCheckBox fx:id="createTestImage" mnemonicParsing="false" text="%createTestImageCheckBox"
+                                     GridPane.rowIndex="2"/>
                     </children>
                 </GridPane>
-                <JFXButton fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction" styleClass="button-blue" text="Aktion durchführen" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                <Label styleClass="header" text="Bitte wählen Sie eine Aktion" />
-                <JFXButton fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction" styleClass="button-white" text="Zurück" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                <JFXButton fx:id="runActionButton" mnemonicParsing="false" onAction="#runActionButtonOnAction"
+                           text="%runActionButton" GridPane.halignment="RIGHT" GridPane.rowIndex="2"
+                           GridPane.valignment="BOTTOM" styleClass="button-blue"/>
+                <Label text="%pleaseChooseAnActionLabel" styleClass="header"/>
+                <JFXButton fx:id="backToImportButton" mnemonicParsing="false" onAction="#backToImportButtonOnAction"
+                           text="%backButton" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM"
+                           styleClass="button-white"/>
             </children>
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
