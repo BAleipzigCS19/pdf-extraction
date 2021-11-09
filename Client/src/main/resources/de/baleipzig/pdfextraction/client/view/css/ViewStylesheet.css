@@ -26,14 +26,19 @@
     -fx-font-family: "Verdana";
     -fx-font-size: 16px;
     -fx-text-fill: #2157A0;
+    -fx-padding: 5px 0px 10px 0px;
 }
 
-.label-datagrid {
+.label-addField {
     -fx-background-color: #2157A0;
     -fx-text-fill: WHITE;
     -fx-label-padding: 5px 20px 5px 20px;
     -fx-background-radius: 10px;
     -fx-min-width: 200;
+}
+
+#templateViewRightSide {
+    -fx-padding: 10px 10px 10px 15px;
 }
 
 .template-item{

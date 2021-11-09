@@ -2,7 +2,6 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.ControllerUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
@@ -22,8 +21,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Locale;
 
-public class MenuBarController {
+public class MenuBarController extends Controller {
 
     @FXML
     public MenuItem chooseFile;
@@ -46,8 +46,7 @@ public class MenuBarController {
     @FXML
     private void onCreateTemplate() {
 
-        ControllerUtils.switchScene((Stage) this.menuBar.getScene().getWindow(),
-                new CreateTemplate());
+        switchScene((Stage) this.menuBar.getScene().getWindow(), new CreateTemplate());
     }
 
     @FXML
@@ -74,6 +73,26 @@ public class MenuBarController {
         job.setPathToFile(pdfPath);
         this.renderer.setPdfPath(pdfPath);
     }
+
+    /**
+     * changes the Language Locale and reloads the Scene with the new Ressource Bundle
+     *
+     * @param locale
+     */
+    public void onChangeLanguage(Locale locale) {
+        Locale.setDefault(locale);
+        reloadScene((Stage) menuBar.getScene().getWindow());
+    }
+
+    public void onChangeLanguageGerman() {
+        onChangeLanguage(Locale.GERMAN);
+    }
+
+    public void onChangeLanguageEnglish() {
+        onChangeLanguage(Locale.ENGLISH);
+    }
+
+
 
     @FXML
     public void onSaveResultTemplate() {

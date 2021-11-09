@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 public final class Injector {
     private static final Map<Class<?>, Object> singletonMap = new ConcurrentHashMap<>();
@@ -147,7 +148,9 @@ public final class Injector {
     }
 
     private static Collection<Field> getInjectableFields(final Object toCheck) {
-        return Arrays.stream(toCheck.getClass().getDeclaredFields())
+        return Stream.<Class<?>>iterate(toCheck.getClass(), clazz -> Objects.nonNull(clazz.getSuperclass()), Class::getSuperclass)
+                .map(Class::getDeclaredFields)
+                .flatMap(Stream::of)
                 .filter(field -> field.getAnnotation(Inject.class) != null)
                 .toList();
     }

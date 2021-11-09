@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
-public class PdfPreviewController implements Initializable {
+public class PdfPreviewController extends Controller implements Initializable {
 
     @FXML
     public Button pageBackButton;
@@ -53,8 +53,6 @@ public class PdfPreviewController implements Initializable {
 
         if (this.renderer.hasPreview()) {
             loadPdfPreview(this.renderer::getCurrentPreview);
-        } else {
-            pageIndexLabel.setText("Seitenanzahl");
         }
 
         parentAnchorPane.setOnDragOver(event -> {
@@ -73,14 +71,14 @@ public class PdfPreviewController implements Initializable {
 
                 final List<File> files = dragboard.getFiles();
                 if (files.size() > 1) {
-                    AlertUtils.showErrorAlert("Es kann nur eine PDF-Datei analysiert werden.");
+                    AlertUtils.showErrorAlert(getResource("alertOnlyOnePDFCanBeEdited"));
                     return;
                 }
 
                 final File first = files.get(0);
                 final boolean isCorrectFormat = first.getName().toLowerCase().endsWith(".pdf");
                 if (!isCorrectFormat) {
-                    AlertUtils.showErrorAlert("Es werden nur PDF-Dateien unterstützt.");
+                    AlertUtils.showErrorAlert(getResource("alertOnlyPDFsupport"));
                     return;
                 }
 
@@ -121,7 +119,7 @@ public class PdfPreviewController implements Initializable {
     private void loadPdfPreview(final Supplier<Image> image) {
         try {
             pdfPreviewImageView.setImage(image.get());
-            pageIndexLabel.setText("Seite: %d/%d".formatted(this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
+            pageIndexLabel.setText("%s: %d/%d".formatted(getResource("pageNumberLabel"), this.renderer.getCurrentPage() + 1, this.renderer.getNumberOfPages()));
         } catch (final UncheckedIOException | IllegalStateException e) {
             LoggerFactory.getLogger(ImportController.class)
                     .atError()
