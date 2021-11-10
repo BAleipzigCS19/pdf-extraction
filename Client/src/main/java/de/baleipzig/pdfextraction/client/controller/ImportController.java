@@ -2,6 +2,8 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import de.baleipzig.pdfextraction.api.dto.FieldDTO;
+import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
@@ -17,6 +19,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
@@ -29,25 +35,20 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
-
     @FXML
     public JFXButton showTemplateButton;
-
+    @FXML
+    public AnchorPane pdfAnchor;
     @FXML
     private Button continueButton;
-
     @FXML
     private JFXComboBox<Label> templateComboBox;
-
     @Inject
     private TemplateConnector connector;
-
     @Inject
     private Job job;
-
     @FXML
     private MenuBarController menuBarController;
-
     @FXML
     private PdfPreviewController pdfPreviewController;
 
@@ -110,13 +111,54 @@ public class ImportController extends Controller implements Initializable {
                 .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
     }
 
-    public void showTemplateButtonOnAction(ActionEvent actionEvent) {
+    public void showTemplateButtonOnAction() {
 
-        //TODO: Boxen aus dem Backend Laden, Boxen in der PDF Preview zeichnen, evtl Button Text ändern, also ein Toggle draus machen
-        // Template Holen und boxen daraus extrahieren... / oder kann man sich direkt die boxen holen ?
+        //TODO: evtl Button Text ändern, also ein Toggle draus machen
+        // Prüfen auf welcher Seite sich die Box befindet ?
+        // schauen  das eine PDF geladen ist...
 
-        List<Label> templateNames = this.templateComboBox.getItems();
+        Label selectedItem = this.templateComboBox.getValue();
 
+        if (Optional.ofNullable(selectedItem).map(Label::getText).isPresent()) {
+            loadTemplate(selectedItem.getText());
+        }
+    }
 
+    private void loadTemplate(String templateName) {
+
+        this.connector.getForName(templateName)
+                .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
+                        .error("Exception while listening for response.", err))
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                .subscribe(templateDTO -> Platform.runLater(() -> drawTemplate(templateDTO)))
+        ;
+    }
+
+    private void drawTemplate(TemplateDTO templateDTO) {
+
+        List<FieldDTO> boxes = templateDTO.getFields();
+        Size size = getSize(pdfPreviewController.pdfPreviewImageView);
+        for (FieldDTO field : boxes) {
+
+            Rectangle rectangle = getRectangle(size, field);
+            rectangle.setStroke(Color.BLACK);
+            rectangle.setFill(Color.TRANSPARENT);
+            pdfAnchor.getChildren().add(rectangle);
+        }
+    }
+
+    private Rectangle getRectangle(Size size, FieldDTO f) {
+        final double xPos = f.getxPosPercentage() * size.width;
+        final double yPos = f.getyPosPercentage() * size.height;
+        final double width = f.getWidthPercentage() * size.width;
+        final double height = f.getHeightPercentage() * size.height;
+        return new Rectangle(xPos, yPos, width, height);
+    }
+
+    private Size getSize(final ImageView imageView) {
+        return new Size(imageView.getFitHeight(), imageView.getFitWidth());
+    }
+
+    private record Size(double height, double width) {
     }
 }

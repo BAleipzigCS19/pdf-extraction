@@ -19,7 +19,7 @@
               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-              <AnchorPane>
+              <AnchorPane fx:id="pdfAnchor">
                   <children>
                       <fx:include fx:id="pdfPreview" source="PdfPreview.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   </children>
