@@ -116,6 +116,7 @@ public class ImportController extends Controller implements Initializable {
         //TODO: evtl Button Text ändern, also ein Toggle draus machen
         // Prüfen auf welcher Seite sich die Box befindet ?
         // schauen  das eine PDF geladen ist...
+        // den Namen der Felder über der Box anzeigen
 
         Label selectedItem = this.templateComboBox.getValue();
 
@@ -130,6 +131,7 @@ public class ImportController extends Controller implements Initializable {
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                // kann ich irgendwie den Wert der hier bei dem subscripe heraus kommt als return wert zurück geben ?
                 .subscribe(templateDTO -> Platform.runLater(() -> drawTemplate(templateDTO)))
         ;
     }
