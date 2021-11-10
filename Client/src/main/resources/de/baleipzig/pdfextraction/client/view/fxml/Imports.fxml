@@ -37,7 +37,12 @@
                   <VBox prefHeight="367.0" prefWidth="505.0">
                      <children>
                                 <Label fx:id="templateHeader" styleClass="header" text="%templatesHeader" />
-                                <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="168.0" promptText="%templateComboBox" styleClass="check-box" />
+                        <Pane>
+                           <children>
+                               <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="168.0" promptText="%templateComboBox" styleClass="check-box" />
+                               <JFXButton fx:id="showTemplateButton" onAction="#showTemplateButtonOnAction" alignment="CENTER_RIGHT" layoutX="366.0" mnemonicParsing="false" text="%showTemplateButton" styleClass="button-blue"/>
+                           </children>
+                        </Pane>
                      </children>
                   </VBox>
                       <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">

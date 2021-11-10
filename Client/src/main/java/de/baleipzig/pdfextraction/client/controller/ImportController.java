@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
@@ -9,6 +10,7 @@ import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -27,6 +29,9 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
+
+    @FXML
+    public JFXButton showTemplateButton;
 
     @FXML
     private Button continueButton;
@@ -103,5 +108,15 @@ public class ImportController extends Controller implements Initializable {
         Optional.ofNullable(job.getTemplateName())
                 .flatMap(templateName -> getLabelMatching(templateName, labels))
                 .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
+    }
+
+    public void showTemplateButtonOnAction(ActionEvent actionEvent) {
+
+        //TODO: Boxen aus dem Backend Laden, Boxen in der PDF Preview zeichnen, evtl Button Text ändern, also ein Toggle draus machen
+        // Template Holen und boxen daraus extrahieren... / oder kann man sich direkt die boxen holen ?
+
+        List<Label> templateNames = this.templateComboBox.getItems();
+
+
     }
 }
