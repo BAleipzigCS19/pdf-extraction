@@ -120,9 +120,9 @@ public class ImportController extends Controller implements Initializable {
 
         Label selectedItem = this.templateComboBox.getValue();
 
-        if (Optional.ofNullable(selectedItem).map(Label::getText).isPresent()) {
-            loadTemplate(selectedItem.getText());
-        }
+        Optional.ofNullable(selectedItem)
+                .map(Label::getText)
+                .ifPresent(this::loadTemplate);
     }
 
     private void loadTemplate(String templateName) {
@@ -131,7 +131,6 @@ public class ImportController extends Controller implements Initializable {
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                // kann ich irgendwie den Wert der hier bei dem subscripe heraus kommt als return wert zurück geben ?
                 .subscribe(templateDTO -> Platform.runLater(() -> drawTemplate(templateDTO)))
         ;
     }
@@ -150,8 +149,8 @@ public class ImportController extends Controller implements Initializable {
     }
 
     private Rectangle getRectangle(Size size, FieldDTO f) {
-        final double xPos = f.getxPosPercentage() * size.width;
-        final double yPos = f.getyPosPercentage() * size.height;
+        final double xPos = (f.getxPosPercentage() * size.width) + AnchorPane.getLeftAnchor(pdfPreviewController.pdfPreviewImageView);
+        final double yPos = (f.getyPosPercentage() * size.height) + AnchorPane.getTopAnchor(pdfPreviewController.pdfPreviewImageView);
         final double width = f.getWidthPercentage() * size.width;
         final double height = f.getHeightPercentage() * size.height;
         return new Rectangle(xPos, yPos, width, height);
