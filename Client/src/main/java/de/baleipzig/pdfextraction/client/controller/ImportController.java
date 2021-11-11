@@ -8,6 +8,7 @@ import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
+import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
@@ -27,6 +28,8 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -47,10 +50,14 @@ public class ImportController extends Controller implements Initializable {
     private TemplateConnector connector;
     @Inject
     private Job job;
+    @Inject
+    private PDFRenderer renderer;
     @FXML
     private MenuBarController menuBarController;
     @FXML
     private PdfPreviewController pdfPreviewController;
+
+    private boolean showTemplateToggle = false;
 
     @FXML
     private void continueButtonOnAction() {
@@ -70,13 +77,6 @@ public class ImportController extends Controller implements Initializable {
 
         switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
-    }
-
-    @FXML
-    private void createTemplateButtonOnAction() {
-
-        switchScene((Stage) this.continueButton.getScene().getWindow(),
-                new CreateTemplate());
     }
 
     @Override
@@ -113,16 +113,43 @@ public class ImportController extends Controller implements Initializable {
 
     public void showTemplateButtonOnAction() {
 
-        //TODO: evtl Button Text ändern, also ein Toggle draus machen
-        // Prüfen auf welcher Seite sich die Box befindet ?
-        // schauen  das eine PDF geladen ist...
+        //TODO: Boxen richtig zeichnen kekw xD
         // den Namen der Felder über der Box anzeigen
 
-        Label selectedItem = this.templateComboBox.getValue();
+        if (this.job.getPathToFile() == null) {
+            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
+            return;
+        }
 
-        Optional.ofNullable(selectedItem)
-                .map(Label::getText)
-                .ifPresent(this::loadTemplate);
+        if (!showTemplateToggle) {
+
+            Label selectedTemplate = this.templateComboBox.getValue();
+
+            if (selectedTemplate == null) {
+                AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+                return;
+            }
+
+            loadTemplate(selectedTemplate.getText());
+            this.showTemplateToggle = true;
+            this.showTemplateButton.setText(getResource("undoShowTemplateButton"));
+        } else {
+
+            removeRectangles();
+            this.showTemplateToggle = false;
+            this.showTemplateButton.setText(getResource("showTemplateButton"));
+        }
+    }
+
+    private void removeRectangles() {
+
+        List<Rectangle> addedRectangles = pdfAnchor.getChildren()
+                .stream()
+                .filter(Rectangle.class::isInstance)
+                .map(node -> (Rectangle) node)
+                .toList();
+
+        pdfAnchor.getChildren().removeAll(addedRectangles);
     }
 
     private void loadTemplate(String templateName) {
@@ -140,16 +167,17 @@ public class ImportController extends Controller implements Initializable {
         List<FieldDTO> boxes = templateDTO.getFields();
         Size size = getSize(pdfPreviewController.pdfPreviewImageView);
         for (FieldDTO field : boxes) {
-
-            Rectangle rectangle = getRectangle(size, field);
-            rectangle.setStroke(Color.BLACK);
-            rectangle.setFill(Color.TRANSPARENT);
-            pdfAnchor.getChildren().add(rectangle);
+            if (field.getPage() == renderer.getCurrentPage()) {
+                Rectangle rectangle = getRectangle(size, field);
+                rectangle.setStroke(Color.BLACK);
+                rectangle.setFill(Color.TRANSPARENT);
+                pdfAnchor.getChildren().add(rectangle);
+            }
         }
     }
 
     private Rectangle getRectangle(Size size, FieldDTO f) {
-        final double xPos = (f.getxPosPercentage() * size.width) + AnchorPane.getLeftAnchor(pdfPreviewController.pdfPreviewImageView);
+        final double xPos = (f.getxPosPercentage() * size.width) - AnchorPane.getLeftAnchor(pdfPreviewController.pdfPreviewImageView);
         final double yPos = (f.getyPosPercentage() * size.height) + AnchorPane.getTopAnchor(pdfPreviewController.pdfPreviewImageView);
         final double width = f.getWidthPercentage() * size.width;
         final double height = f.getHeightPercentage() * size.height;
