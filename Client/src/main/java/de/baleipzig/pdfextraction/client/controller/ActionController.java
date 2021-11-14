@@ -1,24 +1,28 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXMasonryPane;
 import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
+import de.baleipzig.pdfextraction.client.view.ActionItem;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MenuBar;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -26,24 +30,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
-public class ActionController extends Controller implements Initializable{
+public class ActionController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
 
     @FXML
-    public JFXComboBox<String> resultCombobox;
-
-    @FXML
-    private CheckBox createTerminationCheckBox;
-
-    @FXML
-    private CheckBox createTestImage;
-
-    @FXML
     private Button backToImportButton;
+
+    @FXML
+    private JFXMasonryPane contentPane;
 
     @Inject
     private ExtractionConnector extractionConnector;
@@ -54,27 +54,56 @@ public class ActionController extends Controller implements Initializable{
     @Inject
     private Job job;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        changeFocusOnControlParent(menuBar);
+
+        this.resultConnector.getAllNames()
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                .subscribe(name -> Platform.runLater(() -> onCompleteGetAllNames(name)));
+
+        addTestbildErstellenItem();
+    }
+
+    @FXML
+    private void backToImportButtonOnAction() {
+        switchScene((Stage) this.backToImportButton.getScene().getWindow(), new Imports());
+    }
+
     @FXML
     private void runActionButtonOnAction() {
-        if (this.createTestImage.isSelected()) {
-            this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
-                    .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                    .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
-                    .subscribe();
+
+        if (!checkOnlyOneActionIsSelected()) {
+            AlertUtils.showErrorAlert(getResource("selectOnlyOneAction"));
+            return;
         }
 
-        if (this.createTerminationCheckBox.isSelected()) {
-            final String resultName = this.resultCombobox.getSelectionModel().getSelectedItem();
-            if (!StringUtils.hasText(resultName)) {
-                AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
-                return;
+        for (int i = 0; i < (long) contentPane.getChildren().size(); i++) {
+
+            Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
+
+            if (itemIsSelected(selectActionCircle)) {
+                Label actionLabel = (Label) getActionItemById(contentPane.getChildren().get(i), "actionLabel");
+
+                final String resultName = actionLabel.getText();
+
+                if (!StringUtils.hasText(resultName)) {
+                    AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+                    return;
+                }
+
+                if (resultName.equals("Testbild erstellen")) {
+                    this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
+                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                            .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
+                            .subscribe();
+                } else {
+                    this.extractionConnector.runJob(this.job.getTemplateName(), this.job.getPathToFile(), resultName)
+                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                            .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
+                            .subscribe();
+                }
             }
-
-
-            this.extractionConnector.runJob(this.job.getTemplateName(), this.job.getPathToFile(), resultName)
-                    .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                    .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
-                    .subscribe();
         }
 
         /*
@@ -83,6 +112,55 @@ public class ActionController extends Controller implements Initializable{
                 .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
                 .subscribe();
          */
+    }
+
+    private void onCompleteGetAllNames(String name) {
+
+        FXMLLoader loader = new FXMLLoader(new ActionItem().getFXML());
+        try {
+            Node item = loader.load();
+            buildItem(loader, name);
+            contentPane.getChildren().add(item);
+        } catch (IOException e) {
+            LoggerFactory.getLogger(getClass())
+                    .atError()
+                    .setCause(e)
+                    .log("Exception occurred while create item");
+
+            AlertUtils.showErrorAlert(e);
+        }
+    }
+
+    private void buildItem(FXMLLoader loader, String name) {
+
+        ActionItemController actionItemController = loader.getController();
+        actionItemController.actionLabel.setText(name);
+        actionItemController.selectActionCircle.setOnMouseClicked(event -> {
+            if (actionItemController.selectActionCircle.getFill() == Color.WHITE) {
+                actionItemController.selectActionCircle.setFill(new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/check.png")))));
+            } else {
+                actionItemController.selectActionCircle.setFill(Color.WHITE);
+            }
+        });
+
+    }
+
+    private boolean checkOnlyOneActionIsSelected() {
+
+        int counter = 0;
+        for (int i = 0; i < (long) contentPane.getChildren().size(); i++) {
+
+            Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
+
+            if (itemIsSelected(selectActionCircle)) {
+                counter++;
+                if (counter > 1) {
+                    break;
+                }
+            }
+        }
+
+        return counter == 1;
     }
 
     private void onSuccess(final byte[] pdfBytes) {
@@ -101,6 +179,36 @@ public class ActionController extends Controller implements Initializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addTestbildErstellenItem() {
+
+        FXMLLoader loader = new FXMLLoader(new ActionItem().getFXML());
+        try {
+            Node item = loader.load();
+            buildItem(loader, "Testbild erstellen");
+            contentPane.getChildren().add(item);
+        } catch (IOException e) {
+            LoggerFactory.getLogger(getClass())
+                    .atError()
+                    .setCause(e)
+                    .log("Exception occurred while create item");
+
+            AlertUtils.showErrorAlert(e);
+        }
+    }
+
+    private Node getActionItemById(Node item, String nodeId) {
+
+        return ((AnchorPane) item)
+                .getChildren()
+                .stream()
+                .filter(node -> node.getId().equals(nodeId)).collect(Collectors.toList()).get(0);
+    }
+
+    private boolean itemIsSelected(Circle selectActionCircle) {
+
+        return selectActionCircle.getFill() != Color.WHITE;
     }
 
     private void onTestImage(final Image image) {
@@ -122,24 +230,5 @@ public class ActionController extends Controller implements Initializable{
                 getResource("successTitle"),
                 getResource("actionCompleted"),
                 getResource("alertActionCompleted") + "\n\n" + sb);
-    }
-
-    @FXML
-    private void backToImportButtonOnAction() {
-        switchScene((Stage) this.backToImportButton.getScene().getWindow(),
-                new Imports());
-    }
-
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        changeFocusOnControlParent(menuBar);
-
-        this.resultConnector.getAllNames()
-                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(name -> this.resultCombobox.getItems().add(name));
-
-        this.resultCombobox.setVisible(false);
-        this.createTerminationCheckBox.setOnAction(ev -> this.resultCombobox.setVisible(!this.resultCombobox.isVisible()));
     }
 }

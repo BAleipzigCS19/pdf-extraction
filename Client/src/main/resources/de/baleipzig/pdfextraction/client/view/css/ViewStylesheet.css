@@ -41,4 +41,14 @@
     -fx-padding: 10px 10px 10px 15px;
 }
 
+.template-item{
+    -fx-background-color: #2157A0;
+    -fx-background-radius: 7;
+    -fx-padding: 10;
+}
 
+.label-action-item{
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 16px;
+}
