@@ -17,8 +17,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -54,6 +54,8 @@ public class ActionController extends Controller implements Initializable {
     @Inject
     private Job job;
 
+    private final ImagePattern done = new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/done.png"))));
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         changeFocusOnControlParent(menuBar);
@@ -82,7 +84,7 @@ public class ActionController extends Controller implements Initializable {
 
             Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
 
-            if (itemIsSelected(selectActionCircle)) {
+            if (isItemSelected(selectActionCircle)) {
                 Label actionLabel = (Label) getActionItemById(contentPane.getChildren().get(i), "actionLabel");
 
                 final String resultName = actionLabel.getText();
@@ -136,10 +138,12 @@ public class ActionController extends Controller implements Initializable {
         ActionItemController actionItemController = loader.getController();
         actionItemController.actionLabel.setText(name);
         actionItemController.selectActionCircle.setOnMouseClicked(event -> {
-            if (actionItemController.selectActionCircle.getFill() == Color.WHITE) {
-                actionItemController.selectActionCircle.setFill(new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/check.png")))));
+            if (actionItemController.selectActionCircle.getStrokeWidth() == 2) {
+                actionItemController.selectActionCircle.setStrokeWidth(0);
+                actionItemController.selectActionCircle.setFill(done);
             } else {
-                actionItemController.selectActionCircle.setFill(Color.WHITE);
+                actionItemController.selectActionCircle.setStrokeWidth(2);
+                actionItemController.selectActionCircle.setFill(Paint.valueOf("#ffffff00"));
             }
         });
 
@@ -152,7 +156,7 @@ public class ActionController extends Controller implements Initializable {
 
             Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
 
-            if (itemIsSelected(selectActionCircle)) {
+            if (isItemSelected(selectActionCircle)) {
                 counter++;
                 if (counter > 1) {
                     break;
@@ -206,9 +210,9 @@ public class ActionController extends Controller implements Initializable {
                 .filter(node -> node.getId().equals(nodeId)).collect(Collectors.toList()).get(0);
     }
 
-    private boolean itemIsSelected(Circle selectActionCircle) {
+    private boolean isItemSelected(Circle selectActionCircle) {
 
-        return selectActionCircle.getFill() != Color.WHITE;
+        return selectActionCircle.getFill().equals(done);
     }
 
     private void onTestImage(final Image image) {

@@ -7,6 +7,6 @@
 <AnchorPane maxHeight="200.0" maxWidth="200.0" minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" styleClass="template-item" stylesheets="@../css/ViewStylesheet.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.baleipzig.pdfextraction.client.controller.ActionItemController">
    <children>
       <Label fx:id="actionLabel" alignment="TOP_LEFT" layoutX="14.0" layoutY="52.0" prefHeight="139.0" prefWidth="174.0" styleClass="label-action-item" text="Test" wrapText="true" />
-      <Circle fx:id="selectActionCircle" fill="WHITE" layoutX="173.0" layoutY="27.0" radius="13.0" stroke="WHITE" strokeType="INSIDE" />
+      <Circle fx:id="selectActionCircle" fill="#ffffff00" layoutX="173.0" layoutY="27.0" radius="13.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.0" />
    </children>
 </AnchorPane>
