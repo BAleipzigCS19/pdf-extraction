@@ -5,15 +5,11 @@ import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
-import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.EventUtils;
-import de.baleipzig.pdfextraction.client.utils.Job;
-import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Actions;
-import de.baleipzig.pdfextraction.client.view.CreateTemplate;
+import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -28,7 +24,6 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +79,7 @@ public class ImportController extends Controller implements Initializable {
 
         changeFocusOnControlParent(menuBar);
 
+
         this.connector.getAllNames()
                 .collectList()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
@@ -112,9 +108,6 @@ public class ImportController extends Controller implements Initializable {
     }
 
     public void showTemplateButtonOnAction() {
-
-        //TODO: Boxen richtig zeichnen kekw xD
-        // den Namen der Felder über der Box anzeigen
 
         if (this.job.getPathToFile() == null) {
             AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
@@ -158,36 +151,29 @@ public class ImportController extends Controller implements Initializable {
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(templateDTO -> Platform.runLater(() -> drawTemplate(templateDTO)))
+                .subscribe(templateDTO -> Platform.runLater(() -> drawRectangles(templateDTO)))
         ;
     }
 
-    private void drawTemplate(TemplateDTO templateDTO) {
+    private void drawRectangles(TemplateDTO templateDTO) {
 
-        List<FieldDTO> boxes = templateDTO.getFields();
-        Size size = getSize(pdfPreviewController.pdfPreviewImageView);
-        for (FieldDTO field : boxes) {
-            if (field.getPage() == renderer.getCurrentPage()) {
-                Rectangle rectangle = getRectangle(size, field);
-                rectangle.setStroke(Color.BLACK);
-                rectangle.setFill(Color.TRANSPARENT);
-                pdfAnchor.getChildren().add(rectangle);
-            }
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView,
+                templateDTO, renderer.getCurrentPage());
+
+        List<Rectangle> rectangles = drawRectangleWU.work();
+        pdfAnchor.getChildren().addAll(rectangles);
+    }
+
+    private void checkShowTemplateButtonProperties() {
+
+        // TODO: Button aktivieren wenn ein pdf Path gesetzt wird
+        if (this.templateComboBox.getValue() != null && this.job.getPathToFile() != null){
+            showTemplateButton.setDisable(false);
+            showTemplateButton.getTooltip().setText("");
+        } else {
+            showTemplateButton.setDisable(true);
         }
     }
 
-    private Rectangle getRectangle(Size size, FieldDTO f) {
-        final double xPos = (f.getxPosPercentage() * size.width) - AnchorPane.getLeftAnchor(pdfPreviewController.pdfPreviewImageView);
-        final double yPos = (f.getyPosPercentage() * size.height) + AnchorPane.getTopAnchor(pdfPreviewController.pdfPreviewImageView);
-        final double width = f.getWidthPercentage() * size.width;
-        final double height = f.getHeightPercentage() * size.height;
-        return new Rectangle(xPos, yPos, width, height);
-    }
 
-    private Size getSize(final ImageView imageView) {
-        return new Size(imageView.getFitHeight(), imageView.getFitWidth());
-    }
-
-    private record Size(double height, double width) {
-    }
 }
