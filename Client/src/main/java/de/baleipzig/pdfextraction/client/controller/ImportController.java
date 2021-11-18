@@ -108,10 +108,4 @@ public class ImportController extends Controller implements Initializable {
                 .flatMap(templateName -> getLabelMatching(templateName, labels))
                 .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
     }
-
-    public void showTemplates() {
-
-        ControllerUtils.switchScene((Stage) this.showTemplatesButton.getScene().getWindow(),
-                new TemplateOverview());
-    }
 }

@@ -29,6 +29,13 @@
     -fx-padding: 5px 0px 10px 0px;
 }
 
+.header-second {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 13px;
+    -fx-text-fill: #2157A0;
+    -fx-padding: 5px 0px 10px 0px;
+}
+
 .label-addField {
     -fx-background-color: #2157A0;
     -fx-text-fill: WHITE;
@@ -41,7 +48,33 @@
     -fx-padding: 10px 10px 10px 15px;
 }
 
-.template-item{
-    -fx-border-color: #000000;
-    -fx-border-width: 2;
+.template-item {
+    -fx-background-color: #2157A0;
+    -fx-background-radius: 7;
+    -fx-padding: 10;
+}
+
+.item-templatename {
+    -fx-font-size: 18;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.item-versicherung {
+    -fx-font-size: 12;
+    -fx-text-fill: #FFFFFF;
+}
+
+.item-button {
+    -fx-background-color: #2157A0;
+}
+
+.heading {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 24;
+    -fx-text-fill: #2157A0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
 }

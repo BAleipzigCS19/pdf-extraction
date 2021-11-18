@@ -69,5 +69,17 @@ public final class TemplateConnectorImpl extends AbstractConnector implements Te
                 });
     }
 
-
+    @Override
+    public Mono<Void> delete(String name) {
+        return this.webClient
+                .delete()
+                .uri("/template?name={name}", Map.of("name", name))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return Mono.empty();
+                    } else {
+                        return Mono.error(new IllegalStateException(response.statusCode().name()));
+                    }
+                });
+    }
 }

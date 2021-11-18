@@ -52,8 +52,7 @@ public class MenuBarController extends Controller {
     @FXML
     public void onShowTemplates() {
 
-        ControllerUtils.switchScene((Stage) this.menuBar.getScene().getWindow(),
-                new TemplateOverview());
+        switchScene((Stage) this.menuBar.getScene().getWindow(), new TemplateOverview());
     }
 
     @FXML

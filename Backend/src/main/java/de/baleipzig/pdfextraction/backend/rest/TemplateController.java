@@ -7,6 +7,7 @@ import de.baleipzig.pdfextraction.backend.util.ValidationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -122,5 +123,27 @@ public class TemplateController {
                 .atDebug()
                 .log("Saved Entity {}", saved);
         return ResponseEntity.created(URI.create("%s:%s/rest/template?name=%s".formatted(this.host, this.port, saved.getName()))).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@RequestParam(name = "name") final String name) {
+
+        if (!StringUtils.hasText(name) || !this.repo.existsTemplateByName(name)) {
+            LogManager.getLogger(getClass())
+                    .atError()
+                    .log("Received bad Request with a invalid name");
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            ExtractionTemplate template = this.repo.findTemplateByName(name);
+            this.repo.delete(template);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LogManager.getLogger(getClass())
+                    .error("Exception occurred while deleting template with name {}", name, e);
+
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

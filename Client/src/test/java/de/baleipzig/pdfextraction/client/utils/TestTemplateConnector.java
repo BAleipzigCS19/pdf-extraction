@@ -35,4 +35,9 @@ public class TestTemplateConnector implements TemplateConnector {
                 new FieldDTO(FieldType.EXPIRATION, 0, 0.4, 0.4, 0.2, 0.2),
                 new FieldDTO(FieldType.INSURANCE_NUMBER, 0, 0.5, 0.5, 0.2, 0.2));
     }
+
+    @Override
+    public Mono<Void> delete(String name) {
+        return Mono.empty();
+    }
 }

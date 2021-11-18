@@ -49,9 +49,9 @@ public class CreateTemplateController extends Controller implements Initializabl
     @FXML
     private GridPane dataGridPane;
     @FXML
-    private TextField insuranceTextField;
+    public TextField insuranceTextField;
     @FXML
-    private TextField templateNameTextField;
+    public TextField templateNameTextField;
     @FXML
     private PdfPreviewController pdfPreviewController;
     @FXML

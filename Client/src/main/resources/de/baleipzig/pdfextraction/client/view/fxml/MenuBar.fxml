@@ -11,6 +11,7 @@
   </Menu>
   <Menu fx:id="templateMenuID" mnemonicParsing="false" text="%templateMenu">
     <MenuItem fx:id="createTemplate" mnemonicParsing="false" onAction="#onCreateTemplate" text="%createTemplate"/>
+    <MenuItem mnemonicParsing="false" onAction="#onShowTemplates" text="%showTemplates" />
   </Menu>
   <Menu mnemonicParsing="false" text="%document">
     <items>

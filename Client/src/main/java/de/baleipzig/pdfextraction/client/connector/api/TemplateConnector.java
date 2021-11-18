@@ -28,4 +28,11 @@ public interface TemplateConnector {
      * @return empty Mono or error Mono
      */
     Mono<Void> save(TemplateDTO dto);
+
+    /**
+     * Delete the Template
+     * @param name name of the Template
+     * @return success of deletion
+     */
+    Mono<Void> delete(String name);
 }
