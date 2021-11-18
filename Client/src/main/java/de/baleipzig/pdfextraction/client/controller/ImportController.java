@@ -2,7 +2,6 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
@@ -16,20 +15,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
-public class ImportController extends Controller implements Initializable {
+public class ImportController extends Controller implements Initializable, PropertyChangeListener {
 
     @FXML
     public MenuBar menuBar;
@@ -56,29 +52,29 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     private void continueButtonOnAction() {
-        final Optional<Label> chosenValue = Optional.ofNullable(this.templateComboBox.getValue());
-        if (chosenValue.isEmpty()) {
-            //Intentionally not checking if something is set in the job
-            AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
-            return;
-        }
-
-        if (this.job.getPathToFile() == null) {
-            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
-            return;
-        }
-
-        chosenValue.map(Labeled::getText).ifPresent(this.job::setTemplateName);
 
         switchScene((Stage) this.continueButton.getScene().getWindow(),
                 new Actions());
     }
 
+    private void setChoosenTemplate(Optional<Label> choosenTemplate) {
+
+        if (choosenTemplate.isEmpty()) {
+            //Intentionally not checking if something is set in the job
+            AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+
+        }
+
+        if (this.job.getPathToFile() == null) {
+            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
+
+        }
+
+        choosenTemplate.map(Labeled::getText).ifPresent(this.job::setTemplateName);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        changeFocusOnControlParent(menuBar);
-
 
         this.connector.getAllNames()
                 .collectList()
@@ -88,6 +84,11 @@ public class ImportController extends Controller implements Initializable {
                 .subscribe(name -> Platform.runLater(() -> onRequestCompleted(name)));
 
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
+
+        changeFocusOnControlParent(menuBar);
+        checkShowTemplateButtonProperties();
+        job.addPropertyChangeListener(this);
+        templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(Optional.ofNullable(newValue)));
     }
 
     private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
@@ -166,14 +167,18 @@ public class ImportController extends Controller implements Initializable {
 
     private void checkShowTemplateButtonProperties() {
 
-        // TODO: Button aktivieren wenn ein pdf Path gesetzt wird
         if (this.templateComboBox.getValue() != null && this.job.getPathToFile() != null){
             showTemplateButton.setDisable(false);
-            showTemplateButton.getTooltip().setText("");
+            showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipEnabled"));
         } else {
             showTemplateButton.setDisable(true);
+            showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipDisabled"));
         }
     }
 
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        checkShowTemplateButtonProperties();
+    }
 }
