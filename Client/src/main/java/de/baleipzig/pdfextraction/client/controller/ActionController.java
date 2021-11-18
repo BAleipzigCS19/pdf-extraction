@@ -1,5 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXMasonryPane;
 import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
@@ -40,6 +41,12 @@ public class ActionController extends Controller implements Initializable {
     public MenuBar menuBar;
 
     @FXML
+    public JFXButton runActionButton;
+
+    @FXML
+    public ProgressIndicator progress;
+
+    @FXML
     private Button backToImportButton;
 
     @FXML
@@ -54,6 +61,7 @@ public class ActionController extends Controller implements Initializable {
     @Inject
     private Job job;
 
+    private static final int STROKE_WIDTH_CIRCLE = 2 ;
     private final ImagePattern done = new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/done.png"))));
 
     @Override
@@ -64,7 +72,7 @@ public class ActionController extends Controller implements Initializable {
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .subscribe(name -> Platform.runLater(() -> onCompleteGetAllNames(name)));
 
-        addTestbildErstellenItem();
+        addCreateTestPictureItem();
     }
 
     @FXML
@@ -80,7 +88,7 @@ public class ActionController extends Controller implements Initializable {
             return;
         }
 
-        for (int i = 0; i < (long) contentPane.getChildren().size(); i++) {
+        for (int i = 0; i < contentPane.getChildren().size(); i++) {
 
             Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
 
@@ -94,15 +102,19 @@ public class ActionController extends Controller implements Initializable {
                     return;
                 }
 
+                toggleActionButtonVisible(false);
+
                 if (resultName.equals("Testbild erstellen")) {
                     this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
                             .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                             .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
+                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
                             .subscribe();
                 } else {
                     this.extractionConnector.runJob(this.job.getTemplateName(), this.job.getPathToFile(), resultName)
                             .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                             .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
+                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
                             .subscribe();
                 }
             }
@@ -114,6 +126,11 @@ public class ActionController extends Controller implements Initializable {
                 .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
                 .subscribe();
          */
+    }
+
+    private void toggleActionButtonVisible(boolean isVisible){
+        runActionButton.setVisible(isVisible);
+        progress.setVisible(!isVisible);
     }
 
     private void onCompleteGetAllNames(String name) {
@@ -137,12 +154,12 @@ public class ActionController extends Controller implements Initializable {
 
         ActionItemController actionItemController = loader.getController();
         actionItemController.actionLabel.setText(name);
-        actionItemController.selectActionCircle.setOnMouseClicked(event -> {
-            if (actionItemController.selectActionCircle.getStrokeWidth() == 2) {
+        actionItemController.itemPane.setOnMouseClicked(event -> {
+            if (actionItemController.selectActionCircle.getStrokeWidth() == STROKE_WIDTH_CIRCLE) {
                 actionItemController.selectActionCircle.setStrokeWidth(0);
                 actionItemController.selectActionCircle.setFill(done);
             } else {
-                actionItemController.selectActionCircle.setStrokeWidth(2);
+                actionItemController.selectActionCircle.setStrokeWidth(STROKE_WIDTH_CIRCLE);
                 actionItemController.selectActionCircle.setFill(Paint.valueOf("#ffffff00"));
             }
         });
@@ -152,7 +169,7 @@ public class ActionController extends Controller implements Initializable {
     private boolean checkOnlyOneActionIsSelected() {
 
         int counter = 0;
-        for (int i = 0; i < (long) contentPane.getChildren().size(); i++) {
+        for (int i = 0; i < contentPane.getChildren().size(); i++) {
 
             Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
 
@@ -185,7 +202,7 @@ public class ActionController extends Controller implements Initializable {
         }
     }
 
-    private void addTestbildErstellenItem() {
+    private void addCreateTestPictureItem() {
 
         FXMLLoader loader = new FXMLLoader(new ActionItem().getFXML());
         try {
@@ -207,7 +224,9 @@ public class ActionController extends Controller implements Initializable {
         return ((AnchorPane) item)
                 .getChildren()
                 .stream()
-                .filter(node -> node.getId().equals(nodeId)).collect(Collectors.toList()).get(0);
+                .filter(node -> node.getId().equals(nodeId))
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean isItemSelected(Circle selectActionCircle) {
