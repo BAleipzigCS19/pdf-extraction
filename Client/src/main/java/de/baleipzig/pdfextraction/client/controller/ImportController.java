@@ -86,7 +86,7 @@ public class ImportController extends Controller implements Initializable, Prope
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
 
         changeFocusOnControlParent(menuBar);
-        checkShowTemplateButtonProperties();
+        checkShowTemplateButtonCondition();
         job.addPropertyChangeListener(this);
         templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(Optional.ofNullable(newValue)));
     }
@@ -117,14 +117,14 @@ public class ImportController extends Controller implements Initializable, Prope
 
         if (!showTemplateToggle) {
 
-            Label selectedTemplate = this.templateComboBox.getValue();
+            String selectedTemplate = this.job.getTemplateName();
 
             if (selectedTemplate == null) {
                 AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
                 return;
             }
 
-            loadTemplate(selectedTemplate.getText());
+            loadTemplate(selectedTemplate);
             this.showTemplateToggle = true;
             this.showTemplateButton.setText(getResource("undoShowTemplateButton"));
         } else {
@@ -165,9 +165,9 @@ public class ImportController extends Controller implements Initializable, Prope
         pdfAnchor.getChildren().addAll(rectangles);
     }
 
-    private void checkShowTemplateButtonProperties() {
+    private void checkShowTemplateButtonCondition() {
 
-        if (this.templateComboBox.getValue() != null && this.job.getPathToFile() != null){
+        if (this.job.getTemplateName() != null && this.job.getPathToFile() != null){
             showTemplateButton.setDisable(false);
             showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipEnabled"));
         } else {
@@ -179,6 +179,6 @@ public class ImportController extends Controller implements Initializable, Prope
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        checkShowTemplateButtonProperties();
+        checkShowTemplateButtonCondition();
     }
 }
