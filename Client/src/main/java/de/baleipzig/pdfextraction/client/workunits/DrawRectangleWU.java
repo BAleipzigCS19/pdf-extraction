@@ -24,6 +24,10 @@ public class DrawRectangleWU {
         this.currentPage = currentPage;
     }
 
+    /**
+     * Creates rectangles out of the in the constructor loaded TemplateDTO, that can be added on an container
+     * @return a List of javafx Rectangles
+     */
     public List<Rectangle> work() {
 
         List<FieldDTO> boxes = templateDTO.getFields();
