@@ -7,6 +7,7 @@ import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
@@ -110,5 +111,8 @@ public class MenuBarController extends Controller {
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .doOnSuccess(v -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, "Erfolgreich gespeichert")))
                 .subscribe();
+    }
+
+    public void onAbout(ActionEvent actionEvent) {
     }
 }

@@ -22,6 +22,6 @@
     <MenuItem fx:id="english" mnemonicParsing="false" onAction="#onChangeLanguageEnglish" text="%changeLanguageEnglish"/>
   </Menu>
   <Menu mnemonicParsing="false" text="%helpMenu">
-    <MenuItem mnemonicParsing="false" text="%about"/>
+    <MenuItem mnemonicParsing="false" text="%about" onAction="#onAbout"/>
   </Menu>
 </MenuBar>
