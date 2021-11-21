@@ -17,7 +17,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -30,10 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Map;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ActionController extends Controller implements Initializable {
 
@@ -45,6 +44,9 @@ public class ActionController extends Controller implements Initializable {
 
     @FXML
     public ProgressIndicator progress;
+
+    @FXML
+    public JFXMasonryPane contentPaneOthers;
 
     @FXML
     private Button backToImportButton;
@@ -61,7 +63,7 @@ public class ActionController extends Controller implements Initializable {
     @Inject
     private Job job;
 
-    private static final int STROKE_WIDTH_CIRCLE = 2 ;
+    private static final int STROKE_WIDTH_CIRCLE = 2;
     private final ImagePattern done = new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/done.png"))));
 
     @Override
@@ -83,42 +85,13 @@ public class ActionController extends Controller implements Initializable {
     @FXML
     private void runActionButtonOnAction() {
 
-        if (!checkOnlyOneActionIsSelected()) {
+        if (checkMoreThanOneActionIsSelected(Arrays.asList(contentPane, contentPaneOthers))) {
             AlertUtils.showErrorAlert(getResource("selectOnlyOneAction"));
             return;
         }
 
-        for (int i = 0; i < contentPane.getChildren().size(); i++) {
-
-            Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
-
-            if (isItemSelected(selectActionCircle)) {
-                Label actionLabel = (Label) getActionItemById(contentPane.getChildren().get(i), "actionLabel");
-
-                final String resultName = actionLabel.getText();
-
-                if (!StringUtils.hasText(resultName)) {
-                    AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
-                    return;
-                }
-
-                toggleActionButtonVisible(false);
-
-                if (resultName.equals("Testbild erstellen")) {
-                    this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
-                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                            .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
-                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
-                            .subscribe();
-                } else {
-                    this.extractionConnector.runJob(this.job.getTemplateName(), this.job.getPathToFile(), resultName)
-                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                            .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
-                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
-                            .subscribe();
-                }
-            }
-        }
+        checkItemSelected(contentPane);
+        checkItemSelected(contentPaneOthers);
 
         /*
         this.extractionConnector.extractOnly(this.job.getTemplateName(), this.job.getPathToFile())
@@ -128,7 +101,7 @@ public class ActionController extends Controller implements Initializable {
          */
     }
 
-    private void toggleActionButtonVisible(boolean isVisible){
+    private void toggleActionButtonVisible(boolean isVisible) {
         runActionButton.setVisible(isVisible);
         progress.setVisible(!isVisible);
     }
@@ -166,22 +139,27 @@ public class ActionController extends Controller implements Initializable {
 
     }
 
-    private boolean checkOnlyOneActionIsSelected() {
+    private boolean checkMoreThanOneActionIsSelected(List<JFXMasonryPane> contentPanes) {
 
-        int counter = 0;
-        for (int i = 0; i < contentPane.getChildren().size(); i++) {
+        int selectionCounter = 0;
 
-            Circle selectActionCircle = (Circle) getActionItemById(contentPane.getChildren().get(i), "selectActionCircle");
+        for (JFXMasonryPane contentPane : contentPanes) {
+            for (int i = 0; i < contentPane.getChildren().size(); i++) {
 
-            if (isItemSelected(selectActionCircle)) {
-                counter++;
-                if (counter > 1) {
-                    break;
+                GridPane gridPaneContent = (GridPane) getActionItemById(contentPane.getChildren().get(i), "gridPaneContent");
+                HBox hBoxCircle = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
+                Circle selectActionCircle = (Circle) getActionItemById(hBoxCircle, "selectActionCircle");
+
+                if (isItemSelected(selectActionCircle)) {
+                    selectionCounter++;
+                    if (selectionCounter > 1) {
+                        break;
+                    }
                 }
             }
         }
 
-        return counter == 1;
+        return selectionCounter > 1;
     }
 
     private void onSuccess(final byte[] pdfBytes) {
@@ -208,7 +186,7 @@ public class ActionController extends Controller implements Initializable {
         try {
             Node item = loader.load();
             buildItem(loader, "Testbild erstellen");
-            contentPane.getChildren().add(item);
+            contentPaneOthers.getChildren().add(item);
         } catch (IOException e) {
             LoggerFactory.getLogger(getClass())
                     .atError()
@@ -221,7 +199,7 @@ public class ActionController extends Controller implements Initializable {
 
     private Node getActionItemById(Node item, String nodeId) {
 
-        return ((AnchorPane) item)
+        return ((Pane) item)
                 .getChildren()
                 .stream()
                 .filter(node -> node.getId().equals(nodeId))
@@ -232,6 +210,43 @@ public class ActionController extends Controller implements Initializable {
     private boolean isItemSelected(Circle selectActionCircle) {
 
         return selectActionCircle.getFill().equals(done);
+    }
+
+    private void checkItemSelected(JFXMasonryPane contentPane) {
+
+        for (int i = 0; i < contentPane.getChildren().size(); i++) {
+
+            GridPane gridPaneContent = (GridPane) getActionItemById(contentPane.getChildren().get(i), "gridPaneContent");
+            HBox hBoxCircle = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
+            Circle selectActionCircle = (Circle) getActionItemById(hBoxCircle, "selectActionCircle");
+
+            if (isItemSelected(selectActionCircle)) {
+                Label actionLabel = (Label) getActionItemById(gridPaneContent, "actionLabel");
+
+                final String resultName = actionLabel.getText();
+
+                if (!StringUtils.hasText(resultName)) {
+                    AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+                    return;
+                }
+
+                toggleActionButtonVisible(false);
+
+                if (resultName.equals("Testbild erstellen")) {
+                    this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
+                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                            .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
+                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
+                            .subscribe();
+                } else {
+                    this.extractionConnector.runJob(this.job.getTemplateName(), this.job.getPathToFile(), resultName)
+                            .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                            .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
+                            .doOnSuccess(v -> Platform.runLater(() -> toggleActionButtonVisible(true)))
+                            .subscribe();
+                }
+            }
+        }
     }
 
     private void onTestImage(final Image image) {

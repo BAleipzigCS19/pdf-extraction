@@ -24,6 +24,13 @@
 
 .header {
     -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+    -fx-text-fill: #2157A0;
+    -fx-padding: 5px 0px 10px 0px;
+}
+
+.header-second {
+    -fx-font-family: "Verdana";
     -fx-font-size: 16px;
     -fx-text-fill: #2157A0;
     -fx-padding: 5px 0px 10px 0px;
@@ -44,13 +51,12 @@
 .template-item {
     -fx-background-color: #2157A0;
     -fx-background-radius: 7;
-    -fx-padding: 10;
 }
 
 .label-action-item {
     -fx-text-fill: #FFFFFF;
     -fx-font-family: "Verdana";
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
 }
 
 .scroll-pane {
