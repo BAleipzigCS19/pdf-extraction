@@ -15,9 +15,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -113,6 +120,32 @@ public class MenuBarController extends Controller {
                 .subscribe();
     }
 
-    public void onAbout(ActionEvent actionEvent) {
+    public void onAbout() {
+
+        JSONParser jsonParser = new JSONParser();
+
+
+        try (FileReader reader = new FileReader(String.valueOf(getClass().getResource("/dependencies.json")))){
+
+            // nicht wundern wegen den ganzen casts, das ist wohl gängige Praxis
+            JSONArray dependenciesList = (JSONArray) jsonParser.parse(reader);
+
+            dependenciesList.forEach(dependencie -> parseDependencies((JSONObject) dependencie));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseDependencies(JSONObject dependencie) {
+
+        JSONObject dependencieObject =  (JSONObject) dependencie.get("dependencie");
+
+        String name = (String) dependencieObject.get("name");
+        System.out.println(name);
     }
 }

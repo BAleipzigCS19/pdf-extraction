@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.backend.tesseract;
 import de.baleipzig.pdfextraction.backend.config.Config;
 import de.baleipzig.pdfextraction.backend.entities.Field;
 import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Tesseract1;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -26,7 +27,7 @@ public class TessImpl implements Tess {
     private final ITesseract tesseract;
 
     public TessImpl(final Config config) {
-        this.tesseract = new Tesseract1();
+        this.tesseract = new Tesseract();
         this.tesseract.setDatapath(config.getTessPath());
         this.tesseract.setLanguage(config.getTessLanguage());
         this.tesseract.setTessVariable("user_defined_dpi", "300");
