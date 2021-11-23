@@ -25,6 +25,9 @@ import java.util.Map;
 public class XDocWU {
     private static final DateTimeFormatter DAY_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final String DATE_FIELD = "DATE";
+    private static final String SENDER_NAME_FIELD = "SENDER_NAME";
+    private static final String ADDRESS_SENDER = "ADDRESS_SENDER";
+    private static final String ADDRESS_RECEIVER = "ADDRESS_RECEIVER";
 
     private final byte[] resultContent;
     private final Map<Field, String> extracted;
@@ -48,6 +51,9 @@ public class XDocWU {
 
         final Map<String, String> result = FieldUtils.map(extracted);
         result.put(DATE_FIELD, DAY_FORMAT.format(LocalDateTime.now()));
+        result.put(SENDER_NAME_FIELD, parseSenderName(result.get(ADDRESS_RECEIVER)));
+        result.put(ADDRESS_SENDER, convertSenderToReceiver(result.get(ADDRESS_SENDER)));
+        result.put(ADDRESS_RECEIVER, convertSenderToReceiver(result.get(ADDRESS_RECEIVER)));
 
         LoggerFactory.getLogger(getClass())
                 .trace("Extracted: {}", result);
@@ -70,7 +76,6 @@ public class XDocWU {
         }
     }
 
-
     private byte[] inlineResult(final Map<String, String> extracted)
             throws IOException, XDocReportException {
         final IXDocReport report = XDocReportRegistry.getRegistry().loadReport(new ByteArrayInputStream(this.resultContent), TemplateEngineKind.Velocity);
@@ -82,5 +87,20 @@ public class XDocWU {
         report.convert(context, options, processed);
 
         return processed.toByteArray();
+    }
+
+    private String parseSenderName(String senderAddress){
+
+        return senderAddress.split("\n")[1];
+    }
+
+    private String convertSenderToReceiver(String sender){
+
+        return sender.replace(", ", "\n");
+    }
+
+    private String convertReceiverToSender(String receiver){
+
+        return receiver.replace("\n", ", ");
     }
 }
