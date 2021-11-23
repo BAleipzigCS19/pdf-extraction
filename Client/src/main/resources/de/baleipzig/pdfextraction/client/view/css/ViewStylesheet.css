@@ -41,4 +41,18 @@
     -fx-padding: 10px 10px 10px 15px;
 }
 
+.text-data-key {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 14px;
+}
+
+.text-data-value {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 12px;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
 
