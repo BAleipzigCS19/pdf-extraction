@@ -53,7 +53,8 @@ public class XDocWU {
         result.put(DATE_FIELD, DAY_FORMAT.format(LocalDateTime.now()));
         result.put(SENDER_NAME_FIELD, parseSenderName(result.get(ADDRESS_RECEIVER)));
         result.put(ADDRESS_SENDER, convertSenderToReceiver(result.get(ADDRESS_SENDER)));
-        result.put(ADDRESS_RECEIVER, convertSenderToReceiver(result.get(ADDRESS_RECEIVER)));
+        result.put(ADDRESS_RECEIVER, convertReceiverToSender(result.get(ADDRESS_RECEIVER)));
+        switchSenderAndReceiver(result);
 
         LoggerFactory.getLogger(getClass())
                 .trace("Extracted: {}", result);
@@ -89,18 +90,27 @@ public class XDocWU {
         return processed.toByteArray();
     }
 
-    private String parseSenderName(String senderAddress){
+    private String parseSenderName(String senderAddress) {
 
-        return senderAddress.split("\n")[1];
+        return senderAddress.split("\n")[1].trim();
     }
 
-    private String convertSenderToReceiver(String sender){
+    private String convertSenderToReceiver(String sender) {
 
         return sender.replace(", ", "\n");
     }
 
-    private String convertReceiverToSender(String receiver){
+    private String convertReceiverToSender(String receiver) {
 
-        return receiver.replace("\n", ", ");
+        return receiver.replace("\n", "");
+    }
+
+    private void switchSenderAndReceiver(Map<String, String> results) {
+
+        String addressSender = results.get(ADDRESS_SENDER);
+        String addressReceiver = results.get(ADDRESS_RECEIVER);
+
+        results.put(ADDRESS_SENDER, addressReceiver);
+        results.put(ADDRESS_RECEIVER, addressSender);
     }
 }
