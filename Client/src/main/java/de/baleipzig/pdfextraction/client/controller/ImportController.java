@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
@@ -29,22 +30,31 @@ public class ImportController extends Controller implements Initializable, Prope
 
     @FXML
     public MenuBar menuBar;
+
     @FXML
     public JFXButton showTemplateButton;
+
     @FXML
     public AnchorPane pdfAnchor;
+
     @FXML
     private Button continueButton;
+
     @FXML
     private JFXComboBox<Label> templateComboBox;
+
     @Inject
     private TemplateConnector connector;
+
     @Inject
     private Job job;
+
     @Inject
     private PDFRenderer renderer;
+
     @FXML
     private MenuBarController menuBarController;
+
     @FXML
     private PdfPreviewController pdfPreviewController;
 
@@ -53,8 +63,16 @@ public class ImportController extends Controller implements Initializable, Prope
     @FXML
     private void continueButtonOnAction() {
 
-        switchScene((Stage) this.continueButton.getScene().getWindow(),
-                new Actions());
+        if (this.job.getPathToFile() == null) {
+            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
+            return;
+        }
+        if (this.job.getTemplateName() == null) {
+            AlertUtils.showErrorAlert((getResource("alertChooseTemplate")));
+            return;
+        }
+
+        switchScene((Stage) this.continueButton.getScene().getWindow(), new Actions());
     }
 
     private void setChoosenTemplate(Optional<Label> choosenTemplate) {
@@ -62,11 +80,6 @@ public class ImportController extends Controller implements Initializable, Prope
         if (choosenTemplate.isEmpty()) {
             //Intentionally not checking if something is set in the job
             AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
-
-        }
-
-        if (this.job.getPathToFile() == null) {
-            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
 
         }
 
@@ -161,7 +174,11 @@ public class ImportController extends Controller implements Initializable, Prope
         DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView,
                 templateDTO, renderer.getCurrentPage());
 
-        List<Rectangle> rectangles = drawRectangleWU.work();
+        Set<Box> boxes = drawRectangleWU.work();
+
+        List<Rectangle> rectangles = new ArrayList<>();
+        boxes.stream().toList().forEach(e -> rectangles.add(e.place()));
+
         pdfAnchor.getChildren().addAll(rectangles);
     }
 
