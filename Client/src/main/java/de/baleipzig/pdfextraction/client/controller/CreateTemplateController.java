@@ -31,10 +31,8 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CreateTemplateController extends Controller implements Initializable{
 

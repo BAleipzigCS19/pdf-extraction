@@ -26,6 +26,7 @@ public class Job {
 
         Path oldValue = this.pathToFile;
         this.pathToFile = pathToFile;
+        // Import Controller listens on this Porperty
         changes.firePropertyChange("pathToFile", oldValue, pathToFile);
     }
 
@@ -33,6 +34,7 @@ public class Job {
 
         String oldValue = this.templateName;
         this.templateName = templateName;
+        // Import Controller listens on this Porperty
         changes.firePropertyChange("templateName", oldValue, templateName);
     }
 

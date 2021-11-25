@@ -29,7 +29,7 @@ public class TestTemplateConnector implements TemplateConnector {
     }
 
     @NotNull
-    public static List<FieldDTO> getFields() {
+    private List<FieldDTO> getFields() {
         return List.of(new FieldDTO(FieldType.ADDRESS_RECEIVER, 0, 0.1, 0.1, 0.2, 0.2),
                 new FieldDTO(FieldType.ADDRESS_SENDER, 0, 0.3, 0.3, 0.2, 0.2),
                 new FieldDTO(FieldType.EXPIRATION, 0, 0.4, 0.4, 0.2, 0.2),

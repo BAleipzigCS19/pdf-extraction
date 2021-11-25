@@ -1,12 +1,9 @@
 package de.baleipzig.pdfextraction.client.workunits;
 
-import de.baleipzig.pdfextraction.client.controller.CreateTemplateController;
 import de.baleipzig.pdfextraction.client.utils.Box;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;

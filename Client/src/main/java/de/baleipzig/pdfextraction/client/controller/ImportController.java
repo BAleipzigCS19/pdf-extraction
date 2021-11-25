@@ -18,7 +18,6 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -81,7 +80,9 @@ public class ImportController extends Controller implements Initializable, Prope
         switchScene((Stage) this.continueButton.getScene().getWindow(), new Actions());
     }
 
-    private void setChoosenTemplate(Optional<Label> choosenTemplate) {
+    private void setChoosenTemplate(Label template) {
+
+        Optional<Label> choosenTemplate = Optional.ofNullable(template);
 
         if (choosenTemplate.isEmpty()) {
             //Intentionally not checking if something is set in the job
@@ -111,7 +112,7 @@ public class ImportController extends Controller implements Initializable, Prope
         changeFocusOnControlParent(menuBar);
         checkShowTemplateButtonCondition();
         job.addPropertyChangeListener(this);
-        templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(Optional.ofNullable(newValue)));
+        templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(newValue));
     }
 
     private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
