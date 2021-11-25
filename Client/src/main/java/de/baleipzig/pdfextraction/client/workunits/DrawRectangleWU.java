@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,14 +37,12 @@ public class DrawRectangleWU {
         Set<Box> drawnBoxes = new HashSet<>();
 
         List<FieldDTO> boxes = templateDTO.getFields();
-        List<Rectangle> rectangles = new ArrayList<>();
         for (FieldDTO field : boxes) {
             if (field.getPage() == currentPage) {
                 Rectangle rectangle = getRectangle(getSize(imageView), field);
                 Paint color = new ColorPicker(drawnBoxes).getColor();
                 rectangle.setStroke(color);
                 rectangle.setFill(Color.TRANSPARENT);
-                rectangles.add(rectangle);
                 drawnBoxes.add(new Box(field.getPage(), field.getType(), rectangle, color));
             }
         }

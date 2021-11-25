@@ -64,7 +64,4 @@ public class Job {
         changes.addPropertyChangeListener(l);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener l) {
-        changes.removePropertyChangeListener(l);
-    }
 }

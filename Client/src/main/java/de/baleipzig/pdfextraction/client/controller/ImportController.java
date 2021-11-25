@@ -23,12 +23,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.*;
 
-public class ImportController extends Controller implements Initializable, PropertyChangeListener {
+public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
@@ -78,6 +76,7 @@ public class ImportController extends Controller implements Initializable, Prope
         }
 
         switchScene((Stage) this.continueButton.getScene().getWindow(), new Actions());
+
     }
 
     private void setChoosenTemplate(Label template) {
@@ -111,7 +110,7 @@ public class ImportController extends Controller implements Initializable, Prope
 
         changeFocusOnControlParent(menuBar);
         checkShowTemplateButtonCondition();
-        job.addPropertyChangeListener(this);
+        job.addPropertyChangeListener(evt -> checkShowTemplateButtonCondition());
         templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(newValue));
     }
 
@@ -215,9 +214,4 @@ public class ImportController extends Controller implements Initializable, Prope
         }
     }
 
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        checkShowTemplateButtonCondition();
-    }
 }
