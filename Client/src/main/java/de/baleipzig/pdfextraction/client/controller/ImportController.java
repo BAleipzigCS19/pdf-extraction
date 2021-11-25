@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.client.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Actions;
@@ -16,6 +17,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -36,6 +39,9 @@ public class ImportController extends Controller implements Initializable, Prope
 
     @FXML
     public AnchorPane pdfAnchor;
+
+    @FXML
+    public GridPane boxesLegend;
 
     @FXML
     private Button continueButton;
@@ -80,7 +86,11 @@ public class ImportController extends Controller implements Initializable, Prope
         if (choosenTemplate.isEmpty()) {
             //Intentionally not checking if something is set in the job
             AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+        }
 
+        if (pdfAnchor.getChildren().stream().anyMatch(Rectangle.class::isInstance)) {
+            // toggle the Show Template button off, when an new Template is choosen
+            showTemplateButtonOnAction();
         }
 
         choosenTemplate.map(Labeled::getText).ifPresent(this.job::setTemplateName);
@@ -156,6 +166,9 @@ public class ImportController extends Controller implements Initializable, Prope
                 .map(node -> (Rectangle) node)
                 .toList();
 
+        while (boxesLegend.getRowCount() > 1) {
+            boxesLegend.getChildren().remove(0);
+        }
         pdfAnchor.getChildren().removeAll(addedRectangles);
     }
 
@@ -165,21 +178,29 @@ public class ImportController extends Controller implements Initializable, Prope
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(templateDTO -> Platform.runLater(() -> drawRectangles(templateDTO)))
+                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO)))
         ;
     }
 
-    private void drawRectangles(TemplateDTO templateDTO) {
+    private void getBoxes(TemplateDTO templateDTO) {
 
         DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView,
                 templateDTO, renderer.getCurrentPage());
 
         Set<Box> boxes = drawRectangleWU.work();
 
-        List<Rectangle> rectangles = new ArrayList<>();
-        boxes.stream().toList().forEach(e -> rectangles.add(e.place()));
+        for (Box box : boxes) {
+            generateBoxInformation(box.color(), box.type());
+            pdfAnchor.getChildren().add(box.place());
+        }
+    }
 
-        pdfAnchor.getChildren().addAll(rectangles);
+    private void generateBoxInformation(Paint color, FieldType fieldType) {
+
+        final int row = this.boxesLegend.getRowCount();
+        final Rectangle colorDot = new Rectangle(20, 20, color);
+        final Label label = new Label(fieldType.getName());
+        this.boxesLegend.addRow(row, colorDot, label);
     }
 
     private void checkShowTemplateButtonCondition() {

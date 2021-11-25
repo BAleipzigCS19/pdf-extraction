@@ -158,7 +158,6 @@ public class CreateTemplateController extends Controller implements Initializabl
         final int count = this.datagrid.getRowCount();
         final Rectangle dot = new Rectangle(20, 20, color);
         final Label label = new Label(fieldType.toString());
-        label.getStyleClass().add("label-datagrid");
         final JFXButton remove = new JFXButton("Remove");
         remove.getStyleClass().add("button-white");
         this.datagrid.addRow(count, dot, label, remove);

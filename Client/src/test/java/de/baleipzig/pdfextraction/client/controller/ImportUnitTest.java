@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.client.controller;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
+import de.baleipzig.pdfextraction.client.utils.Box;
 import de.baleipzig.pdfextraction.client.utils.Size;
 import de.baleipzig.pdfextraction.client.utils.TestTemplateConnector;
 import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
@@ -12,7 +13,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImportUnitTest {
@@ -41,7 +45,9 @@ public class ImportUnitTest {
         TemplateDTO templateDTO = new TemplateDTO("Test", "Test", list);
 
         DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO, 0 );
-        List<Rectangle> rectangles = drawRectangleWU.work();
+        Set<Box> boxes = drawRectangleWU.work();
+        List<Rectangle> rectangles = new ArrayList<>();
+        boxes.stream().toList().forEach(e -> rectangles.add(e.place()));
 
         assertNotNull(rectangles);
         assertEquals(1, rectangles.size());
