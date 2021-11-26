@@ -4,10 +4,7 @@ import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.Box;
-import de.baleipzig.pdfextraction.client.utils.Size;
-import de.baleipzig.pdfextraction.client.utils.TestTemplateConnector;
 import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
@@ -17,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ImportUnitTest {
 
@@ -44,7 +42,7 @@ public class ImportUnitTest {
         List<FieldDTO> list = List.of(new FieldDTO(FieldType.ADDRESS_RECEIVER, 0, percXPos, percYPos, percWidth, percHeight));
         TemplateDTO templateDTO = new TemplateDTO("Test", "Test", list);
 
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO, 0 );
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO, 0);
         Set<Box> boxes = drawRectangleWU.work();
         List<Rectangle> rectangles = new ArrayList<>();
         boxes.stream().toList().forEach(e -> rectangles.add(e.place()));

@@ -10,7 +10,7 @@ import de.baleipzig.pdfextraction.client.utils.Box;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.Imports;
-import de.baleipzig.pdfextraction.client.workunits.ColorPicker;
+import de.baleipzig.pdfextraction.client.utils.ColorPicker;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -40,24 +40,33 @@ public class CreateTemplateController extends Controller implements Initializabl
 
     @FXML
     public MenuBar menuBar;
+
     @FXML
     public AnchorPane pdfAnchor;
-    @Inject
-    protected TemplateConnector connector;
-    @Inject
-    protected PDFRenderer renderer;
+
     @FXML
     private GridPane dataGridPane;
+
     @FXML
     private TextField insuranceTextField;
+
     @FXML
     private TextField templateNameTextField;
+
     @FXML
     private PdfPreviewController pdfPreviewController;
+
     @FXML
     private MenuBarController menuBarController;
+
     @FXML
     private GridPane datagrid;
+
+    @Inject
+    protected TemplateConnector connector;
+
+    @Inject
+    protected PDFRenderer renderer;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them

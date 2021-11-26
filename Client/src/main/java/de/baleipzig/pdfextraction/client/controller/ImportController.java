@@ -46,6 +46,12 @@ public class ImportController extends Controller implements Initializable {
     @FXML
     private JFXComboBox<Label> templateComboBox;
 
+    @FXML
+    private MenuBarController menuBarController;
+
+    @FXML
+    private PdfPreviewController pdfPreviewController;
+
     @Inject
     private TemplateConnector connector;
 
@@ -55,13 +61,7 @@ public class ImportController extends Controller implements Initializable {
     @Inject
     private PDFRenderer renderer;
 
-    @FXML
-    private MenuBarController menuBarController;
-
-    @FXML
-    private PdfPreviewController pdfPreviewController;
-
-    private boolean showTemplateToggle = false;
+    private boolean isRectangleVisible = false;
 
     @FXML
     private void continueButtonOnAction() {
@@ -79,21 +79,21 @@ public class ImportController extends Controller implements Initializable {
 
     }
 
-    private void setChoosenTemplate(Label template) {
+    private void setChosenTemplate(Label template) {
 
-        Optional<Label> choosenTemplate = Optional.ofNullable(template);
+        final Optional<Label> chosenTemplate = Optional.ofNullable(template);
 
-        if (choosenTemplate.isEmpty()) {
+        if (chosenTemplate.isEmpty()) {
             //Intentionally not checking if something is set in the job
             AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
         }
 
         if (pdfAnchor.getChildren().stream().anyMatch(Rectangle.class::isInstance)) {
-            // toggle the Show Template button off, when an new Template is choosen
+            // toggle the Show Template button off, when a new Template is chosen
             showTemplateButtonOnAction();
         }
 
-        choosenTemplate.map(Labeled::getText).ifPresent(this.job::setTemplateName);
+        chosenTemplate.map(Labeled::getText).ifPresent(this.job::setTemplateName);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ImportController extends Controller implements Initializable {
         changeFocusOnControlParent(menuBar);
         checkShowTemplateButtonCondition();
         job.addPropertyChangeListener(evt -> checkShowTemplateButtonCondition());
-        templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChoosenTemplate(newValue));
+        templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChosenTemplate(newValue));
     }
 
     private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
@@ -138,7 +138,7 @@ public class ImportController extends Controller implements Initializable {
             return;
         }
 
-        if (!showTemplateToggle) {
+        if (!this.isRectangleVisible) {
 
             String selectedTemplate = this.job.getTemplateName();
 
@@ -148,12 +148,12 @@ public class ImportController extends Controller implements Initializable {
             }
 
             loadTemplate(selectedTemplate);
-            this.showTemplateToggle = true;
+            this.isRectangleVisible = true;
             this.showTemplateButton.setText(getResource("undoShowTemplateButton"));
         } else {
 
             removeRectangles();
-            this.showTemplateToggle = false;
+            this.isRectangleVisible = false;
             this.showTemplateButton.setText(getResource("showTemplateButton"));
         }
     }
@@ -178,8 +178,7 @@ public class ImportController extends Controller implements Initializable {
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO)))
-        ;
+                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO)));
     }
 
     private void getBoxes(TemplateDTO templateDTO) {

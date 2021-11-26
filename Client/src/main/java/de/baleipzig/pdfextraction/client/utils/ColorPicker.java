@@ -1,6 +1,5 @@
-package de.baleipzig.pdfextraction.client.workunits;
+package de.baleipzig.pdfextraction.client.utils;
 
-import de.baleipzig.pdfextraction.client.utils.Box;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -11,23 +10,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ColorPicker {
+public record ColorPicker(Set<Box> existingBoxes) {
 
-    private final List<Color> freeToUse;
-
-    public ColorPicker(Set<Box> existingBoxes) {
-
-        Set<Paint> usedColors = existingBoxes.stream()
+    public Paint getColor() {
+        final Set<Paint> usedColors = existingBoxes.stream()
                 .map(Box::color)
                 .collect(Collectors.toSet());
 
-        freeToUse = Stream.of(Color.CRIMSON, Color.DARKGREEN, Color.MEDIUMBLUE, Color.DEEPPINK, Color.GREEN, Color.INDIGO, Color.RED)
+        final List<Color> freeToUse = Stream.of(Color.CRIMSON, Color.DARKGREEN, Color.MEDIUMBLUE, Color.DEEPPINK, Color.GREEN, Color.INDIGO, Color.RED)
                 .filter(Predicate.not(usedColors::contains))
                 .toList();
-    }
 
-    public Paint getColor() {
-        
         if (freeToUse.isEmpty()) {
             return Color.BLACK;//Default
         }

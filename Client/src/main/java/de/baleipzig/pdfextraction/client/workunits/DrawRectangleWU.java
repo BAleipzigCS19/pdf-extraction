@@ -3,6 +3,7 @@ package de.baleipzig.pdfextraction.client.workunits;
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.utils.Box;
+import de.baleipzig.pdfextraction.client.utils.ColorPicker;
 import de.baleipzig.pdfextraction.client.utils.Size;
 import javafx.geometry.Bounds;
 import javafx.scene.image.ImageView;
@@ -15,32 +16,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DrawRectangleWU {
-
-    private final ImageView imageView;
-    private final TemplateDTO templateDTO;
-    private final int currentPage;
-
-    
-
-    public DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO, int currentPage) {
-        this.imageView = imageView;
-        this.templateDTO = templateDTO;
-        this.currentPage = currentPage;
-    }
+public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO, int currentPage) {
 
     /**
-     * Creates rectangles out of the in the constructor loaded TemplateDTO, that can be added on an container
+     * Creates rectangles out of the in the constructor loaded TemplateDTO, that can be added on a container
+     *
      * @return a List of javafx Rectangles
      */
     public Set<Box> work() {
-        Set<Box> drawnBoxes = new HashSet<>();
-
-        List<FieldDTO> boxes = templateDTO.getFields();
-        for (FieldDTO field : boxes) {
-            if (field.getPage() == currentPage) {
-                Rectangle rectangle = getRectangle(getSize(imageView), field);
-                Paint color = new ColorPicker(drawnBoxes).getColor();
+        final Set<Box> drawnBoxes = new HashSet<>();
+        final ColorPicker picker = new ColorPicker(drawnBoxes);
+        final List<FieldDTO> boxes = templateDTO.getFields();
+        for (final FieldDTO field : boxes) {
+            if (field.getPage() == this.currentPage) {
+                final Rectangle rectangle = getRectangle(getSize(imageView), field);
+                final Paint color = picker.getColor();
                 rectangle.setStroke(color);
                 rectangle.setFill(Color.TRANSPARENT);
                 drawnBoxes.add(new Box(field.getPage(), field.getType(), rectangle, color));
@@ -49,7 +39,7 @@ public class DrawRectangleWU {
         return drawnBoxes;
     }
 
-    private Rectangle getRectangle(Size size, FieldDTO f) {
+    private Rectangle getRectangle(final Size size, final FieldDTO f) {
         final double xPos = (f.getxPosPercentage() * size.width()) + AnchorPane.getLeftAnchor(imageView);
         final double yPos = (f.getyPosPercentage() * size.height()) + AnchorPane.getTopAnchor(imageView);
         final double width = f.getWidthPercentage() * size.width();
@@ -58,9 +48,7 @@ public class DrawRectangleWU {
     }
 
     private Size getSize(final ImageView imageView) {
-        Bounds boundsInParent = imageView.getBoundsInParent();
+        final Bounds boundsInParent = imageView.getBoundsInParent();
         return new Size(boundsInParent.getHeight(), boundsInParent.getWidth());
     }
-
-
 }

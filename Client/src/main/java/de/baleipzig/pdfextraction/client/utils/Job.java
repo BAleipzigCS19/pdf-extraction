@@ -26,7 +26,7 @@ public class Job {
 
         Path oldValue = this.pathToFile;
         this.pathToFile = pathToFile;
-        // Import Controller listens on this Porperty
+        // Import Controller listens on this Property
         changes.firePropertyChange("pathToFile", oldValue, pathToFile);
     }
 
@@ -34,8 +34,12 @@ public class Job {
 
         String oldValue = this.templateName;
         this.templateName = templateName;
-        // Import Controller listens on this Porperty
+        // Import Controller listens on this Property
         changes.firePropertyChange("templateName", oldValue, templateName);
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        changes.addPropertyChangeListener(l);
     }
 
     @Override
@@ -58,10 +62,6 @@ public class Job {
                 "templateName='" + templateName + '\'' +
                 ", pathToFile=" + pathToFile +
                 '}';
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        changes.addPropertyChangeListener(l);
     }
 
 }

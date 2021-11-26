@@ -52,7 +52,7 @@
                                <JFXComboBox fx:id="templateComboBox" prefHeight="25.0" prefWidth="168.0" promptText="%templateComboBox" styleClass="check-box" />
                                <JFXButton fx:id="showTemplateButton" alignment="CENTER_RIGHT" disable="true" layoutX="366.0" mnemonicParsing="false" onAction="#showTemplateButtonOnAction" styleClass="button-blue" text="%showTemplateButton">
                                  <tooltip>
-                                    <Tooltip text="" /> <!---Text wird im Import Controller gesetzt-->
+                                    <Tooltip text="%showTemplateButtonTooltipDisabled" /> <!---Text wird im Import Controller gesetzt-->
                                  </tooltip></JFXButton>
                            </children>
                         </Pane>
