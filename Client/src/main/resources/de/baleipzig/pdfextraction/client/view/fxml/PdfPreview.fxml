@@ -24,7 +24,7 @@
                                BorderPane.alignment="CENTER"/>
                     </center>
                 </BorderPane>
-                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true" x="5.0" y="5.0"
+                <ImageView fx:id="pdfPreviewImageView" pickOnBounds="true" preserveRatio="true"
                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0"
                            AnchorPane.topAnchor="5.0"/>
             </children>
