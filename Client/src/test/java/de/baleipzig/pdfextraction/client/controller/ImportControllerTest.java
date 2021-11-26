@@ -1,5 +1,9 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import de.baleipzig.pdfextraction.api.dto.FieldDTO;
+import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
+import de.baleipzig.pdfextraction.api.fields.FieldType;
+import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.SceneHandler;
 import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.Imports;
@@ -9,16 +13,21 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
 @EnabledOnOs({OS.WINDOWS, OS.MAC})
 class ImportControllerTest extends ApplicationTest {
+
+    private TemplateConnector connector;
 
     @BeforeAll
     static void beforeAll() {
@@ -40,6 +49,7 @@ class ImportControllerTest extends ApplicationTest {
         verifyThat("#pageBackButton", LabeledMatchers.hasText("<"));
         verifyThat("#pageBackButton", NodeMatchers.isVisible());
         verifyThat("#pageIndexLabel", NodeMatchers.isVisible());
+        verifyThat("#showTemplateButton", NodeMatchers.isVisible());
     }
 
     @Test
@@ -49,7 +59,6 @@ class ImportControllerTest extends ApplicationTest {
         clickOn("#continueButton");
         verifyThat("#backToImportButton", NodeMatchers.isVisible());
     }
-
 
 
 }

@@ -6,9 +6,11 @@ import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.Box;
 import de.baleipzig.pdfextraction.client.utils.EventUtils;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.Imports;
+import de.baleipzig.pdfextraction.client.utils.ColorPicker;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -29,10 +31,8 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CreateTemplateController extends Controller implements Initializable{
 
@@ -40,24 +40,33 @@ public class CreateTemplateController extends Controller implements Initializabl
 
     @FXML
     public MenuBar menuBar;
+
     @FXML
     public AnchorPane pdfAnchor;
-    @Inject
-    protected TemplateConnector connector;
-    @Inject
-    protected PDFRenderer renderer;
+
     @FXML
     private GridPane dataGridPane;
+
     @FXML
     private TextField insuranceTextField;
+
     @FXML
     private TextField templateNameTextField;
+
     @FXML
     private PdfPreviewController pdfPreviewController;
+
     @FXML
     private MenuBarController menuBarController;
+
     @FXML
     private GridPane datagrid;
+
+    @Inject
+    protected TemplateConnector connector;
+
+    @Inject
+    protected PDFRenderer renderer;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them
@@ -75,7 +84,7 @@ public class CreateTemplateController extends Controller implements Initializabl
         final int currentPage = this.renderer.getCurrentPage();
 
         final List<Rectangle> toAdd = chosenFieldTypes.stream()
-                .filter(b -> b.page == currentPage)
+                .filter(b -> b.page() == currentPage)
                 .map(Box::place)
                 .toList();
 
@@ -111,7 +120,7 @@ public class CreateTemplateController extends Controller implements Initializabl
 
         dialog.showAndWait().ifPresent(fieldType -> {
             final Rectangle rec = new Rectangle(0, 0, 0, 0);
-            final Paint color = getColor();
+            final Paint color = new ColorPicker(this.chosenFieldTypes).getColor();
             rec.setStroke(color);
             rec.setFill(Color.TRANSPARENT);
             final Scene scene = this.pdfAnchor.getScene();
@@ -156,7 +165,6 @@ public class CreateTemplateController extends Controller implements Initializabl
         final int count = this.datagrid.getRowCount();
         final Rectangle dot = new Rectangle(20, 20, color);
         final Label label = new Label(fieldType.toString());
-        label.getStyleClass().add("label-datagrid");
         final JFXButton remove = new JFXButton("Remove");
         remove.getStyleClass().add("button-white");
         this.datagrid.addRow(count, dot, label, remove);
@@ -219,23 +227,6 @@ public class CreateTemplateController extends Controller implements Initializabl
                 .collect(Collectors.toSet());
     }
 
-    private Paint getColor() {
-        final Set<Paint> usedColors = this.chosenFieldTypes.stream()
-                .map(Box::color)
-                .collect(Collectors.toSet());
-
-        final List<Color> freeToUse = Stream.of(Color.CRIMSON, Color.DARKGREEN, Color.MEDIUMBLUE, Color.DEEPPINK, Color.GREEN, Color.INDIGO, Color.RED)
-                .filter(Predicate.not(usedColors::contains))
-                .toList();
-
-        if (freeToUse.isEmpty()) {
-            return Color.BLACK;//Default
-        }
-
-        final ThreadLocalRandom random = ThreadLocalRandom.current();
-        return freeToUse.get(random.nextInt(0, freeToUse.size() - 1));
-    }
-
     @FXML
     private void createTemplateButtonOnAction() {
         if (isDataIncomplete()) {
@@ -248,7 +239,7 @@ public class CreateTemplateController extends Controller implements Initializabl
         final ImageView image = this.pdfPreviewController.pdfPreviewImageView;
         final Bounds bounds = image.getBoundsInParent();
         for (final Box box : this.chosenFieldTypes) {
-            final Rectangle rec = box.place;
+            final Rectangle rec = box.place();
 
             //Hier sollten nicht die absolute Weite genommen werden, da wir das Bild ja skaliert haben
             final double percX = (rec.getX() - AnchorPane.getLeftAnchor(image)) / bounds.getWidth();
@@ -256,7 +247,7 @@ public class CreateTemplateController extends Controller implements Initializabl
             final double percWidth = rec.getWidth() / bounds.getWidth();
             final double percHeight = rec.getHeight() / bounds.getHeight();
 
-            fields.add(new FieldDTO(box.type, box.page, percX, percY, percWidth, percHeight));
+            fields.add(new FieldDTO(box.type(), box.page(), percX, percY, percWidth, percHeight));
         }
 
         final TemplateDTO toSave = new TemplateDTO(this.templateNameTextField.getText(), this.insuranceTextField.getText(), fields);//unused
@@ -293,24 +284,6 @@ public class CreateTemplateController extends Controller implements Initializabl
         return !getCurrentFieldNames().containsAll(FieldType.getAllFieldTypes())
                 || insuranceTextField.getText().isBlank()
                 || templateNameTextField.getText().isBlank();
-    }
-
-    private record Box(int page, FieldType type, Rectangle place, Paint color) {
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof Box other)) {
-                return false;
-            }
-            return page == other.page
-                    && type == other.type
-                    && Objects.equals(place, other.place)
-                    && Objects.equals(color, other.color);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(page, type, place, color);
-        }
     }
 
     private record FieldTypeWrapper(FieldType type) {
