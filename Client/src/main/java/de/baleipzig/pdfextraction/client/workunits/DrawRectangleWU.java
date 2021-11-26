@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO, int currentPage) {
+public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO) {
 
     /**
      * Creates rectangles out of the in the constructor loaded TemplateDTO, that can be added on a container
@@ -24,19 +24,18 @@ public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO, int 
      * @return a List of javafx Rectangles
      */
     public Set<Box> work() {
-        final Set<Box> drawnBoxes = new HashSet<>();
-        final ColorPicker picker = new ColorPicker(drawnBoxes);
-        final List<FieldDTO> boxes = templateDTO.getFields();
-        for (final FieldDTO field : boxes) {
-            if (field.getPage() == this.currentPage) {
+        Set<Box> templateBoxes = new HashSet<>();
+        final ColorPicker picker = new ColorPicker(templateBoxes);
+
+        List<FieldDTO> boxes = templateDTO.getFields();
+        for (FieldDTO field : boxes) {
                 final Rectangle rectangle = getRectangle(getSize(imageView), field);
                 final Paint color = picker.getColor();
                 rectangle.setStroke(color);
                 rectangle.setFill(Color.TRANSPARENT);
-                drawnBoxes.add(new Box(field.getPage(), field.getType(), rectangle, color));
-            }
+                templateBoxes.add(new Box(field.getPage(), field.getType(), rectangle, color));
         }
-        return drawnBoxes;
+        return templateBoxes;
     }
 
     private Rectangle getRectangle(final Size size, final FieldDTO f) {

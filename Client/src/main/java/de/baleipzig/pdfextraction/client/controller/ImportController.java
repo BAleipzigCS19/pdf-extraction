@@ -107,6 +107,8 @@ public class ImportController extends Controller implements Initializable {
                 .subscribe(name -> Platform.runLater(() -> onRequestCompleted(name)));
 
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, event -> this.updateDrawnBoxes());
+        EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, event -> this.updateDrawnBoxes());
 
         changeFocusOnControlParent(menuBar);
         checkShowTemplateButtonCondition();
@@ -163,7 +165,7 @@ public class ImportController extends Controller implements Initializable {
         List<Rectangle> addedRectangles = pdfAnchor.getChildren()
                 .stream()
                 .filter(Rectangle.class::isInstance)
-                .map(node -> (Rectangle) node)
+                .map(Rectangle.class::cast)
                 .toList();
 
         while (boxesLegend.getRowCount() > 1) {
@@ -183,14 +185,15 @@ public class ImportController extends Controller implements Initializable {
 
     private void getBoxes(TemplateDTO templateDTO) {
 
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView,
-                templateDTO, renderer.getCurrentPage());
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO);
 
         Set<Box> boxes = drawRectangleWU.work();
 
         for (Box box : boxes) {
-            generateBoxInformation(box.color(), box.type());
-            pdfAnchor.getChildren().add(box.place());
+            if (box.page() == renderer.getCurrentPage()) {
+                generateBoxInformation(box.color(), box.type());
+                pdfAnchor.getChildren().add(box.place());
+            }
         }
     }
 
@@ -210,6 +213,21 @@ public class ImportController extends Controller implements Initializable {
         } else {
             showTemplateButton.setDisable(true);
             showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipDisabled"));
+        }
+    }
+
+    private void updateDrawnBoxes() {
+        if (isRectangleVisible) {
+
+            removeRectangles();
+            String selectedTemplate = this.job.getTemplateName();
+
+            if (selectedTemplate == null) {
+                AlertUtils.showErrorAlert(getResource("alertChooseTemplate"));
+                return;
+            }
+
+            loadTemplate(selectedTemplate);
         }
     }
 

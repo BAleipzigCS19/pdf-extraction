@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ImportUnitTest {
+class ImportUnitTest {
 
 
     @Test
@@ -42,7 +42,7 @@ public class ImportUnitTest {
         List<FieldDTO> list = List.of(new FieldDTO(FieldType.ADDRESS_RECEIVER, 0, percXPos, percYPos, percWidth, percHeight));
         TemplateDTO templateDTO = new TemplateDTO("Test", "Test", list);
 
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO, 0);
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO);
         Set<Box> boxes = drawRectangleWU.work();
         List<Rectangle> rectangles = new ArrayList<>();
         boxes.stream().toList().forEach(e -> rectangles.add(e.place()));
