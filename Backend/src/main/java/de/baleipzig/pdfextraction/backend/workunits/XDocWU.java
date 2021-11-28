@@ -50,11 +50,11 @@ public class XDocWU {
         checkResult(extracted);
 
         final Map<String, String> result = FieldUtils.map(extracted);
-        result.put(DATE_FIELD, DAY_FORMAT.format(LocalDateTime.now()));
-        result.put(SENDER_NAME_FIELD, parseSenderName(result.get(ADDRESS_RECEIVER)));
-        result.put(ADDRESS_SENDER, convertSenderToReceiver(result.get(ADDRESS_SENDER)));
-        result.put(ADDRESS_RECEIVER, convertReceiverToSender(result.get(ADDRESS_RECEIVER)));
         switchSenderAndReceiver(result);
+        result.put(DATE_FIELD, DAY_FORMAT.format(LocalDateTime.now()));
+        result.put(SENDER_NAME_FIELD, parseSenderName(result.get(ADDRESS_SENDER)));
+        result.put(ADDRESS_SENDER, convertReceiverToSender(result.get(ADDRESS_SENDER)));
+        result.put(ADDRESS_RECEIVER, convertSenderToReceiver(result.get(ADDRESS_RECEIVER)));
 
         LoggerFactory.getLogger(getClass())
                 .trace("Extracted: {}", result);
@@ -102,7 +102,7 @@ public class XDocWU {
 
     private String convertReceiverToSender(String receiver) {
 
-        return receiver.replace("\n", "");
+        return receiver.replace("\n", ",");
     }
 
     private void switchSenderAndReceiver(Map<String, String> results) {
