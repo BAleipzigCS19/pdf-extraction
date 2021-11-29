@@ -1,13 +1,14 @@
 package de.baleipzig.pdfextraction.client.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
+import de.baleipzig.pdfextraction.client.utils.Dependencie;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
@@ -15,17 +16,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Locale;
@@ -122,30 +119,16 @@ public class MenuBarController extends Controller {
 
     public void onAbout() {
 
-        JSONParser jsonParser = new JSONParser();
+        try (InputStream inputStream = MenuBarController.class.getResourceAsStream("../view/dependencies.json")){
+            // create object mapper instance
+            ObjectMapper mapper = new ObjectMapper();
 
+            List<Dependencie> dependencies = List.of(mapper.readValue(inputStream, Dependencie[].class));
 
-        try (FileReader reader = new FileReader(String.valueOf(getClass().getResource("/dependencies.json")))){
+            dependencies.forEach(System.out::println);
 
-            // nicht wundern wegen den ganzen casts, das ist wohl gängige Praxis
-            JSONArray dependenciesList = (JSONArray) jsonParser.parse(reader);
-
-            dependenciesList.forEach(dependencie -> parseDependencies((JSONObject) dependencie));
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-    }
-
-    private void parseDependencies(JSONObject dependencie) {
-
-        JSONObject dependencieObject =  (JSONObject) dependencie.get("dependencie");
-
-        String name = (String) dependencieObject.get("name");
-        System.out.println(name);
     }
 }

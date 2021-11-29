@@ -38,9 +38,6 @@ dependencies {
 
     implementation("org.reflections:reflections:0.10.1")
 
-    // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-
     compileOnly("org.slf4j:slf4j-api:2.0.0-alpha5")
     runtimeOnly("ch.qos.logback:logback-classic:1.3.0-alpha10")
 
