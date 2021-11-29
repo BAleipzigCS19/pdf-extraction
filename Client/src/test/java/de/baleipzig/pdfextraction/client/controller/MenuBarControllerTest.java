@@ -31,7 +31,7 @@ class MenuBarControllerTest extends ApplicationTest {
     }
 
     @Test
-    void verifyComponents(){
+    void verifyComponents() {
         verifyThat("#menuBar", NodeMatchers.isVisible());
         verifyThat("#fileMenu", NodeMatchers.isVisible());
         verifyThat("#templateMenuID", NodeMatchers.isVisible());
@@ -39,13 +39,13 @@ class MenuBarControllerTest extends ApplicationTest {
     }
 
     @Test
-    void verifyFileMenu(){
+    void verifyFileMenu() {
         clickOn("#fileMenu");
         verifyThat("#chooseFile", NodeMatchers.isVisible());
     }
 
     @Test
-    void verifyTemplateMenu(){
+    void verifyTemplateMenu() {
         clickOn("#templateMenuID");
         verifyThat("#createTemplate", NodeMatchers.isVisible());
     }
@@ -67,7 +67,7 @@ class MenuBarControllerTest extends ApplicationTest {
     }
 
     @Test
-    void changeLangauage(){
+    void changeLangauage() {
         verifyThat("#templateHeader", LabeledMatchers.hasText("Schablonen"));
         clickOn("#languageMenuID");
         clickOn("#english");
