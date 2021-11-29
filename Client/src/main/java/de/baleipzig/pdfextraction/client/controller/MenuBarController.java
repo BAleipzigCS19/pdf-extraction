@@ -1,11 +1,10 @@
 package de.baleipzig.pdfextraction.client.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.Dependencie;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.view.About;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
@@ -19,10 +18,7 @@ import javafx.stage.Stage;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Locale;
@@ -74,7 +70,7 @@ public class MenuBarController extends Controller {
     /**
      * changes the Language Locale and reloads the Scene with the new Ressource Bundle
      *
-     * @param locale
+     * @param locale The locale of the language you want to change to
      */
     public void onChangeLanguage(Locale locale) {
         Locale.setDefault(locale);
@@ -104,7 +100,7 @@ public class MenuBarController extends Controller {
         }
 
         final TextInputDialog dialog = new TextInputDialog(null);
-        dialog.setHeaderText("Bitte geben sie einem Namen ein, unter welchem diese Vorlage gespeichert werden soll.");
+        dialog.setHeaderText(getResource("saveFileDialogHeader"));
         final Optional<String> optAnswer = dialog.showAndWait();
         if (!optAnswer.map(StringUtils::hasText).orElse(false)) {
             //User canceled the dialog
@@ -118,17 +114,11 @@ public class MenuBarController extends Controller {
     }
 
     public void onAbout() {
-
-        try (InputStream inputStream = MenuBarController.class.getResourceAsStream("../view/dependencies.json")){
-            // create object mapper instance
-            ObjectMapper mapper = new ObjectMapper();
-
-            List<Dependencie> dependencies = List.of(mapper.readValue(inputStream, Dependencie[].class));
-
-            dependencies.forEach(System.out::println);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        Stage stage = new Stage();
+        stage.setTitle(getResource("aboutTitle"));
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
+        stage.initOwner(menuBar.getScene().getWindow());
+        switchScene(stage, new About());
     }
 }
