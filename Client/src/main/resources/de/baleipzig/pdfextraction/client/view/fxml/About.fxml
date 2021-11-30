@@ -19,14 +19,28 @@
               </rowConstraints>
             </GridPane>
          </content>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
       </ScrollPane>
    </center>
    <bottom>
-      <JFXButton fx:id="closeButton" buttonType="RAISED" styleClass="button-blue" text="%cancelButton"
-                 BorderPane.alignment="CENTER_RIGHT" onAction="#cancelButtonOnAction">
+      <JFXButton fx:id="closeButton" buttonType="RAISED" onAction="#cancelButtonOnAction" styleClass="button-blue" text="%cancelButton" BorderPane.alignment="CENTER_RIGHT">
          <BorderPane.margin>
             <Insets bottom="5.0" right="5.0" top="5.0" />
          </BorderPane.margin>
       </JFXButton>
    </bottom>
+   <top>
+      <VBox prefHeight="91.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="header" text="%projectname"/>
+            <Hyperlink fx:id="gitHubLink" text="%githubLine" />
+            <Label styleClass="header" text="%poweredBy"/>
+         </children>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </VBox>
+   </top>
 </BorderPane>

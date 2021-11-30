@@ -1,17 +1,21 @@
 package de.baleipzig.pdfextraction.client.utils;
 
-public class Dependencie {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private String name;
-    private String version;
-    private String link;
-    private String license;
+public class Dependency {
 
-    public Dependencie () {
+    private final String name;
+    private final String version;
+    private final String link;
+    private final String license;
 
-    }
-
-    public Dependencie(String name, String version, String link, String license) {
+    @JsonCreator
+    public Dependency(
+            @JsonProperty("name") String name,
+            @JsonProperty("version") String version,
+            @JsonProperty("link") String link,
+            @JsonProperty("license") String license) {
         this.name = name;
         this.version = version;
         this.link = link;
@@ -20,7 +24,7 @@ public class Dependencie {
 
     @Override
     public String toString() {
-        return "dependencie{" +
+        return "dependency{" +
                 "name='" + name + '\'' +
                 ", version='" + version + '\'' +
                 ", link='" + link + '\'' +
@@ -28,35 +32,22 @@ public class Dependencie {
                 '}';
     }
 
+    // no setters are intendet here, bean Propertys should only be set through JSON parser
+
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public String getLink() {
         return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
 
     public String getLicense() {
         return license;
     }
 
-    public void setLicense(String license) {
-        this.license = license;
-    }
 }

@@ -2,13 +2,14 @@ package de.baleipzig.pdfextraction.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfoenix.controls.JFXButton;
-import de.baleipzig.pdfextraction.client.utils.Dependencie;
+import de.baleipzig.pdfextraction.client.utils.Dependency;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 
 import java.awt.*;
@@ -28,19 +29,26 @@ public class AboutController extends Controller implements Initializable {
     @FXML
     public JFXButton closeButton;
 
+    @FXML
+    public Hyperlink gitHubLink;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         try (InputStream inputStream = MenuBarController.class.getResourceAsStream("../view/dependencies.json")){
 
             ObjectMapper mapper = new ObjectMapper();
-            List<Dependencie> dependencies = List.of(mapper.readValue(inputStream, Dependencie[].class));
+            List<Dependency> dependencies = List.of(mapper.readValue(inputStream, Dependency[].class));
 
+            editHyperlinkEvent("https://github.com/BAleipzigCS19/pdf-extraction", gitHubLink);
             createTableHeaders();
             fillTableWithContent(dependencies);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(AboutController.class)
+                    .atError()
+                    .setCause(e)
+                    .log("Exception while loading ressource \"dependencies.json\" ");
         }
     }
 
@@ -53,24 +61,32 @@ public class AboutController extends Controller implements Initializable {
         this.dependenciesGrid.addRow(dependenciesGrid.getRowCount(), name, license);
     }
 
-    private void fillTableWithContent(List<Dependencie> dependencies) {
-        dependencies.forEach(dep -> {
+    private void fillTableWithContent(List<Dependency> dependencies) {
+        for (Dependency dependency : dependencies) {
 
             int row = dependenciesGrid.getRowCount();
-            Label name = new Label(dep.getName() + " " + dep.getVersion());
-            Hyperlink link= new Hyperlink(dep.getLicense());
-
-            link.setOnAction(evt -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(dep.getLink()));
-                } catch (IOException | URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
-            });
+            Label name = new Label(dependency.getName() + " " + dependency.getVersion());
+            Hyperlink link= new Hyperlink(dependency.getLicense());
+            editHyperlinkEvent(dependency.getLink(), link);
 
             this.dependenciesGrid.addRow(row, name, link);
+        }
+    }
+
+    private void editHyperlinkEvent(String url, Hyperlink link) {
+        link.setOnAction(evt -> {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                LoggerFactory.getLogger(AboutController.class)
+                        .atError()
+                        .setCause(e)
+                        .addArgument(url)
+                        .log("Exception while resolving link: {} ");
+            }
         });
     }
+
 
     public void cancelButtonOnAction() {
 
