@@ -85,11 +85,6 @@ public class ActionController extends Controller implements Initializable {
     @FXML
     private void runActionButtonOnAction() {
 
-        if (checkMoreThanOneActionIsSelected(Arrays.asList(contentPane, contentPaneOthers))) {
-            AlertUtils.showErrorAlert(getResource("selectOnlyOneAction"));
-            return;
-        }
-
         checkItemSelected(contentPane);
         checkItemSelected(contentPaneOthers);
 
@@ -129,6 +124,13 @@ public class ActionController extends Controller implements Initializable {
         actionItemController.actionLabel.setText(name);
         actionItemController.itemPane.setOnMouseClicked(event -> {
             if (actionItemController.selectActionCircle.getStrokeWidth() == STROKE_WIDTH_CIRCLE) {
+                GridPane gridPaneContent = checkOneActionIsSelected(Arrays.asList(contentPane, contentPaneOthers));
+                if(gridPaneContent != null){
+                    HBox hBoxCircleOld = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
+                    Circle selectActionCircleOld = (Circle) getActionItemById(hBoxCircleOld, "selectActionCircle");
+                    selectActionCircleOld.setStrokeWidth(STROKE_WIDTH_CIRCLE);
+                    selectActionCircleOld.setFill(Paint.valueOf("#ffffff00"));
+                }
                 actionItemController.selectActionCircle.setStrokeWidth(0);
                 actionItemController.selectActionCircle.setFill(done);
             } else {
@@ -139,9 +141,7 @@ public class ActionController extends Controller implements Initializable {
 
     }
 
-    private boolean checkMoreThanOneActionIsSelected(List<JFXMasonryPane> contentPanes) {
-
-        int selectionCounter = 0;
+    private GridPane checkOneActionIsSelected(List<JFXMasonryPane> contentPanes) {
 
         for (JFXMasonryPane contentPane : contentPanes) {
             for (int i = 0; i < contentPane.getChildren().size(); i++) {
@@ -151,15 +151,12 @@ public class ActionController extends Controller implements Initializable {
                 Circle selectActionCircle = (Circle) getActionItemById(hBoxCircle, "selectActionCircle");
 
                 if (isItemSelected(selectActionCircle)) {
-                    selectionCounter++;
-                    if (selectionCounter > 1) {
-                        break;
-                    }
+                    return gridPaneContent;
                 }
             }
         }
 
-        return selectionCounter > 1;
+        return null;
     }
 
     private void onSuccess(final byte[] pdfBytes) {
