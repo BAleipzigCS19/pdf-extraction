@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
-import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Actions;
@@ -14,9 +13,8 @@ import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
@@ -35,9 +33,6 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
-
-    @FXML
-    public VBox dataContent;
 
     @FXML
     public ProgressIndicator progress;
@@ -74,12 +69,6 @@ public class ImportController extends Controller implements Initializable {
 
     @FXML
     private PdfPreviewController pdfPreviewController;
-
-    @Inject
-    private TemplateConnector connector;
-
-    @Inject
-    private Job job;
 
     @Inject
     private PDFRenderer renderer;
@@ -156,33 +145,6 @@ public class ImportController extends Controller implements Initializable {
                 .ifPresent(l -> templateComboBox.getSelectionModel().select(l));
     }
 
-    public void selectTemplateOnAction() {
-
-        dataContent.getChildren().clear();
-        progress.setVisible(true);
-        collectedDataHeader.setVisible(false);
-
-        this.extractionConnector.extractOnly(this.templateComboBox.getValue().getText(), this.job.getPathToFile())
-                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
-                .subscribe();
-    }
-
-    private void onSuccess(Map<String, String> results) {
-
-        progress.setVisible(false);
-        collectedDataHeader.setVisible(true);
-
-        for (Map.Entry<String, String> entry : results.entrySet()) {
-            Label labelKey = new Label(entry.getKey());
-            labelKey.getStyleClass().add("text-data-key");
-            labelKey.setPadding(new Insets(10, 0, 0, 0));
-            Label labelValue = new Label(entry.getValue());
-            labelValue.getStyleClass().add("text-data-value");
-            dataContent.getChildren().addAll(labelKey, labelValue);
-        }
-    }
-
     public void showTemplateButtonOnAction() {
 
         if (this.job.getPathToFile() == null) {
@@ -226,33 +188,51 @@ public class ImportController extends Controller implements Initializable {
 
     private void loadTemplate(String templateName) {
 
-        this.connector.getForName(templateName)
+        this.templateConnector.getForName(templateName)
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO)));
+                .subscribe(templateDTO -> Platform.runLater(() -> extractData(templateDTO)));
     }
 
-    private void getBoxes(TemplateDTO templateDTO) {
+    private void extractData(TemplateDTO templateDTO) {
+
+        this.extractionConnector.extractOnly(templateDTO.getName(), this.job.getPathToFile())
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                .doOnSuccess(v -> Platform.runLater(() -> getBoxes(v, templateDTO)))
+                .subscribe();
+    }
+
+    private void getBoxes(Map<String, String> results, TemplateDTO templateDTO) {
 
         DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO);
-
         Set<Box> boxes = drawRectangleWU.work();
 
         for (Box box : boxes) {
-            if (box.page() == renderer.getCurrentPage()) {
-                generateBoxInformation(box.color(), box.type());
-                pdfAnchor.getChildren().add(box.place());
+            for (Map.Entry<String, String> entry : results.entrySet()){
+                if (entry.getKey().equals(box.type().getInternName())){
+                    if (box.page() == renderer.getCurrentPage()) {
+                        generateBoxInformation(box.color(), box.type(), entry.getValue());
+                        pdfAnchor.getChildren().add(box.place());
+                    }
+                }
             }
         }
     }
 
-    private void generateBoxInformation(Paint color, FieldType fieldType) {
+    private void generateBoxInformation(Paint color, FieldType fieldType, String value) {
 
-        final int row = this.boxesLegend.getRowCount();
+        int row = this.boxesLegend.getRowCount();
         final Rectangle colorDot = new Rectangle(20, 20, color);
         final Label label = new Label(fieldType.getName());
+        label.getStyleClass().add("text-data-key");
+        final Label labelValue = new Label(value);
+        labelValue.setWrapText(true);
+        labelValue.setPrefWidth(Control.USE_COMPUTED_SIZE);
+        labelValue.setPrefHeight(Control.USE_COMPUTED_SIZE);
+        labelValue.getStyleClass().add("text-data-value");
         this.boxesLegend.addRow(row, colorDot, label);
+        this.boxesLegend.addRow(++row, new Label(), labelValue);
     }
 
     private void checkShowTemplateButtonCondition() {

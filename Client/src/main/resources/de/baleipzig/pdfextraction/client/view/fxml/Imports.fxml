@@ -61,13 +61,13 @@
                   </VBox>
                       <ScrollPane prefHeight="400.0" prefWidth="505.0" GridPane.rowIndex="2">
                           <content>
-                              <GridPane fx:id="boxesLegend" alignment="CENTER" prefHeight="45.0" prefWidth="368.0" vgap="10.0">
+                              <GridPane fx:id="boxesLegend" alignment="CENTER" vgap="10.0">
                                   <columnConstraints>
                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0" prefWidth="111.0" />
                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                   </columnConstraints>
                                   <rowConstraints>
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                      <RowConstraints minHeight="10.0" />
                                   </rowConstraints>
                            <padding>
                               <Insets left="20.0" />
