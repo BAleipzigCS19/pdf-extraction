@@ -51,17 +51,6 @@ class ActionControllerTest extends ApplicationTest {
     }
 
     @Test
-    void selectMoreThanOneAction() {
-
-        ObservableList<Node> items = ((JFXMasonryPane)(stage.getScene().lookup("#contentPane"))).getChildren();
-        clickOn(items.get(0).lookup("#selectActionCircle"));
-        clickOn(items.get(1).lookup("#selectActionCircle"));
-        clickOn("#runActionButton");
-
-        verifyThat("Es darf nur eine Aktion ausgewählt werden.",NodeMatchers.isVisible());
-    }
-
-    @Test
     @Disabled("Without choosing a Template and an PDF it can't continue.")
     void runAction() {
         clickOn("#runActionButton");

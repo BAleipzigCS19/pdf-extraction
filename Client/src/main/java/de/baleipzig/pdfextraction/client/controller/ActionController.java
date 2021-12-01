@@ -182,7 +182,7 @@ public class ActionController extends Controller implements Initializable {
         FXMLLoader loader = new FXMLLoader(new ActionItem().getFXML());
         try {
             Node item = loader.load();
-            buildItem(loader, "Testbild erstellen");
+            buildItem(loader, getResource("createTestPic"));
             contentPaneOthers.getChildren().add(item);
         } catch (IOException e) {
             LoggerFactory.getLogger(getClass())
@@ -229,7 +229,7 @@ public class ActionController extends Controller implements Initializable {
 
                 toggleActionButtonVisible(false);
 
-                if (resultName.equals("Testbild erstellen")) {
+                if (resultName.equals(getResource("createTestPic"))) {
                     this.extractionConnector.createTestImage(this.job.getTemplateName(), this.job.getPathToFile())
                             .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                             .doOnSuccess(v -> Platform.runLater(() -> onTestImage(v)))
