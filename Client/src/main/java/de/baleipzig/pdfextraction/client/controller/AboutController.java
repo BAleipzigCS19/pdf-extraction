@@ -40,7 +40,7 @@ public class AboutController extends Controller implements Initializable {
             ObjectMapper mapper = new ObjectMapper();
             List<Dependency> dependencies = List.of(mapper.readValue(inputStream, Dependency[].class));
 
-            editHyperlinkEvent("https://github.com/BAleipzigCS19/pdf-extraction", gitHubLink);
+            gitHubLink.setOnAction(event -> onURLclick("https://github.com/BAleipzigCS19/pdf-extraction"));
             createTableHeaders();
             fillTableWithContent(dependencies);
 
@@ -67,24 +67,22 @@ public class AboutController extends Controller implements Initializable {
             int row = dependenciesGrid.getRowCount();
             Label name = new Label(dependency.getName() + " " + dependency.getVersion());
             Hyperlink link= new Hyperlink(dependency.getLicense());
-            editHyperlinkEvent(dependency.getLink(), link);
+            link.setOnAction(event -> onURLclick(dependency.getLink()));
 
             this.dependenciesGrid.addRow(row, name, link);
         }
     }
 
-    private void editHyperlinkEvent(String url, Hyperlink link) {
-        link.setOnAction(evt -> {
-            try {
-                Desktop.getDesktop().browse(new URI(url));
-            } catch (IOException | URISyntaxException e) {
-                LoggerFactory.getLogger(AboutController.class)
-                        .atError()
-                        .setCause(e)
-                        .addArgument(url)
-                        .log("Exception while resolving link: {} ");
-            }
-        });
+    private void onURLclick(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (IOException | URISyntaxException e) {
+            LoggerFactory.getLogger(AboutController.class)
+                    .atError()
+                    .setCause(e)
+                    .addArgument(url)
+                    .log("Exception while resolving link: {} ");
+        }
     }
 
 
