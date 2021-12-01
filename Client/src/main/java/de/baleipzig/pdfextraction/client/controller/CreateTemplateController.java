@@ -5,12 +5,9 @@ import de.baleipzig.pdfextraction.api.dto.FieldDTO;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
-import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.Box;
-import de.baleipzig.pdfextraction.client.utils.EventUtils;
-import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
-import de.baleipzig.pdfextraction.client.view.Imports;
 import de.baleipzig.pdfextraction.client.utils.ColorPicker;
+import de.baleipzig.pdfextraction.client.utils.*;
+import de.baleipzig.pdfextraction.client.view.Imports;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -34,9 +31,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class CreateTemplateController extends Controller implements Initializable{
+public class CreateTemplateController extends Controller implements Initializable {
 
-    private final Set<Box> chosenFieldTypes = new HashSet<>();
+    public final Set<Box> chosenFieldTypes = new HashSet<>();
 
     @FXML
     public MenuBar menuBar;
@@ -49,16 +46,18 @@ public class CreateTemplateController extends Controller implements Initializabl
 
     @FXML
     public TextField insuranceTextField;
+
     @FXML
     public TextField templateNameTextField;
+
     @FXML
-    private PdfPreviewController pdfPreviewController;
+    public PdfPreviewController pdfPreviewController;
 
     @FXML
     private MenuBarController menuBarController;
 
     @FXML
-    private GridPane datagrid;
+    public GridPane datagrid;
 
     @Inject
     protected TemplateConnector connector;

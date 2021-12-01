@@ -3,12 +3,12 @@ package de.baleipzig.pdfextraction.client.controller;
 import com.jfoenix.controls.JFXButton;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.connector.impl.TemplateConnectorImpl;
-import de.baleipzig.pdfextraction.client.utils.AlertUtils;
-import de.baleipzig.pdfextraction.client.utils.LanguageHandler;
+import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.utils.injector.Injector;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import de.baleipzig.pdfextraction.client.view.Imports;
 import de.baleipzig.pdfextraction.client.view.TemplateItem;
+import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -22,7 +22,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +47,12 @@ public class TemplateOverviewController extends Controller implements Initializa
 
     @Inject
     private TemplateConnectorImpl connector;
+
+    @Inject
+    private Job job;
+
+    @Inject
+    protected PDFRenderer renderer;
 
     private final Map<String, String> itemMap = new HashMap<>();
     private final List<VBox> vBoxList = new ArrayList<>();
@@ -147,7 +156,14 @@ public class TemplateOverviewController extends Controller implements Initializa
             CreateTemplateController createTemplateController = fxmlLoader.getController();
             createTemplateController.templateNameTextField.setText(templateDTO.getName());
             createTemplateController.insuranceTextField.setText(templateDTO.getConsumer());
-            //TODO Felder einzeichnen
+            showFields(
+                    createTemplateController.pdfPreviewController,
+                    createTemplateController.pdfAnchor,
+                    createTemplateController.templateNameTextField.getText(),
+                    createTemplateController.datagrid,
+                    createTemplateController.chosenFieldTypes
+            );
+
             final Scene scene = new Scene(parent);
             Stage stage = getStage();
             stage.setScene(scene);
@@ -166,7 +182,7 @@ public class TemplateOverviewController extends Controller implements Initializa
         return (Stage) this.backButton.getScene().getWindow();
     }
 
-    private VBox createHeadingWithItem(TemplateDTO templateDTO, Node item){
+    private VBox createHeadingWithItem(TemplateDTO templateDTO, Node item) {
         Label heading = new Label(templateDTO.getConsumer());
         heading.getStyleClass().add("header-second");
         VBox.setMargin(heading, new Insets(0, 0, 0, 10));
@@ -174,5 +190,61 @@ public class TemplateOverviewController extends Controller implements Initializa
         vBox.setId("#" + templateDTO.getConsumer());
         vBoxList.add(vBox);
         return vBox;
+    }
+
+    public void showFields(PdfPreviewController pdfPreviewController, AnchorPane pdfAnchor, String templateName,
+                           GridPane dataGridPane, Set<Box> chosenFieldTypes) {
+
+        if (job.getPathToFile() == null) {
+            AlertUtils.showErrorAlert(getResource("alertChoosePDF"));
+            return;
+        }
+
+        loadTemplate(templateName, pdfPreviewController, pdfAnchor, dataGridPane, chosenFieldTypes);
+    }
+
+    private void loadTemplate(String templateName, PdfPreviewController pdfPreviewController, AnchorPane pdfAnchor,
+                              GridPane dataGridPane, Set<Box> chosenFieldTypes) {
+
+        this.connector.getForName(templateName)
+                .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
+                        .error("Exception while listening for response.", err))
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO, pdfPreviewController, pdfAnchor, dataGridPane, chosenFieldTypes)));
+    }
+
+    private void getBoxes(TemplateDTO templateDTO, PdfPreviewController pdfPreviewController, AnchorPane pdfAnchor,
+                          GridPane dataGridPane, Set<Box> chosenFieldTypes) {
+
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO);
+
+        Set<Box> boxes = drawRectangleWU.work();
+
+        for (Box box : boxes) {
+            if (box.page() == renderer.getCurrentPage()) {
+                generateBoxInformation(box, dataGridPane, chosenFieldTypes, pdfAnchor);
+                pdfAnchor.getChildren().add(box.place());
+            }
+        }
+    }
+
+
+    private void generateBoxInformation(Box box, GridPane dataGridPane, Set<Box> chosenFieldTypes, AnchorPane pdfAnchor) {
+
+        final int row = dataGridPane.getRowCount();
+        final Rectangle colorDot = new Rectangle(20, 20, box.color());
+        final Label label = new Label(box.type().getName());
+
+        final JFXButton remove = new JFXButton("Remove");
+        remove.getStyleClass().add("button-white");
+        remove.setOnAction(e -> {
+            dataGridPane.getChildren().removeAll(colorDot, label, remove);
+            chosenFieldTypes.remove(box);
+            pdfAnchor.getChildren().remove(box.place());
+        });
+
+        chosenFieldTypes.add(box);
+
+        dataGridPane.addRow(row, colorDot, label, remove);
     }
 }
