@@ -3,7 +3,6 @@ package de.baleipzig.pdfextraction.client.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
-import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
@@ -13,32 +12,25 @@ import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.*;
 
 public class ImportController extends Controller implements Initializable {
 
     @FXML
     public MenuBar menuBar;
-
-    @FXML
-    public ProgressIndicator progress;
-
-    @FXML
-    public Label collectedDataHeader;
 
     @FXML
     public JFXButton showTemplateButton;
@@ -91,7 +83,7 @@ public class ImportController extends Controller implements Initializable {
 
     }
 
-    private void setChosenTemplate(Label template) {
+    private void setChosenTemplate(final Label template) {
 
         final Optional<Label> chosenTemplate = Optional.ofNullable(template);
 
@@ -109,7 +101,7 @@ public class ImportController extends Controller implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(final URL location, final ResourceBundle resources) {
 
         this.templateConnector.getAllNames()
                 .collectList()
@@ -128,7 +120,7 @@ public class ImportController extends Controller implements Initializable {
         templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChosenTemplate(newValue));
     }
 
-    private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
+    private Optional<Label> getLabelMatching(final String templateName, final List<Label> comboBoxItems) {
 
         return comboBoxItems.stream()
                 .filter(l -> templateName.equals(l.getText()))
@@ -186,16 +178,15 @@ public class ImportController extends Controller implements Initializable {
         pdfAnchor.getChildren().removeAll(addedRectangles);
     }
 
-    private void loadTemplate(String templateName) {
+    private void loadTemplate(final String templateName) {
 
         this.templateConnector.getForName(templateName)
-                .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
-                        .error("Exception while listening for response.", err))
+                .doOnError(err -> LoggerFactory.getLogger(getClass()).atError().setCause(err).log("Exception while listening for response."))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .subscribe(templateDTO -> Platform.runLater(() -> extractData(templateDTO)));
     }
 
-    private void extractData(TemplateDTO templateDTO) {
+    private void extractData(final TemplateDTO templateDTO) {
 
         this.extractionConnector.extractOnly(templateDTO.getName(), this.job.getPathToFile())
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
@@ -203,33 +194,28 @@ public class ImportController extends Controller implements Initializable {
                 .subscribe();
     }
 
-    private void getBoxes(Map<String, String> results, TemplateDTO templateDTO) {
+    private void getBoxes(final Map<String, String> results, final TemplateDTO templateDTO) {
 
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO);
-        Set<Box> boxes = drawRectangleWU.work();
+        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO).work();
 
         for (Box box : boxes) {
-            for (Map.Entry<String, String> entry : results.entrySet()){
-                if (entry.getKey().equals(box.type().name())){
-                    if (box.page() == renderer.getCurrentPage()) {
-                        generateBoxInformation(box.color(), box.type(), entry.getValue());
-                        pdfAnchor.getChildren().add(box.place());
-                    }
-                }
+            if (box.page() == this.renderer.getCurrentPage()) {
+                generateBoxInformation(box.color(), box.type().getName(), results.get(box.type().name()));
+                this.pdfAnchor.getChildren().add(box.place());
             }
         }
     }
 
-    private void generateBoxInformation(Paint color, FieldType fieldType, String value) {
+    private void generateBoxInformation(final Paint color, final String name, final String value) {
 
         int row = this.boxesLegend.getRowCount();
         final Rectangle colorDot = new Rectangle(20, 20, color);
-        final Label label = new Label(fieldType.getName());
+        final Label label = new Label(name);
         label.getStyleClass().add("text-data-key");
         final Label labelValue = new Label(value);
         labelValue.setWrapText(true);
-        labelValue.setPrefWidth(Control.USE_COMPUTED_SIZE);
-        labelValue.setPrefHeight(Control.USE_COMPUTED_SIZE);
+        labelValue.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        labelValue.setPrefHeight(Region.USE_COMPUTED_SIZE);
         labelValue.getStyleClass().add("text-data-value");
         this.boxesLegend.addRow(row, colorDot, label);
         this.boxesLegend.addRow(++row, new Label(), labelValue);
@@ -237,7 +223,7 @@ public class ImportController extends Controller implements Initializable {
 
     private void checkShowTemplateButtonCondition() {
 
-        if (this.job.getTemplateName() != null && this.job.getPathToFile() != null){
+        if (this.job.getTemplateName() != null && this.job.getPathToFile() != null) {
             showTemplateButton.setDisable(false);
             showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipEnabled"));
         } else {
