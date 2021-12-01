@@ -210,7 +210,7 @@ public class ImportController extends Controller implements Initializable {
 
         for (Box box : boxes) {
             for (Map.Entry<String, String> entry : results.entrySet()){
-                if (entry.getKey().equals(box.type().getInternName())){
+                if (entry.getKey().equals(box.type().name())){
                     if (box.page() == renderer.getCurrentPage()) {
                         generateBoxInformation(box.color(), box.type(), entry.getValue());
                         pdfAnchor.getChildren().add(box.place());
