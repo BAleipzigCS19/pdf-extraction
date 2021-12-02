@@ -25,9 +25,9 @@ public class LanguageHandler {
      * @return The created ResourcesBundle of the given Locale. Never null
      */
     private ResourceBundle loadBundle(Locale locale) {
-        final String bundlePath = "../view/languages/language_" + locale.toLanguageTag() + DEFAULT_RB_ENDING;
+        final String bundlePath = "/de/baleipzig/pdfextraction/client/view/languages/language_" + locale.toLanguageTag() + DEFAULT_RB_ENDING;
 
-        try (final InputStream stream = SceneHandler.class.getResourceAsStream(bundlePath)) {
+        try (final InputStream stream = getClass().getResourceAsStream(bundlePath)) {
             final InputStream actualStream = Optional.ofNullable(stream)
                     .orElse(InputStream.nullInputStream());
 

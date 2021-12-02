@@ -1,8 +1,9 @@
 plugins {
     application
+    id("org.springframework.boot") version "2.6.1"
 }
 
-version = "0.0.1-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -12,15 +13,15 @@ dependencies {
     implementation(project(":API"))
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot
-    implementation("org.springframework.boot:spring-boot:2.5.5")
+    implementation("org.springframework.boot:spring-boot:2.6.1")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure
-    implementation("org.springframework.boot:spring-boot-autoconfigure:2.5.5")
+    implementation("org.springframework.boot:spring-boot-autoconfigure:2.6.1")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging
-    implementation("org.springframework.boot:spring-boot-starter-logging:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-logging:2.6.1")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-    implementation("org.springframework.boot:spring-boot-starter-web:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.6.1")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.1")
 
     // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/xdocreport
     implementation("fr.opensagres.xdocreport:xdocreport:2.0.2")
