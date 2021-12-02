@@ -57,6 +57,20 @@
     -fx-background-color: #2157A0;
     -fx-background-radius: 7;
 }
+.text-data-key {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 14px;
+}
+
+.text-data-value {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 12px;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
 
 .label-action-item {
     -fx-text-fill: #FFFFFF;

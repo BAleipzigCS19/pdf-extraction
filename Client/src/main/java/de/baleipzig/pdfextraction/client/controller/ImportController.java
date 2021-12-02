@@ -3,7 +3,7 @@ package de.baleipzig.pdfextraction.client.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
-import de.baleipzig.pdfextraction.api.fields.FieldType;
+import de.baleipzig.pdfextraction.client.connector.api.ExtractionConnector;
 import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Actions;
@@ -18,6 +18,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -46,17 +47,20 @@ public class ImportController extends Controller implements Initializable {
     @FXML
     private JFXComboBox<Label> templateComboBox;
 
+    @Inject
+    private TemplateConnector templateConnector;
+
+    @Inject
+    private ExtractionConnector extractionConnector;
+
+    @Inject
+    private Job job;
+
     @FXML
     private MenuBarController menuBarController;
 
     @FXML
     private PdfPreviewController pdfPreviewController;
-
-    @Inject
-    private TemplateConnector connector;
-
-    @Inject
-    private Job job;
 
     @Inject
     private PDFRenderer renderer;
@@ -79,7 +83,7 @@ public class ImportController extends Controller implements Initializable {
 
     }
 
-    private void setChosenTemplate(Label template) {
+    private void setChosenTemplate(final Label template) {
 
         final Optional<Label> chosenTemplate = Optional.ofNullable(template);
 
@@ -97,9 +101,9 @@ public class ImportController extends Controller implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(final URL location, final ResourceBundle resources) {
 
-        this.connector.getAllNames()
+        this.templateConnector.getAllNames()
                 .collectList()
                 .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
                         .error("Exception while listening for response.", err))
@@ -116,7 +120,7 @@ public class ImportController extends Controller implements Initializable {
         templateComboBox.valueProperty().addListener((observable, oldValue, newValue) -> setChosenTemplate(newValue));
     }
 
-    private Optional<Label> getLabelMatching(String templateName, List<Label> comboBoxItems) {
+    private Optional<Label> getLabelMatching(final String templateName, final List<Label> comboBoxItems) {
 
         return comboBoxItems.stream()
                 .filter(l -> templateName.equals(l.getText()))
@@ -174,40 +178,52 @@ public class ImportController extends Controller implements Initializable {
         pdfAnchor.getChildren().removeAll(addedRectangles);
     }
 
-    private void loadTemplate(String templateName) {
+    private void loadTemplate(final String templateName) {
 
-        this.connector.getForName(templateName)
-                .doOnError(err -> LoggerFactory.getLogger(ImportController.class)
-                        .error("Exception while listening for response.", err))
+        this.templateConnector.getForName(templateName)
+                .doOnError(err -> LoggerFactory.getLogger(getClass()).atError().setCause(err).log("Exception while listening for response."))
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(templateDTO -> Platform.runLater(() -> getBoxes(templateDTO)));
+                .subscribe(templateDTO -> Platform.runLater(() -> extractData(templateDTO)));
     }
 
-    private void getBoxes(TemplateDTO templateDTO) {
+    private void extractData(final TemplateDTO templateDTO) {
 
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO);
+        this.extractionConnector.extractOnly(templateDTO.getName(), this.job.getPathToFile())
+                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
+                .doOnSuccess(v -> Platform.runLater(() -> getBoxes(v, templateDTO)))
+                .subscribe();
+    }
 
-        Set<Box> boxes = drawRectangleWU.work();
+    private void getBoxes(final Map<String, String> results, final TemplateDTO templateDTO) {
+
+        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO).work();
 
         for (Box box : boxes) {
-            if (box.page() == renderer.getCurrentPage()) {
-                generateBoxInformation(box.color(), box.type());
-                pdfAnchor.getChildren().add(box.place());
+            if (box.page() == this.renderer.getCurrentPage()) {
+                generateBoxInformation(box.color(), box.type().getName(), results.get(box.type().name()));
+                this.pdfAnchor.getChildren().add(box.place());
             }
         }
     }
 
-    private void generateBoxInformation(Paint color, FieldType fieldType) {
+    private void generateBoxInformation(final Paint color, final String name, final String value) {
 
-        final int row = this.boxesLegend.getRowCount();
+        int row = this.boxesLegend.getRowCount();
         final Rectangle colorDot = new Rectangle(20, 20, color);
-        final Label label = new Label(fieldType.getName());
+        final Label label = new Label(name);
+        label.getStyleClass().add("text-data-key");
+        final Label labelValue = new Label(value);
+        labelValue.setWrapText(true);
+        labelValue.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        labelValue.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        labelValue.getStyleClass().add("text-data-value");
         this.boxesLegend.addRow(row, colorDot, label);
+        this.boxesLegend.addRow(++row, new Label(), labelValue);
     }
 
     private void checkShowTemplateButtonCondition() {
 
-        if (this.job.getTemplateName() != null && this.job.getPathToFile() != null){
+        if (this.job.getTemplateName() != null && this.job.getPathToFile() != null) {
             showTemplateButton.setDisable(false);
             showTemplateButton.getTooltip().setText(getResource("showTemplateButtonTooltipEnabled"));
         } else {

@@ -6,10 +6,10 @@ import de.baleipzig.pdfextraction.backend.entities.ResultTemplate;
 import de.baleipzig.pdfextraction.backend.repositories.ResultRepository;
 import de.baleipzig.pdfextraction.backend.repositories.TemplateRepository;
 import de.baleipzig.pdfextraction.backend.tesseract.Tess;
-import de.baleipzig.pdfextraction.backend.util.FieldUtils;
 import de.baleipzig.pdfextraction.backend.workunits.CombinedExtractedWU;
+import de.baleipzig.pdfextraction.backend.workunits.CompleteExtractionWU;
 import de.baleipzig.pdfextraction.backend.workunits.PDFBoxImageWU;
-import de.baleipzig.pdfextraction.backend.workunits.XDocWU;
+import de.baleipzig.pdfextraction.backend.workunits.ResultMapperWU;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +88,7 @@ public class ExtractionController {
             final ExtractionTemplate template = this.templateRepository.findTemplateByName(templateName);
 
             final Map<Field, String> extracted = new CombinedExtractedWU(template.getFields(), content).work(this.tess);
-            final Map<String, String> result = FieldUtils.map(extracted);
+            final Map<String, String> result = new ResultMapperWU(extracted).work();
 
             LoggerFactory.getLogger(getClass())
                     .trace("Returning OCR result: {}", result);
@@ -128,8 +128,8 @@ public class ExtractionController {
             final ExtractionTemplate template = this.templateRepository.findTemplateByName(templateName);
             final ResultTemplate result = this.resultRepository.findResultByName(resultName);
 
-            final Map<Field, String> extracted = new CombinedExtractedWU(template.getFields(), content).work(this.tess);
-            final byte[] out = new XDocWU(extracted, result.getContent()).work();
+            final byte[] out = new CompleteExtractionWU(template.getFields(), content, result.getContent())
+                    .work(this.tess);
 
             return ResponseEntity.ok().body(Base64.getEncoder().encodeToString(out));
         } catch (final Exception e) {
