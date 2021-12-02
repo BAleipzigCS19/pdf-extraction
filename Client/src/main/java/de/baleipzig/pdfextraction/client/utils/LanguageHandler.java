@@ -39,6 +39,7 @@ public class LanguageHandler {
 
     /**
      * loads the current Bundle if its not already set, or if the current Bundle is currently null
+     *
      * @return the current set resource Bundle
      */
     public ResourceBundle getCurrentBundle() {

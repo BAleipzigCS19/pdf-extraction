@@ -31,6 +31,7 @@ public interface TemplateConnector {
 
     /**
      * Delete the Template
+     *
      * @param name name of the Template
      * @return Empty if successfully, else an error Mono
      */

@@ -11,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
-
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,7 @@ public class AboutController extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        try (InputStream inputStream = MenuBarController.class.getResourceAsStream("../view/dependencies.json")){
+        try (InputStream inputStream = MenuBarController.class.getResourceAsStream("../view/dependencies.json")) {
 
             ObjectMapper mapper = new ObjectMapper();
             List<Dependency> dependencies = List.of(mapper.readValue(inputStream, Dependency[].class));
@@ -66,7 +65,7 @@ public class AboutController extends Controller implements Initializable {
 
             int row = dependenciesGrid.getRowCount();
             Hyperlink name = new Hyperlink(dependency.getName() + " " + dependency.getVersion());
-            Label license= new Label(dependency.getLicense());
+            Label license = new Label(dependency.getLicense());
             name.setOnAction(event -> onURLclick(dependency.getLink()));
 
             this.dependenciesGrid.addRow(row, name, license);

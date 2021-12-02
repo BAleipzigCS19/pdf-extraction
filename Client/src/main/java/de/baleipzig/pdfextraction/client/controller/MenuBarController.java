@@ -21,8 +21,8 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Locale;
+import java.util.Optional;
 
 public class MenuBarController extends Controller {
 
@@ -91,7 +91,6 @@ public class MenuBarController extends Controller {
     public void onChangeLanguageEnglish() {
         onChangeLanguage(Locale.ENGLISH);
     }
-
 
 
     @FXML

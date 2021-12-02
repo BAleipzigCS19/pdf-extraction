@@ -1,4 +1,4 @@
 package de.baleipzig.pdfextraction.client.view;
 
-public class TemplateOverview implements FXView{
+public class TemplateOverview implements FXView {
 }
