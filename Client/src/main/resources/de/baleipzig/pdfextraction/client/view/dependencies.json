@@ -1,0 +1,165 @@
+[
+
+    {
+      "name" : "Spring WebFlux",
+      "version": "5.3.10",
+      "link" : "https://mvnrepository.com/artifact/org.springframework/spring-webflux",
+      "license":  "Apache 2.0"
+    },
+    {
+      "name": "Reactor Netty",
+      "version": "1.0.11",
+      "link": "https://mvnrepository.com/artifact/io.projectreactor.netty/reactor-netty",
+      "license": "Apache 2.0"
+    },
+  {
+      "name": "Jackson Databind",
+      "version": "2.13.0",
+      "link": "https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Apache PDFBox",
+      "version": "2.0.24",
+      "link": "https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "JFoenix",
+      "version": "9.0.10",
+      "link": "https://mvnrepository.com/artifact/com.jfoenix/jfoenix",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Jakarta Dependency Injection",
+      "version": "2.0.1",
+      "link": "https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Reflections",
+      "version": "0.10.1",
+      "link": "https://mvnrepository.com/artifact/org.reflections/reflections",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "SLF4J API Module",
+      "version": "2.0.0-alpha5",
+      "link": "https://mvnrepository.com/artifact/org.slf4j/slf4j-api",
+      "license": "MIT"
+  },
+  {
+      "name": "Logback Classic Module",
+      "version": "1.3.0-alpha10",
+      "link": "https://mvnrepository.com/artifact/ch.qos.logback/logback-classic",
+      "license": "EPL 1.0"
+  },
+  {
+      "name": "JUnit Jupiter",
+      "version": "5.8.1",
+      "link": "https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter",
+      "license": "EPL 2.0"
+  },
+  {
+      "name": "TestFX JUnit 5",
+      "version": "4.0.16-alpha",
+      "link": "https://mvnrepository.com/artifact/org.testfx/testfx-junit5",
+      "license": "EUPL 1.1"
+  },
+  {
+      "name": "Reactor Test Support",
+      "version": "3.4.11",
+      "link": "https://mvnrepository.com/artifact/io.projectreactor/reactor-test",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "OkHttp",
+      "version": "4.9.2",
+      "link": "https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "MockWebServer Deprecated",
+      "version": "4.9.2",
+      "link": "https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Spring Boot",
+      "version": "2.5.5",
+      "link": "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Spring Boot AutoConfigure",
+      "version": "2.5.5",
+      "link": "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Spring Boot Starter Logging",
+      "version": "2.5.5",
+      "link": "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Spring Boot Starter Web",
+      "version": "2.5.5",
+      "link": "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "Spring Boot Starter Data JPA",
+      "version": "2.5.5",
+      "link": "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "XDocReport",
+      "version": "2.0.2",
+      "link": "https://mvnrepository.com/artifact/fr.opensagres.xdocreport/xdocreport",
+      "license": "MIT"
+  },
+  {
+      "name": "Opensagres XDocReport Template Velocity",
+      "version": "2.0.2",
+      "link": "https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.velocity",
+      "license": "MIT"
+  },
+  {
+      "name": "Opensagres XDocReport Template Freemarker",
+      "version": "2.0.2",
+      "link": "https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.freemarker",
+      "license": "MIT"
+  },
+  {
+      "name": "Opensagres XDocReport Converter ODT ODFDOM",
+      "version": "2.0.2",
+      "link": "https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.odt.odfdom",
+      "license": "MIT"
+  },
+  {
+      "name": "Tess4J Tesseract For Java",
+      "version": "4.5.5",
+      "link": "https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j",
+      "license": "Apache 2.0"
+  },
+  {
+      "name": "JAXB Runtime",
+      "version": "2.3.5",
+      "link": "https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime",
+      "license": "EDL 1.0"
+  },
+  {
+      "name": "H2 Database Engine",
+      "version": "1.4.200",
+      "link": "https://mvnrepository.com/artifact/com.h2database/h2",
+      "license": "EPL 1.0"
+  },
+  {
+      "name": "JSON.simple",
+      "version": "1.1.1",
+      "link": "https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple",
+      "license": "Apache 2.0"
+  }
+]
