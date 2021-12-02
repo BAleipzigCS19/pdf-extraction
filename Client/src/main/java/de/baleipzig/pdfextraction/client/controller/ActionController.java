@@ -18,7 +18,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
@@ -88,12 +87,6 @@ public class ActionController extends Controller implements Initializable {
         checkItemSelected(contentPane);
         checkItemSelected(contentPaneOthers);
 
-        /*
-        this.extractionConnector.extractOnly(this.job.getTemplateName(), this.job.getPathToFile())
-                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .doOnSuccess(v -> Platform.runLater(() -> onSuccess(v)))
-                .subscribe();
-         */
     }
 
     private void toggleActionButtonVisible(boolean isVisible) {
@@ -125,12 +118,17 @@ public class ActionController extends Controller implements Initializable {
         actionItemController.itemPane.setOnMouseClicked(event -> {
             if (actionItemController.selectActionCircle.getStrokeWidth() == STROKE_WIDTH_CIRCLE) {
                 GridPane gridPaneContent = checkOneActionIsSelected(Arrays.asList(contentPane, contentPaneOthers));
-                if(gridPaneContent != null){
-                    HBox hBoxCircleOld = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
-                    Circle selectActionCircleOld = (Circle) getActionItemById(hBoxCircleOld, "selectActionCircle");
-                    selectActionCircleOld.setStrokeWidth(STROKE_WIDTH_CIRCLE);
-                    selectActionCircleOld.setFill(Paint.valueOf("#ffffff00"));
+                if (gridPaneContent != null) {
+                    getActionItemById(gridPaneContent, "hBoxCircle")
+                            .map(box -> getActionItemById(box, "selectActionCircle"))
+                            .map(Circle.class::cast)
+                            .ifPresent(c -> {
+                                c.setStrokeWidth(STROKE_WIDTH_CIRCLE);
+                                c.setFill(Paint.valueOf("#ffffff00"));
+                            });
                 }
+
+
                 actionItemController.selectActionCircle.setStrokeWidth(0);
                 actionItemController.selectActionCircle.setFill(done);
             } else {
@@ -143,15 +141,19 @@ public class ActionController extends Controller implements Initializable {
 
     private GridPane checkOneActionIsSelected(List<JFXMasonryPane> contentPanes) {
 
-        for (JFXMasonryPane contentPane : contentPanes) {
-            for (int i = 0; i < contentPane.getChildren().size(); i++) {
+        for (JFXMasonryPane panes : contentPanes) {
+            for (Node node : panes.getChildren()) {
 
-                GridPane gridPaneContent = (GridPane) getActionItemById(contentPane.getChildren().get(i), "gridPaneContent");
-                HBox hBoxCircle = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
-                Circle selectActionCircle = (Circle) getActionItemById(hBoxCircle, "selectActionCircle");
+                Optional<Node> gridPaneContent = getActionItemById(node, "gridPaneContent");
 
-                if (isItemSelected(selectActionCircle)) {
-                    return gridPaneContent;
+                Optional<Circle> circle1 = gridPaneContent
+                        .flatMap(content -> getActionItemById(content, "hBoxCircle"))
+                        .flatMap(circle -> getActionItemById(circle, "selectActionCircle"))
+                        .map(Circle.class::cast)
+                        .filter(this::isItemSelected);
+
+                if (circle1.isPresent()) {
+                    return gridPaneContent.map(GridPane.class::cast).orElseThrow();
                 }
             }
         }
@@ -194,14 +196,13 @@ public class ActionController extends Controller implements Initializable {
         }
     }
 
-    private Node getActionItemById(Node item, String nodeId) {
+    private Optional<Node> getActionItemById(Node item, String nodeId) {
 
         return ((Pane) item)
                 .getChildren()
                 .stream()
                 .filter(node -> node.getId().equals(nodeId))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     private boolean isItemSelected(Circle selectActionCircle) {
@@ -211,14 +212,20 @@ public class ActionController extends Controller implements Initializable {
 
     private void checkItemSelected(JFXMasonryPane contentPane) {
 
-        for (int i = 0; i < contentPane.getChildren().size(); i++) {
+        for (Node node : contentPane.getChildren()) {
 
-            GridPane gridPaneContent = (GridPane) getActionItemById(contentPane.getChildren().get(i), "gridPaneContent");
-            HBox hBoxCircle = (HBox) getActionItemById(gridPaneContent, "hBoxCircle");
-            Circle selectActionCircle = (Circle) getActionItemById(hBoxCircle, "selectActionCircle");
+            Optional<Node> gridPane = getActionItemById(node, "gridPaneContent");
+            Optional<Circle> circle = gridPane
+                    .flatMap(pane -> getActionItemById(pane, "hBoxCircle"))
+                    .flatMap(box -> getActionItemById(box, "selectActionCircle"))
+                    .map(Circle.class::cast)
+                    .filter(this::isItemSelected);
 
-            if (isItemSelected(selectActionCircle)) {
-                Label actionLabel = (Label) getActionItemById(gridPaneContent, "actionLabel");
+
+            if (circle.isPresent()) {
+                Label actionLabel = gridPane.flatMap(pane -> getActionItemById(pane, "actionLabel"))
+                        .map(Label.class::cast)
+                        .orElseThrow();
 
                 final String resultName = actionLabel.getText();
 
@@ -253,17 +260,5 @@ public class ActionController extends Controller implements Initializable {
         dialogPane.getChildren().add(new ImageView(image));
         dialogPane.setMinSize(image.getWidth() + 100, image.getHeight());
         dialog.show();
-    }
-
-    private void onSuccess(final Map<String, String> result) {
-        final StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : result.entrySet()) {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
-        }
-
-        AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                getResource("successTitle"),
-                getResource("actionCompleted"),
-                getResource("alertActionCompleted") + "\n\n" + sb);
     }
 }
