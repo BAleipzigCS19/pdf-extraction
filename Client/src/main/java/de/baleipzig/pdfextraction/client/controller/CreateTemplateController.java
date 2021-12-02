@@ -168,12 +168,7 @@ public class CreateTemplateController extends Controller implements Initializabl
         final JFXButton remove = new JFXButton("Remove");
         remove.getStyleClass().add("button-white");
         this.datagrid.addRow(count, dot, label, remove);
-        remove.setOnAction(e -> {
-            this.datagrid.getChildren().removeAll(dot, label, remove);
-            this.chosenFieldTypes.remove(box);
-            this.pdfAnchor.getChildren().remove(rec);
-        });
-
+        remove.setOnAction(e -> onRemoveButton(rec, box, dot, label, remove));
         this.chosenFieldTypes.add(box);
 
         ev.consume();
@@ -184,6 +179,13 @@ public class CreateTemplateController extends Controller implements Initializabl
         scene.setCursor(Cursor.DEFAULT);
         stage.setTitle(oldTitle);
     }
+
+    private void onRemoveButton(Rectangle rec, Box box, Rectangle dot, Label label, JFXButton remove) {
+        this.datagrid.getChildren().removeAll(dot, label, remove);
+        this.chosenFieldTypes.remove(box);
+        this.pdfAnchor.getChildren().remove(rec);
+    }
+
 
     private void paintRectangleContinuously(double startX, double startY, Rectangle rec, MouseEvent ev) {
         final ImageView imageView = this.pdfPreviewController.pdfPreviewImageView;

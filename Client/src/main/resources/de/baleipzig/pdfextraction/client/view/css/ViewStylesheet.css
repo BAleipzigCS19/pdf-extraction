@@ -41,6 +41,11 @@
     -fx-padding: 10px 10px 10px 15px;
 }
 
+.aboutViewTableHeader {
+    -fx-font-weight: BOLD;
+    -fx-text-fill: #013780;
+    -fx-font-size: 15px;
+}
 .text-data-key {
     -fx-font-family: "Verdana";
     -fx-font-size: 14px;
