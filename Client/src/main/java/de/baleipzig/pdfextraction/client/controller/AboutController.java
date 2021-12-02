@@ -65,11 +65,11 @@ public class AboutController extends Controller implements Initializable {
         for (Dependency dependency : dependencies) {
 
             int row = dependenciesGrid.getRowCount();
-            Label name = new Label(dependency.getName() + " " + dependency.getVersion());
-            Hyperlink link= new Hyperlink(dependency.getLicense());
-            link.setOnAction(event -> onURLclick(dependency.getLink()));
+            Hyperlink name = new Hyperlink(dependency.getName() + " " + dependency.getVersion());
+            Label license= new Label(dependency.getLicense());
+            name.setOnAction(event -> onURLclick(dependency.getLink()));
 
-            this.dependenciesGrid.addRow(row, name, link);
+            this.dependenciesGrid.addRow(row, name, license);
         }
     }
 

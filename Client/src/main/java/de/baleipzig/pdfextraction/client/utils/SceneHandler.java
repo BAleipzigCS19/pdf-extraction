@@ -37,11 +37,10 @@ public class SceneHandler {
             // dont set currentView to substages, this will result in a bug at reloadScene
             if (current.getOwner() != null) {
                 current.initModality(Modality.WINDOW_MODAL);
-                current.showAndWait();
             } else {
-                current.show();
                 currentView = newView;
             }
+            current.show();
         } catch (IOException e) {
             AlertUtils.showErrorAlert(e);
             throw new UncheckedIOException(e);
