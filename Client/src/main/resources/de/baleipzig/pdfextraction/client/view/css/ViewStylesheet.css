@@ -48,6 +48,11 @@
     -fx-padding: 10px 10px 10px 15px;
 }
 
+.aboutViewTableHeader {
+    -fx-font-weight: BOLD;
+    -fx-text-fill: #013780;
+    -fx-font-size: 15px;
+}
 .template-item {
     -fx-background-color: #2157A0;
     -fx-background-radius: 7;
