@@ -7,6 +7,7 @@ import jakarta.inject.Singleton;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,9 +33,14 @@ public class SceneHandler {
             final Parent parent = FXMLLoader.load(newView.getFXML(), this.languageHandler.getCurrentBundle(), null, Injector::createInstance, StandardCharsets.UTF_8);
             final Scene scene = new Scene(parent);
             current.setScene(scene);
-            current.show();
 
-            currentView = newView;
+            // dont set currentView to substages, this will result in a bug at reloadScene
+            if (current.getOwner() != null) {
+                current.initModality(Modality.WINDOW_MODAL);
+            } else {
+                currentView = newView;
+            }
+            current.show();
         } catch (IOException e) {
             AlertUtils.showErrorAlert(e);
             throw new UncheckedIOException(e);

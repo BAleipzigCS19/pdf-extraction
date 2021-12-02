@@ -4,6 +4,7 @@ import de.baleipzig.pdfextraction.client.connector.api.ResultConnector;
 import de.baleipzig.pdfextraction.client.utils.AlertUtils;
 import de.baleipzig.pdfextraction.client.utils.Job;
 import de.baleipzig.pdfextraction.client.utils.PDFRenderer;
+import de.baleipzig.pdfextraction.client.view.About;
 import de.baleipzig.pdfextraction.client.view.CreateTemplate;
 import de.baleipzig.pdfextraction.client.view.TemplateOverview;
 import jakarta.inject.Inject;
@@ -76,7 +77,7 @@ public class MenuBarController extends Controller {
     /**
      * changes the Language Locale and reloads the Scene with the new Ressource Bundle
      *
-     * @param locale
+     * @param locale The locale of the language you want to change to
      */
     public void onChangeLanguage(Locale locale) {
         Locale.setDefault(locale);
@@ -106,7 +107,7 @@ public class MenuBarController extends Controller {
         }
 
         final TextInputDialog dialog = new TextInputDialog(null);
-        dialog.setHeaderText("Bitte geben sie einem Namen ein, unter welchem diese Vorlage gespeichert werden soll.");
+        dialog.setHeaderText(getResource("saveFileDialogHeader"));
         final Optional<String> optAnswer = dialog.showAndWait();
         if (!optAnswer.map(StringUtils::hasText).orElse(false)) {
             //User canceled the dialog
@@ -117,5 +118,14 @@ public class MenuBarController extends Controller {
                 .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
                 .doOnSuccess(v -> Platform.runLater(() -> AlertUtils.showAlert(Alert.AlertType.INFORMATION, null, null, "Erfolgreich gespeichert")))
                 .subscribe();
+    }
+
+    public void onAbout() {
+        Stage stage = new Stage();
+        stage.setTitle(getResource("aboutTitle"));
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
+        stage.initOwner(menuBar.getScene().getWindow());
+        switchScene(stage, new About());
     }
 }
