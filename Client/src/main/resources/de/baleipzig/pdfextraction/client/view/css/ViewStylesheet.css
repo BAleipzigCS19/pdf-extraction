@@ -71,11 +71,34 @@
     -fx-background-color: transparent;
 }
 
+.item-templatename {
+    -fx-font-size: 18;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.item-versicherung {
+    -fx-font-size: 12;
+    -fx-text-fill: #FFFFFF;
+}
+
+.item-button {
+    -fx-background-color: #2157A0;
+}
 
 .label-action-item {
     -fx-text-fill: #FFFFFF;
     -fx-font-family: "Verdana";
     -fx-font-size: 14px;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.heading {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 24;
+    -fx-text-fill: #2157A0;
 }
 
 .scroll-pane {

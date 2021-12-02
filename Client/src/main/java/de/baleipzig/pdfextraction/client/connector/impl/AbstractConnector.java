@@ -76,7 +76,7 @@ abstract class AbstractConnector {
                         "content", List.of(new FileSystemResource(pathToFile))));
     }
 
-    protected  <T> Mono<T> checkArgs(String templateName, Path pathToFile) {
+    protected <T> Mono<T> checkArgs(String templateName, Path pathToFile) {
         if (!StringUtils.hasText(templateName)) {
             return Mono.error(new IllegalArgumentException("Invalid Name \"%s\"".formatted(templateName)));
         }

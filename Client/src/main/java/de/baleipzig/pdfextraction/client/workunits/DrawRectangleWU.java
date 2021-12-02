@@ -1,7 +1,6 @@
 package de.baleipzig.pdfextraction.client.workunits;
 
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
-import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.client.utils.Box;
 import de.baleipzig.pdfextraction.client.utils.ColorPicker;
 import de.baleipzig.pdfextraction.client.utils.Size;
@@ -16,7 +15,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO) {
+public final class DrawRectangleWU {
+    private final ImageView imageView;
+    private final List<FieldDTO> fieldDTOS;
+    private final ColorPicker picker;
+
+    public DrawRectangleWU(ImageView imageView, List<FieldDTO> fieldDTOS) {
+        this(imageView, fieldDTOS, new HashSet<>());
+    }
+
+    public DrawRectangleWU(ImageView imageView, List<FieldDTO> fieldDTOS, Set<Box> templateBoxes) {
+        this.imageView = imageView;
+        this.fieldDTOS = fieldDTOS;
+        this.picker = new ColorPicker(templateBoxes);
+    }
 
     /**
      * Creates rectangles out of the in the constructor loaded TemplateDTO, that can be added on a container
@@ -24,18 +36,15 @@ public record DrawRectangleWU(ImageView imageView, TemplateDTO templateDTO) {
      * @return a List of javafx Rectangles
      */
     public Set<Box> work() {
-        Set<Box> templateBoxes = new HashSet<>();
-        final ColorPicker picker = new ColorPicker(templateBoxes);
-
-        List<FieldDTO> boxes = templateDTO.getFields();
-        for (FieldDTO field : boxes) {
-                final Rectangle rectangle = getRectangle(getSize(imageView), field);
-                final Paint color = picker.getColor();
-                rectangle.setStroke(color);
-                rectangle.setFill(Color.TRANSPARENT);
-                templateBoxes.add(new Box(field.getPage(), field.getType(), rectangle, color));
+        final Set<Box> result = new HashSet<>(fieldDTOS.size());
+        for (FieldDTO field : fieldDTOS) {
+            final Rectangle rectangle = getRectangle(getSize(imageView), field);
+            final Paint color = this.picker.getColor();
+            rectangle.setStroke(color);
+            rectangle.setFill(Color.TRANSPARENT);
+            result.add(new Box(field.getPage(), field.getType(), rectangle, color));
         }
-        return templateBoxes;
+        return result;
     }
 
     private Rectangle getRectangle(final Size size, final FieldDTO f) {

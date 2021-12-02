@@ -196,7 +196,7 @@ public class ImportController extends Controller implements Initializable {
 
     private void getBoxes(final Map<String, String> results, final TemplateDTO templateDTO) {
 
-        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO).work();
+        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO.getFields()).work();
 
         for (Box box : boxes) {
             if (box.page() == this.renderer.getCurrentPage()) {
