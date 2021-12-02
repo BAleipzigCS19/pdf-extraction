@@ -29,9 +29,9 @@ import java.util.*;
 public class TemplateOverviewController extends Controller implements Initializable {
 
     public static final String INIT_TEMPLATE = "INIT_TEMPLATE";
-    private static final Image deleteImage = new Image(TemplateOverviewController.class.getResourceAsStream("../view/img/delete.png"));
-    private static final Image editImage = new Image(TemplateOverviewController.class.getResourceAsStream("../view/img/edit.png"));
-    private static final Image addImage = new Image(TemplateOverviewController.class.getResourceAsStream("../view/img/add.png"));
+    private static final Image deleteImage = new Image(TemplateOverviewController.class.getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/delete.png"));
+    private static final Image editImage = new Image(TemplateOverviewController.class.getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/edit.png"));
+    private static final Image addImage = new Image(TemplateOverviewController.class.getResourceAsStream("/de/baleipzig/pdfextraction/client/view/img/add.png"));
 
     @FXML
     public VBox contentPane;
