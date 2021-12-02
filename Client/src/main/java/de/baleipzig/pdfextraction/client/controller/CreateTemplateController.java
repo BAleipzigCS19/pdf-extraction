@@ -8,8 +8,10 @@ import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.ColorPicker;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Imports;
+import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -28,27 +30,28 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CreateTemplateController extends Controller implements Initializable {
 
-    public final Set<Box> chosenFieldTypes = new HashSet<>();
+    private final Set<Box> chosenFieldTypes = new HashSet<>();
 
     @FXML
-    public MenuBar menuBar;
+    private MenuBar menuBar;
 
     @FXML
-    public AnchorPane pdfAnchor;
+    private AnchorPane pdfAnchor;
 
     @FXML
     private GridPane dataGridPane;
 
     @FXML
-    public TextField insuranceTextField;
+    private TextField insuranceTextField;
 
     @FXML
-    public TextField templateNameTextField;
+    private TextField templateNameTextField;
 
     @FXML
     public PdfPreviewController pdfPreviewController;
@@ -60,10 +63,13 @@ public class CreateTemplateController extends Controller implements Initializabl
     public GridPane datagrid;
 
     @Inject
-    protected TemplateConnector connector;
+    private TemplateConnector connector;
 
     @Inject
-    protected PDFRenderer renderer;
+    private PDFRenderer renderer;
+
+    @Inject
+    private Job job;
 
     private static void doNothing(MouseEvent ev) {
         //this should do nothing, used in the Handler to reset them
@@ -75,6 +81,42 @@ public class CreateTemplateController extends Controller implements Initializabl
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageBackButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.pdfPreviewController.pageForwardButton, this::onPageTurn);
         EventUtils.chainAfterOnAction(this.menuBarController.chooseFile, this.pdfPreviewController::updatePdfPreview);
+
+        Platform.runLater(this::postInit);
+    }
+
+    private void postInit() {
+        final Stage scene = (Stage) this.datagrid.getScene().getWindow();
+        final ObservableMap<Object, Object> props = scene.getProperties();
+        if (!props.containsKey(TemplateOverviewController.INIT_TEMPLATE)) {
+            return;
+        }
+
+        final TemplateDTO template = (TemplateDTO) props.remove(TemplateOverviewController.INIT_TEMPLATE);
+        if (this.job.getPathToFile() != null && this.renderer.hasPreview()) {
+            //PDF is available
+            drawFromTemplate(template);
+        } else {
+            final AtomicBoolean shouldRun = new AtomicBoolean(true);
+            this.job.addPropertyChangeListener(evt -> {
+                if (evt.getPropertyName().equals("pathToFile") && !shouldRun.get()) {
+                    Platform.runLater(() -> drawFromTemplate(template));
+                    shouldRun.set(false);
+                }
+            });
+        }
+    }
+
+    private void drawFromTemplate(TemplateDTO template) {
+        this.templateNameTextField.setText(template.getName());
+        this.insuranceTextField.setText(template.getConsumer());
+
+        for (FieldDTO field : template.getFields()) {
+            final DrawRectangleWU wu = new DrawRectangleWU(this.pdfPreviewController.pdfPreviewImageView, Collections.singletonList(field), this.chosenFieldTypes);
+            addBox(new FieldTypeWrapper(field.getType()), wu.work().iterator().next());
+        }
+
+        this.onPageTurn();
     }
 
     private void onPageTurn() {
@@ -159,14 +201,7 @@ public class CreateTemplateController extends Controller implements Initializabl
         final Box box = new Box(this.renderer.getCurrentPage(), fieldType.type, rec, color);
 
         //Panel in der Box rechts
-        final int count = this.datagrid.getRowCount();
-        final Rectangle dot = new Rectangle(20, 20, color);
-        final Label label = new Label(fieldType.toString());
-        final JFXButton remove = new JFXButton("Remove");
-        remove.getStyleClass().add("button-white");
-        this.datagrid.addRow(count, dot, label, remove);
-        remove.setOnAction(e -> onRemoveButton(rec, box, dot, label, remove));
-        this.chosenFieldTypes.add(box);
+        addBox(fieldType, box);
 
         ev.consume();
         //Die Handler sind fertig, also ersetzen mit welchen, die nichts tun
@@ -177,10 +212,21 @@ public class CreateTemplateController extends Controller implements Initializabl
         stage.setTitle(oldTitle);
     }
 
-    private void onRemoveButton(Rectangle rec, Box box, Rectangle dot, Label label, JFXButton remove) {
+    private void addBox(FieldTypeWrapper fieldType, Box box) {
+        final int count = this.datagrid.getRowCount();
+        final Rectangle dot = new Rectangle(20, 20, box.color());
+        final Label label = new Label(fieldType.toString());
+        final JFXButton remove = new JFXButton("Remove");
+        remove.getStyleClass().add("button-white");
+        this.datagrid.addRow(count, dot, label, remove);
+        remove.setOnAction(e -> onRemoveButton(box, dot, label, remove));
+        this.chosenFieldTypes.add(box);
+    }
+
+    private void onRemoveButton(Box box, Rectangle dot, Label label, JFXButton remove) {
         this.datagrid.getChildren().removeAll(dot, label, remove);
         this.chosenFieldTypes.remove(box);
-        this.pdfAnchor.getChildren().remove(rec);
+        this.pdfAnchor.getChildren().remove(box.place());
     }
 
 

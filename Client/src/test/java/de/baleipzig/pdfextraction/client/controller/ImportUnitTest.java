@@ -1,7 +1,6 @@
 package de.baleipzig.pdfextraction.client.controller;
 
 import de.baleipzig.pdfextraction.api.dto.FieldDTO;
-import de.baleipzig.pdfextraction.api.dto.TemplateDTO;
 import de.baleipzig.pdfextraction.api.fields.FieldType;
 import de.baleipzig.pdfextraction.client.utils.Box;
 import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
@@ -40,9 +39,7 @@ class ImportUnitTest {
         AnchorPane.setTopAnchor(imageView, topMargin);
 
         List<FieldDTO> list = List.of(new FieldDTO(FieldType.ADDRESS_RECEIVER, 0, percXPos, percYPos, percWidth, percHeight));
-        TemplateDTO templateDTO = new TemplateDTO("Test", "Test", list);
-
-        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, templateDTO);
+        DrawRectangleWU drawRectangleWU = new DrawRectangleWU(imageView, list);
         Set<Box> boxes = drawRectangleWU.work();
         List<Rectangle> rectangles = new ArrayList<>();
         boxes.stream().toList().forEach(e -> rectangles.add(e.place()));

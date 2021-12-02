@@ -8,7 +8,6 @@ import de.baleipzig.pdfextraction.client.connector.api.TemplateConnector;
 import de.baleipzig.pdfextraction.client.utils.*;
 import de.baleipzig.pdfextraction.client.view.Actions;
 import de.baleipzig.pdfextraction.client.workunits.DrawRectangleWU;
-import de.baleipzig.pdfextraction.client.view.TemplateOverview;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -29,9 +28,6 @@ import java.net.URL;
 import java.util.*;
 
 public class ImportController extends Controller implements Initializable {
-
-    @FXML
-    public Button showTemplatesButton;
 
     @FXML
     public MenuBar menuBar;
@@ -200,7 +196,7 @@ public class ImportController extends Controller implements Initializable {
 
     private void getBoxes(final Map<String, String> results, final TemplateDTO templateDTO) {
 
-        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO).work();
+        Set<Box> boxes = new DrawRectangleWU(pdfPreviewController.pdfPreviewImageView, templateDTO.getFields()).work();
 
         for (Box box : boxes) {
             if (box.page() == this.renderer.getCurrentPage()) {

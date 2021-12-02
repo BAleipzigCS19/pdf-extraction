@@ -37,4 +37,8 @@ abstract class Controller {
     protected void changeFocusOnControlParent(Control control) {
         Platform.runLater(() -> control.getParent().requestFocus());
     }
+
+    protected LanguageHandler getLanguageHandler() {
+        return this.languageHandler;
+    }
 }

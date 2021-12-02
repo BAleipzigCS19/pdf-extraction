@@ -261,34 +261,4 @@ public class ActionController extends Controller implements Initializable {
         dialogPane.setMinSize(image.getWidth() + 100, image.getHeight());
         dialog.show();
     }
-
-    private void onSuccess(final Map<String, String> result) {
-        final StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : result.entrySet()) {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
-        }
-
-        AlertUtils.showAlert(Alert.AlertType.INFORMATION,
-                getResource("successTitle"),
-                getResource("actionCompleted"),
-                getResource("alertActionCompleted") + "\n\n" + sb);
-    }
-
-    @FXML
-    private void backToImportButtonOnAction() {
-        switchScene((Stage) this.backToImportButton.getScene().getWindow(), new Imports());
-    }
-
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        changeFocusOnControlParent(menuBar);
-
-        this.resultConnector.getAllNames()
-                .doOnError(err -> Platform.runLater(() -> AlertUtils.showErrorAlert(err)))
-                .subscribe(name -> this.resultCombobox.getItems().add(name));
-
-        this.resultCombobox.setVisible(false);
-        this.createTerminationCheckBox.setOnAction(ev -> this.resultCombobox.setVisible(!this.resultCombobox.isVisible()));
-    }
 }

@@ -125,6 +125,12 @@ public class TemplateController {
         return ResponseEntity.created(URI.create("%s:%s/rest/template?name=%s".formatted(this.host, this.port, saved.getName()))).build();
     }
 
+    /**
+     * Removes the requested Template from the DB
+     *
+     * @param name Name of the Template to delete
+     * @return Only signals Success via HTTP-Codes
+     */
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam(name = "name") final String name) {
 

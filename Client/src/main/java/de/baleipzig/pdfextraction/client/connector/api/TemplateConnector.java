@@ -32,7 +32,7 @@ public interface TemplateConnector {
     /**
      * Delete the Template
      * @param name name of the Template
-     * @return success of deletion
+     * @return Empty if successfully, else an error Mono
      */
     Mono<Void> delete(String name);
 }
